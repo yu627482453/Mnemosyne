@@ -1,0 +1,109 @@
+# Phase 2 设计方案：方案调研与技术选型
+
+> 日期：2026-05-12 | 状态：待逐子步骤确认
+
+---
+
+## 调研范围（6 个子步骤）
+
+### 2.1 插件生态评估
+
+审计现有 41 个社区插件，按 Wiki 系统需求分为三类：
+
+**预期产出**：
+- 核心插件清单：直接支撑 Wiki 系统（Dataview、DB Folder、Templater、omnisearch 等）
+- 可选插件清单：锦上添花（obsidian-kanban、obsidian-admonition 等）
+- 冗余/冲突插件：建议禁用或卸载
+- 能力缺口：需要额外安装的插件
+
+### 2.2 Obsidian 原生能力调研
+
+调研三个关键原生功能：
+
+| 功能 | 版本 | 核心能力 |
+|------|------|----------|
+| **Base** | v1.9.0 (2025.05) | 类 Notion 数据库，GUI 过滤/排序/分组，公式列，Table/Card/List/Map 视图，`.base` 文件格式，Bases API |
+| **Canvas** | v1.1 (2022.12) | 无限画布白板，文本卡片/笔记卡片/媒体卡片，拖拽连线，分组，JSON Canvas 开放格式 |
+| **CLI** | v1.12.4 (2026.02) | 终端操作：`obsidian create/search/read/append/backlinks/links/daily`，需 Catalyst 许可证 |
+
+**重点分析**：
+- Base 能否替代 Dataview 作为主索引工具？
+- Canvas 能否用于知识关系图谱的可视化？
+- CLI 能否成为 Claude Code 操作 Obsidian 的主通道？
+- 三者与现有插件的重叠/互补关系
+
+### 2.3 karpathy-llm-wiki 调研
+
+调研项目：[Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki)（714⭐）
+
+**核心理念**：
+- "编译模式" vs 传统 RAG：摄入时将原始素材编译为结构化 wiki 页面
+- 三操作模型：Ingest（摄入）→ Query（查询）→ Lint（健康检查）
+- 知识复利增长：每摄入一个新来源，级联更新相关页面
+- 目录结构：`raw/`（不可变原始素材）+ `wiki/`（LLM 维护的知识页面）
+
+**与我们的设计对比**：
+| 维度 | karpathy-llm-wiki | 我们的设计 |
+|------|-------------------|-----------|
+| 原始层 | `raw/` 不可变 | `0003-inbox/` 暂存区 |
+| 基础层 | 无（直接到 wiki） | `5000-9999/` 数据基础层 |
+| 关系层 | `wiki/` | `0100-0104/` 五个分区 |
+| ID 体系 | 无显式 ID | 层级前缀+序号 |
+| 前端 | 纯 Markdown | Obsidian + 插件 |
+
+**可借鉴点**：
+- Lint 健康检查机制
+- 知识复利更新的工作流设计
+- Claude Code Skill 封装方式
+
+### 2.4 Claude Code × Obsidian 集成方案
+
+对比两种集成模式：
+
+| 模式 | 方式 | 优点 | 缺点 |
+|------|------|------|------|
+| **文件直读写** | Claude Code 直接读写 `.md` 文件 | 无依赖，简单可靠 | 无 Obsidian 内部 API（链接解析、元数据索引等） |
+| **CLI 命令** | Claude Code 调用 `obsidian` CLI | 利用 Obsidian 原生能力（搜索、反向链接等） | 需 Obsidian 保持运行，需 Catalyst 许可证 |
+
+**预期产出**：推荐的组合方案，以及手动触发模式的具体交互流程
+
+### 2.5 知识分类与关联方法
+
+**分类维度对比**：
+- 目录层级分类（物理位置 = 分类）
+- 标签分类（tags frontmatter + obsidian-tagfolder）
+- Frontmatter 元数据分类（type/domain 字段 + Dataview/Base 查询）
+- 综合方案推荐
+
+**关联策略对比**：
+- `[[wikilink]]` 双向链接（Obsidian 原生，Graph View 可视化）
+- MOC（Map of Content）索引页（手动维护大纲）
+- Dataview 动态查询（自动聚合，但需学习 DQL）
+- Canvas 连线（视觉化，但不生成实际链接）
+- Base 视图（GUI 过滤/分组）
+- 综合方案推荐
+
+### 2.6 知识模板详细设计
+
+为 6 种笔记类型设计具体模板：
+
+| 模板 | 用途 | 目标目录 |
+|------|------|----------|
+| `t-concept` | 概念定义、术语 | `0101-wiki-concepts/` |
+| `t-entity` | 人物、组织、项目 | `0102-wiki-entities/` |
+| `t-topic` | 跨概念综合论述 | `0103-wiki-topics/` |
+| `t-comparison` | A vs B 对比 | `0104-wiki-comparisons/` |
+| `t-inbox` | 原始素材条目 | `0003-inbox/` |
+| `t-daily` | 日记/日常 | 日记目录 |
+
+**每个模板定义**：Frontmatter 完整字段、内容区块结构、Templater 动态变量
+
+---
+
+## 执行方式
+
+每个子步骤独立执行，完成后暂停等待用户确认，确认后方可进入下一个子步骤。
+
+## 交付物
+
+- `0000-meta/llm-wiki/技术选型报告.md`
