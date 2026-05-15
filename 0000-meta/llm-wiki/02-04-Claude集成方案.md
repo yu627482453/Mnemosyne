@@ -37,7 +37,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
 ┌─────────────────────────────────────────────────────┐
 │  Ingest（摄入）                                      │
 │    inbox/ 文件 → Claude 读取 → 清洗/分类/摘要       │
-│    → 写入 5000-9999/ → 更新 INDEX/CHANGELOG         │
+│    → 写入主题目录 → 更新 INDEX/CHANGELOG         │
 ├─────────────────────────────────────────────────────┤
 │  Query（查询）                                       │
 │    用户提问 → Grep/Glob 搜索 → 读相关页面            │
@@ -60,7 +60,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
      ↓
 4. Claude 分析：分类建议 → 摘要生成 → 标签 → 关联建议
      ↓
-5. Claude 创建知识页面到对应域目录（5000-9999/）
+5. Claude 创建知识页面到对应主题目录
      ↓
 6. Claude 更新 0100-wiki-meta/INDEX.md
      ↓
