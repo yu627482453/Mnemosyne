@@ -64,7 +64,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
      ↓
 6. Claude 更新 0100-wiki-meta/INDEX.md
      ↓
-7. Claude 追加 0100-wiki-meta/LOG.md
+7. Claude 追加 0109-log/LOG-YYYY-MM-DD.md
      ↓
 8. Claude 报告处理结果，等待用户确认
 ```
@@ -92,7 +92,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
      ↓
 4. 报告需人工决策的问题
      ↓
-5. 追加 LOG.md
+5. 追加 0109-log/
 ```
 
 ## 三、提示词管理

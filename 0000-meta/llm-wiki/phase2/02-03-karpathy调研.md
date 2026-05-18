@@ -67,7 +67,7 @@ Updated: "2026-04-03"
 | **LLM 角色** | LLM 全权维护 wiki | Claude 手动触发，协助加工 |
 | **前端** | 纯 Markdown | Obsidian + 插件生态 |
 | **元数据** | Sources / Raw / Updated | 完整 Frontmatter（id/type/domain/tags/links/summary） |
-| **变更追踪** | log.md 追加 | Git commit + CHANGELOG.md |
+| **变更追踪** | log.md 追加 | Git commit + 0109-log/ |
 | **质量保障** | Lint 系统 | Claude Code 手动审查 |
 
 ## 四、可借鉴的设计
@@ -76,7 +76,7 @@ Updated: "2026-04-03"
 
 | 设计 | 说明 | 落地位置 |
 |------|------|----------|
-| **操作日志** | `log.md` 追加式记录每次 ingest/query/lint 操作 | `0100-wiki-meta/LOG.md` |
+| **操作日志** | `log.md` 追加式记录每次 ingest/query/lint 操作 | `0109-log/LOG-YYYY-MM-DD.md` |
 | **级联更新** | 新知识入库后检查并更新受影响的相关页面 | Claude 工作流（P1） |
 | **冲突标注** | 不同来源存在矛盾时显式标注 | 知识模板中增加 "争议" 区块 |
 | **不可变原始素材** | inbox 中原始素材标记为不可变，只加工不修改 | `0003-inbox/` 规范 |
