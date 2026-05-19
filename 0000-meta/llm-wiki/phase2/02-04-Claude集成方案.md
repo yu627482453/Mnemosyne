@@ -1,6 +1,6 @@
 # 2.4 Claude Code × Obsidian 集成方案
 
-> 日期：2026-05-14
+> 日期：2026-05-14 | 修订：2026-05-18（同步 03 详细流程）
 
 ## 一、集成模式选择
 
@@ -52,33 +52,27 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
 ### Ingest 详细流程
 
 ```
-1. 用户在 0003-inbox/ 创建原始条目
-     ↓
-2. 用户在 Claude Code 中：@"0003-inbox/xxx.md" 处理这条知识
-     ↓
-3. Claude 读取 inbox 文件
-     ↓
-4. Claude 分析：分类建议 → 摘要生成 → 标签 → 关联建议
-     ↓
-5. Claude 创建知识页面到对应主题目录
-     ↓
-6. Claude 更新 0100-wiki-meta/INDEX.md
-     ↓
-7. Claude 追加 0109-log/LOG-YYYY-MM-DD.md
-     ↓
-8. Claude 报告处理结果，等待用户确认
+1. 素材放入 0003-inbox/，用户 @引用
+2. Claude 读取 → 判断归属主题目录
+3. 目标目录不存在 → 执行新建目录流程
+4. Glob 目录取最大序号 +1 → 分配 ID
+5. 按模板创建 {编号}-{序号}-{slug}.md
+6. 更新 {目录}/_index.md
+7. 判断是否更新 0101-0104 合成页面
+8. 追加 0109-log/LOG-YYYY-MM-DD.md
+9. 报告结果，建议关联
+10. 询问是否删除 inbox 原文件
 ```
 
 ### Query 详细流程
 
 ```
-1. 用户提问："搜索我 wiki 中关于 Transformer 的知识"
-     ↓
-2. Claude Grep 搜索关键词 → 读 INDEX.md → 读相关页面
-     ↓
-3. Claude 合成回答，引用 `[[页面名]]` 或文件路径
-     ↓
-4. 用户可选："将回答存档到 outbox"
+1. 用户提问
+2. Claude 优先搜 summary → 读 _index.md → 定位候选
+3. 最多读入 8 个候选文件全文
+4. 若 8 个不足以回答，提示缩小范围
+5. 合成回答，引用 [[wikilink]]
+6. 可选：存档到 outbox
 ```
 
 ### Lint 详细流程
