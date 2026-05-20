@@ -1,0 +1,34 @@
+# 健康检查规则 — 可自动修复项与需人工确认项
+
+auto_fix:
+  - rule: index_consistency
+    description: "INDEX.md 与实际主题目录不一致"
+    action: "更新 INDEX.md"
+
+  - rule: broken_wikilink
+    description: "内部 [[wikilink]] 指向不存在"
+    action: "标记为注释 <!-- BROKEN: ... -->"
+
+manual_review:
+  - rule: orphan_page
+    description: "无任何 incoming wikilink 的页面"
+    check: "Glob 所有 .md → Grep 检查 incoming links"
+
+  - rule: long_draft
+    description: "status=draft 超过 30 天"
+    check: "Glob frontmatter status + date delta"
+
+  - rule: missing_cross_ref
+    description: "可能遗漏的跨主题引用建议"
+
+  - rule: incomplete_frontmatter
+    description: "必填字段缺失"
+    check: "按 schema.yaml 校验"
+
+  - rule: summary_too_long
+    description: "summary 超过 80 字符"
+    check: "Grep frontmatter summary length"
+
+  - rule: summary_missing
+    description: "summary 字段缺失或为空"
+    check: "Grep frontmatter summary"

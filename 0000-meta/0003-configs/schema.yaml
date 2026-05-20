@@ -1,0 +1,43 @@
+# Frontmatter Schema — 机器可校验字段规范
+# 与 0100-wiki-meta/SCHEMA.md 同步维护（前者面向人，本文件面向 Claude/脚本）
+
+common_required:
+  title: { type: string, max_len: 120 }
+  updated: { type: date, format: YYYY-MM-DD }
+
+layers:
+  L1:
+    # inbox 临时文件，不参与校验
+    fields:
+      date:     { type: date, format: YYYY-MM-DD }
+      source:   { type: enum, values: [manual, url, file, claude] }
+      source_url: { type: string }
+      status:   { type: enum, values: [raw, processing, archived] }
+
+  L2:
+    fields:
+      title:    { type: string, required: true, max_len: 120 }
+      topic:    { type: string, required: true, pattern: "^\d{4}-.+$" }
+      layer:    { type: enum, required: true, values: [L2] }
+      kind:     { type: enum, required: true, values: [standard] }
+      tags:     { type: list, min: 3, max: 10 }
+      aliases:  { type: list, min: 1 }
+      created:  { type: date, required: true, format: YYYY-MM-DD }
+      updated:  { type: date, required: true, format: YYYY-MM-DD }
+      source:   { type: enum, values: [manual, url, file, claude] }
+      status:   { type: enum, required: true, values: [draft, published] }
+      summary:  { type: string, required: true, max_len: 80 }
+
+  L3:
+    fields:
+      title:    { type: string, required: true, max_len: 120 }
+      layer:    { type: enum, required: true, values: [L3] }
+      kind:     { type: enum, required: true, values: [topic, concept, entity, comparison] }
+      processing_path: { type: string, required: true, pattern: "^\S+/\S+$" }
+      updated:  { type: date, required: true, format: YYYY-MM-DD }
+      entry_count: { type: number, min: 0 }
+      source_topics: { type: list }
+      tags:     { type: list, min: 3, max: 10 }
+      source:   { type: enum, values: [manual, url, file, claude] }
+      status:   { type: enum, values: [draft, published] }
+      summary:  { type: string, max_len: 80 }
