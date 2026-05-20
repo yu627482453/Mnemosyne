@@ -61,8 +61,8 @@ L3 页面格式见 `CLAUDE.md` L3 Frontmatter 节和 `s-*.md` 模板。
 ### 6. 报告与收尾
 
 报告内容：新建文件路径、归属主题目录、L3 创建/更新情况、建议关联的已有知识。
-询问："是否删除 inbox 原文件？"（D008：默认删除）
-用户确认后 → 删除 L1 原文件 → git add/commit/push
+询问："是否移入回收站？"（D008：默认移入 `0003-inbox/.trash/`）
+用户确认后 → mv 到 .trash/ → git add/commit/push
 
 ## 字段校验（写入前）
 

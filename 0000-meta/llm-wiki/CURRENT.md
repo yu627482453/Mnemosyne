@@ -138,7 +138,7 @@ status: raw
    - 无匹配 → 新建概念页 `0102-wiki-concepts/{大类}/{主题域}/{slug}.md`
    - 主题域首次有概念 → 新建主题综述 `0101-wiki-topics/{大类}/{主题域}.md`
 7. 追加 `0109-log/LOG-YYYY-MM-DD.md`
-8. 报告结果，询问是否删除 inbox 原文件（默认删除）
+8. 报告结果，询问是否移入回收站 `0003-inbox/.trash/`
 9. git commit
 
 ### Query：L3（topic 优先）→ L2 → L1
