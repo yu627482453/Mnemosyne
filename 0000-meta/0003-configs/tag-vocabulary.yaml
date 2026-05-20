@@ -5,51 +5,45 @@ vocabulary:
   - tag: AI
     zh: 人工智能
     scope: [L2, L3]
-
   - tag: 机器学习
     en: ML
     scope: [L2, L3]
-
   - tag: 深度学习
     en: Deep-Learning
     scope: [L2, L3]
-
   - tag: NLP
     zh: 自然语言处理
     scope: [L2, L3]
-
   - tag: LLM
     zh: 大语言模型
     scope: [L2, L3]
-
   - tag: 注意力机制
     en: Attention
     scope: [L2, L3]
-
   - tag: 计算机视觉
     en: CV
     scope: [L2, L3]
-
+  - tag: CNN
+    zh: 卷积神经网络
+    scope: [L2, L3]
+  - tag: 残差网络
+    en: Residual-Network
+    scope: [L2, L3]
   - tag: 项目管理
     en: Project-Management
     scope: [L2, L3]
-
   - tag: 生产力
     en: Productivity
     scope: [L2, L3]
-
   - tag: 个人管理
     en: Personal-Management
     scope: [L2, L3]
-
   - tag: 基础知识
     en: Fundamentals
     scope: [L2, L3]
-
   - tag: 对比
     en: Comparison
     scope: [L3]
-
   - tag: 综述
     en: Overview
     scope: [L3]
