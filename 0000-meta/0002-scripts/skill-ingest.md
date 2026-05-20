@@ -23,53 +23,32 @@
 ### 2. 生成 slug（D009）
 
 - 英文优先，从标题生成可读 slug
-- 给出 3-5 个推荐选项，格式如下：
-  1. `transformer`
-  2. `transformer-architecture`
-  3. `transformer-model`
+- 给出 3-5 个推荐选项
 - 用 `rg --files "{主题目录}/"` 检查重名
 - 重名时自动追加 `-2`、`-3`
 - 用户可确认推荐或手动指定
 
 ### 3. 创建 L2 标准化主题知识
 
-按 `0000-meta/0001-templates/t-knowledge.md` 模板写入：
-
-```yaml
----
-title: "标题"
-topic: "3001-深度学习"
-layer: L2
-kind: standard
-tags: [tag1, tag2, tag3]
-aliases: [slug, 中文别名]
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-source: url                # manual | url | file | claude
-status: draft
-summary: "一句话摘要 ≤80字"
----
-```
-
-填写规则：
-- `tags`：3-10 个，优先用 `tag-vocabulary.yaml` 已有标签；新增标签需用户确认
+按 `0000-meta/0001-templates/t-knowledge.md` 模板写入，填写规则：
+- `tags`：3-10 个，优先用 `tag-vocabulary.yaml`；新增标签需用户确认
 - `aliases`：至少包含 slug、中文译名、常见变体
-- `summary`：≤80 字，提炼核心要点
+- `summary`：≤80 字
 - `created` / `updated`：使用当天日期
+- 正文至少包含：核心内容、要点（3 条以上）、关联（[[wikilink]]）、来源
 
-正文至少包含：核心内容（1-2 段）、要点（3 条以上）、关联（[[wikilink]]）、来源。
+### 4. 判断 L3 触发（D004/D013）
 
-### 4. 判断 L3 触发（D004）
-
-对比新知识的 `topic` 与已有 L3 页面的 `processing_path`：
+L3 页面结构：`010{1-4}/{大类}/{主题域}/{slug}.md`（0101 为域级 `{大类}/{主题域}.md`）
 
 | 情况 | 动作 |
 |------|------|
-| 匹配已有 processing_path | 追加 `- [[{slug}]] — {summary}` 到对应 L3 页面 |
-| L3 页面条目 ≥50 | 自动创建分页 `{主题域}-2.md` |
-| 无匹配 processing_path | 在 0101/0102/0103/0104 四个目录下新建 `{大类}/{主题域}.md` |
+| L3 已有同名概念页（同 slug） | 更新该页内容（合并新信息） |
+| L3 无同名概念页 | 新建 `0102-wiki-concepts/{大类}/{主题域}/{slug}.md` |
+| 内容为实体/对比 | 对应写入 `0103` 或 `0104`，同路径规则 |
+| 主题域首次有内容 | 新建 `0101-wiki-topics/{大类}/{主题域}.md`（主题综述） |
 
-L3 页面格式见 `CLAUDE.md` L3 Frontmatter 节。
+L3 页面格式见 `CLAUDE.md` L3 Frontmatter 节和 `s-*.md` 模板。
 
 ### 5. 追加操作日志
 
@@ -81,13 +60,9 @@ L3 页面格式见 `CLAUDE.md` L3 Frontmatter 节。
 
 ### 6. 报告与收尾
 
-报告内容：
-- 新建文件路径
-- 归属主题目录
-- 建议关联的已有知识（wikilink 建议）
-- 询问："是否删除 inbox 原文件？"（D008：默认删除）
-
-用户确认后 → 删除 L1 原文件 → `git status → git add {文件} → git commit -m "wiki: Ingest {slug}.md — {摘要}" → git push`
+报告内容：新建文件路径、归属主题目录、L3 创建/更新情况、建议关联的已有知识。
+询问："是否删除 inbox 原文件？"（D008：默认删除）
+用户确认后 → 删除 L1 原文件 → git add/commit/push
 
 ## 字段校验（写入前）
 
