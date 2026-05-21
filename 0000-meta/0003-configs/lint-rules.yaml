@@ -1,10 +1,6 @@
 # 健康检查规则 — 可自动修复项与需人工确认项
 
 auto_fix:
-  - rule: index_consistency
-    description: "INDEX.md 与实际主题目录不一致"
-    action: "更新 INDEX.md"
-
   - rule: broken_wikilink
     description: "内部 [[wikilink]] 指向不存在"
     action: "标记为注释 <!-- BROKEN: ... -->"

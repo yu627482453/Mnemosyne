@@ -1,5 +1,5 @@
 # Frontmatter Schema — 机器可校验字段规范
-# 与 0100-wiki-meta/SCHEMA.md 同步维护（前者面向人，本文件面向 Claude/脚本）
+# 机器可校验字段规范 — Claude 执行 Ingest/Update/Lint 时的校验依据
 
 common_required:
   title: { type: string, max_len: 120 }

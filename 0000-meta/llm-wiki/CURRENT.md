@@ -26,7 +26,6 @@ obsidian-vault/
 │   ├── 0003-configs/
 │   └── llm-wiki/
 ├── 0003-inbox/                   # L1 原始数据层
-├── 0100-wiki-meta/
 ├── 0101-wiki-topics/             # L3 主题综述（域级：大类/主题域.md）
 ├── 0102-wiki-concepts/           # L3 概念加工（概念级：大类/主题域/{slug}.md）
 ├── 0103-wiki-entities/           # L3 实体档案（实体级：大类/主题域/{slug}.md）
@@ -106,7 +105,6 @@ status: raw
 ---
 ```
 
-> 完整字段定义见 `0100-wiki-meta/SCHEMA.md`，校验规则见 `0000-meta/0003-configs/schema.yaml`。
 > L2 必填字段：title, topic, layer, kind, created, updated, status, summary。
 > L3 必填字段：title, layer, kind, processing_path, updated。
 > L3 不使用 `created`，以 `updated` 代创建时间。
@@ -161,7 +159,7 @@ status: raw
 
 ### Lint（健康检查）
 
-**自动修复**：INDEX.md 不一致、断裂 wikilink
+**自动修复**：断裂 wikilink
 **报告**：孤立页面、长期 draft >30 天、Frontmatter 不完整、summary 超长或缺失
 
 ## 7. 当前权威文档
