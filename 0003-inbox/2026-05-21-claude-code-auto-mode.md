@@ -72,4 +72,5 @@ Full pipeline results: 0.4% FPR on real traffic, 17% FNR on overeager actions, 0
 
 ## 处理状态
 
-- [ ] 待 Claude 处理
+- [x] 已完成 Claude 处理
+- [ ] 待移入回收站
