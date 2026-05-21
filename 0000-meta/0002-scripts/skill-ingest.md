@@ -42,7 +42,7 @@
 ### 3. 创建 L2 标准化主题知识
 
 按 `0000-meta/0001-templates/t-knowledge.md` 模板写入，填写规则：
-- `tags`：3-10 个，优先用 `0108-wiki-tags/` 权威词表（`0000-meta/0003-configs/tag-vocabulary.yaml` 仅作参考索引）；新增标签需用户确认
+- `tags`：3-10 个，优先用 `tag-vocabulary.yaml` 已有标签；新增标签需用户确认
 - `aliases`：至少包含 slug、中文译名、常见变体
 - `summary`：≤80 字
 - `created` / `updated`：使用当天日期

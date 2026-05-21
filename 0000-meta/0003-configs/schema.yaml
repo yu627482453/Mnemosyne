@@ -24,6 +24,8 @@ layers:
       aliases:  { type: list, min: 1 }
       created:  { type: date, required: true, format: YYYY-MM-DD }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
+      source:   { type: enum, values: [manual, url, file, claude] }
+      source_url: { type: string }
       status:   { type: enum, required: true, values: [draft, published] }
       summary:  { type: string, required: true, max_len: 80 }
 

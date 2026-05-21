@@ -30,7 +30,6 @@ obsidian-vault/
 ├── 0102-wiki-concepts/           # L3 概念加工（概念级：大类/主题域/{slug}.md）
 ├── 0103-wiki-entities/           # L3 实体档案（实体级：大类/主题域/{slug}.md）
 ├── 0104-wiki-comparisons/        # L3 对比分析（对比级：大类/主题域/{slug}.md）
-├── 0108-wiki-tags/              # 权威标签词表（每个标签一个页面）
 ├── 0105-wiki-base/
 ├── 0109-log/
 └── {编号}-{主题名}/               # L2 主题知识层
@@ -132,7 +131,6 @@ status: raw
 2. Claude 读取 L1，判断归属主题目录
 3. 生成 slug：英文优先，3-5 个推荐选项，`rg --files` 检查重名
 4. 按 `t-knowledge.md` 创建 L2 条目 `{主题目录}/{slug}.md`
-5. tags 优先使用 `0108-wiki-tags/` 权威词表（`0000-meta/0003-configs/tag-vocabulary.yaml` 仅作参考索引），新增需用户确认
 6. 判断 L3 触发：
    - 匹配到已有概念页 → 更新该页
    - 无匹配 → 新建概念页 `0102-wiki-concepts/{大类}/{主题域}/{slug}.md`

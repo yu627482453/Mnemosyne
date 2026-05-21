@@ -67,7 +67,7 @@
 
 - 决策：tags 在 P0 即建立受控词表，不延后到 P3。
 - 原因：推迟治理会导致前期积累大量自由标签，后期清洗成本远高于从一开始约束。
-- 影响：`0108-wiki-tags/` 为权威标签词表；`0000-meta/0003-configs/tag-vocabulary.yaml` 仅作参考索引；`topics.yaml` 中预定义各主题域的推荐标签集。
+- 影响：`tag-vocabulary.yaml` 为标签词表；`topics.yaml` 中预定义各主题域的推荐标签集。
 
 ## D012 source 保持单一字段
 
