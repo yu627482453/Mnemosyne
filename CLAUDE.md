@@ -58,7 +58,7 @@ layer: L3
 kind: concept             # topic | concept | entity | comparison
 processing_path: "AI技术/深度学习"
 updated: 2026-05-20
-source_topics: [3001-深度学习]
+source: [3001-深度学习/transformer.md]
 ```
 
 主题综述（0101，域级）：
@@ -68,7 +68,7 @@ layer: L3
 kind: topic
 processing_path: "AI技术/深度学习"
 updated: 2026-05-20
-source_topics: [3001-深度学习]
+source: [3001-深度学习/transformer.md]
 ```
 
 ### L1 Inbox

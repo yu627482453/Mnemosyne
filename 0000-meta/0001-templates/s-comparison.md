@@ -5,7 +5,7 @@ kind: comparison
 processing_path: "{{category}}/{{topic_domain}}"
 updated: "{{date}}"
 entry_count: {{entry_count}}
-source_topics: [{{source_topics}}]
+source: [{{source}}]
 ---
 
 # {{left}} vs {{right}}

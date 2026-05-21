@@ -36,7 +36,7 @@ layers:
       processing_path: { type: string, required: true, pattern: "^\S+/\S+$" }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       entry_count: { type: number, min: 0 }
-      source_topics: { type: list }
+      source: { type: list, description: "L2 源文件路径列表" }
       tags:     { type: list, min: 3, max: 10 }
       source:   { type: enum, values: [manual, url, file, claude] }
       status:   { type: enum, values: [draft, published] }

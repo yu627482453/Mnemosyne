@@ -76,7 +76,7 @@ layer: L3
 kind: concept
 processing_path: "AI技术/深度学习"
 updated: 2026-05-20
-source_topics: [3001-深度学习]
+source: [3001-深度学习/transformer.md]
 ---
 ```
 
@@ -89,7 +89,7 @@ layer: L3
 kind: topic
 processing_path: "AI技术/深度学习"
 updated: 2026-05-20
-source_topics: [3001-深度学习]
+source: [3001-深度学习/transformer.md]
 ---
 ```
 
