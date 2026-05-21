@@ -44,7 +44,11 @@
    ```
 4. 列出受影响文件清单，请用户确认
 5. 用户确认后更新受影响文件的引用
-6. **同步更新 L3 加工页面**：若此知识被 L3 页面引用（出现在条目列表中），更新对应条目
+6. **同步更新 L3 加工页面**：
+   ```
+   rg -l "{slug}.md" 0101-wiki-topics/ 0102-wiki-concepts/ 0103-wiki-entities/ 0104-wiki-comparisons/
+   ```
+   对每个匹配的 L3 页面，更新 source 列表和关联正文
 7. 追加 LOG
 8. git commit
 

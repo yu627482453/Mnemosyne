@@ -25,6 +25,10 @@ manual_review:
     description: "summary 超过 80 字符"
     check: "Grep frontmatter summary length"
 
+  - rule: l3_source_stale
+    description: "L3 source 字段引用的 L2 路径不存在"
+    check: "提取 L3 source 列表 → Glob 检查文件是否存在 → 标记 STALE"
+
   - rule: summary_missing
     description: "summary 字段缺失或为空"
     check: "Grep frontmatter summary"

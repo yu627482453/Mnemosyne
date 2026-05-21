@@ -4,7 +4,6 @@ layer: L3
 kind: concept
 processing_path: "{{category}}/{{topic_domain}}"
 updated: "{{date}}"
-entry_count: {{entry_count}}
 source: [{{source}}]
 ---
 

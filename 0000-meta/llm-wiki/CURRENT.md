@@ -62,6 +62,7 @@ aliases: [transformer, 变换器]
 created: 2026-05-20
 updated: 2026-05-20
 source: manual
+source_url: ""
 status: draft
 summary: "基于自注意力机制的序列建模架构"
 ---

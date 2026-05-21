@@ -8,6 +8,7 @@ aliases: [{{aliases}}]
 created: "{{tp.file.creation_date("YYYY-MM-DD")}}"
 updated: "{{tp.file.creation_date("YYYY-MM-DD")}}"
 source: "{{source}}"
+source_url: "{{source_url}}"
 status: draft
 summary: "{{summary}}"
 ---
