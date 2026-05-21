@@ -121,7 +121,7 @@ status: raw
 | L3 | `s-entity.md` | 实体档案（0103，实体级） |
 | L3 | `s-comparison.md` | 对比分析（0104，对比级） |
 
-详细模板见 `phase2/02-06-模板详细设计.md`。
+详细模板可参考 `0000-meta/llm-wiki/phase2/02-06-模板详细设计.md`，但以本文件与模板实际文件为准。
 
 ## 6. 关键工作流
 
@@ -131,14 +131,14 @@ status: raw
 2. Claude 读取 L1，判断归属主题目录
 3. 生成 slug：英文优先，3-5 个推荐选项，`rg --files` 检查重名
 4. 按 `t-knowledge.md` 创建 L2 条目 `{主题目录}/{slug}.md`
-5. tags 优先使用 `tag-vocabulary.yaml`，新增需用户确认
+5. tags 优先使用 `0108-wiki-tags/` 权威词表（`0000-meta/0003-configs/tag-vocabulary.yaml` 仅作参考索引），新增需用户确认
 6. 判断 L3 触发：
    - 匹配到已有概念页 → 更新该页
    - 无匹配 → 新建概念页 `0102-wiki-concepts/{大类}/{主题域}/{slug}.md`
    - 主题域首次有概念 → 新建主题综述 `0101-wiki-topics/{大类}/{主题域}.md`
-7. 追加 `0109-log/LOG-YYYY-MM-DD.md`
+7. 询问用户确认后追加 `0109-log/LOG-YYYY-MM-DD.md`
 8. 报告结果，询问是否移入回收站 `0003-inbox/.trash/`
-9. git commit
+9. 如用户明确要求，再执行 git commit
 
 ### Query：L3（topic 优先）→ L2 → L1
 
@@ -155,21 +155,21 @@ status: raw
 1. 用户指定文件路径、标题或 wikilink
 2. 判断变更等级（轻微/中等/重大）
 3. 重大变更需 Grep wikilink 引用 → 报告受影响文件 → 同步更新 L3 加工页面
-4. L3 不允许人工直接编辑（最多改错别字）
-5. git commit
+4. L3 不允许人工直接编辑内容逻辑，仅允许错别字或格式类微调
+5. 如用户明确要求，再执行 git commit
 
 ### Lint（健康检查）
 
 **自动修复**：断裂 wikilink
 **报告**：孤立页面、长期 draft >30 天、Frontmatter 不完整、summary 超长或缺失
 
-## 7. 当前权威文档
+## 7. 当前权威与参考文档
 
-- 当前方案入口：`CURRENT.md`
-- 决策记录：`DECISIONS.md`
-- 待办事项：`TODO.md`
-- 模板细节：`phase2/02-06-模板详细设计.md`
-- 分类与关联细节：`phase2/02-05-分类与关联方法.md`
-- 详细方案草案：`phase3/03-详细方案设计.md`
+- 当前方案入口：`0000-meta/llm-wiki/CURRENT.md`
+- 决策记录：`0000-meta/llm-wiki/DECISIONS.md`
+- 待办事项：`0000-meta/llm-wiki/TODO.md`
+- 模板细节参考：`0000-meta/llm-wiki/phase2/02-06-模板详细设计.md`（参考，不作为执行依据）
+- 分类与关联细节参考：`0000-meta/llm-wiki/phase2/02-05-分类与关联方法.md`（参考，不作为执行依据）
+- 详细方案草案参考：`0000-meta/llm-wiki/phase3/03-详细方案设计.md`（参考，不作为执行依据）
 
 其他 `phase*` 和 `00-*` 文件为历史过程材料，不作为执行依据。

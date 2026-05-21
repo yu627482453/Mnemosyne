@@ -24,7 +24,8 @@
 | `0000-meta/llm-wiki/DECISIONS.md` | 决策记录 |
 | `0000-meta/0003-configs/schema.yaml` | 字段校验 |
 | `0000-meta/0003-configs/topics.yaml` | 主题映射 |
-| `0000-meta/0003-configs/tag-vocabulary.yaml` | 标签词表 |
+| `0108-wiki-tags/` | 权威标签词表 |
+| `0000-meta/0003-configs/tag-vocabulary.yaml` | 标签参考索引 |
 | `0000-meta/0003-configs/lint-rules.yaml` | 健康检查 |
 
 ## Frontmatter（摘要）
@@ -58,10 +59,10 @@
 1. 用户 @ 引用 inbox 文件 → 读取内容
 2. 判断归属主题目录（无则按 topics.yaml 新建）
 3. 生成 slug（英文优先，3-5 推荐，rg --files 查重）
-4. 按 t-knowledge.md 创建 L2 → tags 优先用词表 → schema 校验
+4. 按 t-knowledge.md 创建 L2 → tags 优先用 `0108-wiki-tags/` 权威词表（`tag-vocabulary.yaml` 仅作参考索引）→ schema 校验
 5. L3 触发：同 slug 则合并（新信息补充、冲突标注、source 追加）；无则新建概念页；域首次则建 0101 综述
 6. 跨主题引用建议（tags 重叠 ≥2 → 加 wikilink）
-7. LOG + 移入 .trash/ + git commit
+7. 询问用户确认后执行 LOG、移入 `.trash/`、git commit
 
 ### Query（L3 topic 优先 → L2 → L1）
 
@@ -79,7 +80,7 @@
 | 中等 | tags/aliases | 改 Frontmatter → LOG |
 | 重大 | title/summary/事实 | 改内容 → rg 搜索 wikilink 引用 → rg 搜索 L3 source 引用 → 同步更新 → LOG |
 
-L3 不可人工编辑（D010）。
+L3 不可人工直接编辑内容逻辑；仅允许错别字或格式微调（D010）。
 
 ### Lint
 
@@ -94,4 +95,4 @@ L3 不可人工编辑（D010）。
 | 文档变更 | `docs: {描述}` |
 
 提交粒度：Ingest（知识+LOG）、Update（知识+LOG+L3）、Lint（标记文件）
-流程：`git status → add → commit → push`，push 失败通知用户
+流程：如用户明确要求，再执行 `git status → add → commit → push`，push 失败通知用户

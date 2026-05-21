@@ -1,9 +1,9 @@
-# 健康检查规则 — 可自动修复项与需人工确认项
+# 健康检查规则 — 默认仅报告；需人工确认后再修复
 
 auto_fix:
   - rule: broken_wikilink
     description: "内部 [[wikilink]] 指向不存在"
-    action: "标记为注释 <!-- BROKEN: ... -->"
+    action: "默认仅报告；如用户确认，再标记为注释 <!-- BROKEN: ... -->"
 
 manual_review:
   - rule: orphan_page
@@ -22,7 +22,7 @@ manual_review:
     check: "按 schema.yaml 校验"
 
   - rule: summary_too_long
-    description: "summary 超过 80 字符"
+    description: "summary 超过 80 字/字符（以 schema.yaml 的 max_len=80 为准）"
     check: "Grep frontmatter summary length"
 
   - rule: l3_source_stale
@@ -31,4 +31,4 @@ manual_review:
 
   - rule: summary_missing
     description: "summary 字段缺失或为空"
-    check: "Grep frontmatter summary"
+    check: "检查 frontmatter summary 字段是否缺失或为空"

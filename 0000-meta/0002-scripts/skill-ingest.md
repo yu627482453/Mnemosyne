@@ -42,7 +42,7 @@
 ### 3. 创建 L2 标准化主题知识
 
 按 `0000-meta/0001-templates/t-knowledge.md` 模板写入，填写规则：
-- `tags`：3-10 个，优先用 `tag-vocabulary.yaml`；新增标签需用户确认
+- `tags`：3-10 个，优先用 `0108-wiki-tags/` 权威词表（`0000-meta/0003-configs/tag-vocabulary.yaml` 仅作参考索引）；新增标签需用户确认
 - `aliases`：至少包含 slug、中文译名、常见变体
 - `summary`：≤80 字
 - `created` / `updated`：使用当天日期
@@ -102,8 +102,8 @@ L3 页面格式见 `CLAUDE.md` L3 Frontmatter 节和 `s-*.md` 模板。
 ### 9. 报告与收尾
 
 报告内容：新建文件路径、归属主题目录、L3 创建/更新情况、冲突标注（如有）、跨主题关联建议。
-询问："是否移入回收站？"（D008：默认移入 `0003-inbox/.trash/`）
-用户确认后 → mv 到 .trash/ → git add/commit/push
+询问："是否移入回收站？"（D008：默认移入 `0003-inbox/.trash/`，执行前需用户确认）
+用户确认后 → mv 到 .trash/ → 如用户明确要求，再执行 git add/commit/push
 
 ## 字段校验（写入前）
 
