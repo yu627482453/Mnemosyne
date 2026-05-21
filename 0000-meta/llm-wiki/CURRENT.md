@@ -30,6 +30,7 @@ obsidian-vault/
 ├── 0102-wiki-concepts/           # L3 概念加工（概念级：大类/主题域/{slug}.md）
 ├── 0103-wiki-entities/           # L3 实体档案（实体级：大类/主题域/{slug}.md）
 ├── 0104-wiki-comparisons/        # L3 对比分析（对比级：大类/主题域/{slug}.md）
+├── 0108-wiki-tags/              # 权威标签词表（每个标签一个页面）
 ├── 0105-wiki-base/
 ├── 0109-log/
 └── {编号}-{主题名}/               # L2 主题知识层
