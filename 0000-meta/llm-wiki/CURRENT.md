@@ -27,7 +27,7 @@ obsidian-vault/
 │   └── llm-wiki/
 ├── 0003-inbox/                   # L1 原始数据层
 ├── 0101-wiki-topics/             # L3 主题综述（域级：大类/主题域.md）
-├── 0102-wiki-concepts/           # L3 概念（按主题域：大类/主题域/{slug}.md）
+├── 0102-wiki-concepts/       # L3 概念（按主题域：大类/主题域/{slug}.md）
 ├── 0103-wiki-entities/           # L3 实体（按类别：{entity_type}/{slug}.md）
 ├── 0104-wiki-comparisons/        # L3 对比（按比较轴：{comparison_axis}/{slug}.md）
 ├── 0105-wiki-base/               # Base 面板

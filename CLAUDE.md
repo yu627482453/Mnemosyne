@@ -41,36 +41,45 @@
 
 > 完整校验见 schema.yaml。
 
+## 命名规则
+
+- 文件名禁止空格 → 空格统一转 `-`
+- 文件名主体中的 `.` → 转 `_`（仅最后一个 `.` 是扩展名）
+- slug 仅用于路径定位，不替代标题；L2 title 保留原始标题
+- 图片资源：`0001-resource/{topic}/{slug}/{timeStamp}.{ext}`
+
 ## 目录结构
 
 ```
 {编号}-{主题名}/          # L2（按需创建）
 0000-meta/                # 模板/脚本/配置
-0003-inbox/               # L1（含 .trash/）
-0101-wiki-topics/         # L3 主题综述（域级：大类/主题域.md）
-0102-wiki-concepts/       # L3 概念（按主题域：大类/主题域/{slug}.md）
-0103-wiki-entities/       # L3 实体（按类别：{entity_type}/{slug}.md）
-0104-wiki-comparisons/    # L3 对比（按比较轴：{comparison_axis}/{slug}.md）
+0001-resource/            # 本地资源（图片/附件）
+0003-inbox/               # L1
+0101-wiki-topics/         # L3 主题综述（域级）
+0102-wiki-concepts/       # L3 概念（按主题域）
+0103-wiki-entities/       # L3 实体（按 entity_type）
+0104-wiki-comparisons/    # L3 对比（按 comparison_axis）
 0105-wiki-base/           # Base 面板
 0109-log/                 # 操作日志
+.trash/                   # 回收站
 ```
 
 ## 四操作规范
 
 ### Ingest（L1 → L2 → L3）
 
-1. 用户 @ 引用 inbox 文件 → 读取
-2. 判断归属主题目录（首次归档到某域须用户确认）
-3. 生成 slug（英文优先，3-5 推荐，rg --files 查重）
-4. 按 t-knowledge.md 创建 L2（高保真，不过度摘要；默认中文；tags 5-10 无空格连字符；summary 200-500 字）
-5. L3 触发：concept 按主题域归档，entity 按 entity_type 归档，comparison 按 comparison_axis 归档
-6. 死链治理：正式链接仅指已存在页面，未建概念入 planned_links
-7. 跨主题引用建议
+1. 用户 @ 引用 inbox → 读取 → 扫描图片
+2. 判断归属主题目录（首次归档须用户确认）
+3. 生成 slug（英文优先，3-5 推荐）；文件名按命名规则处理
+4. 图片落地：下载 → `0001-resource/{topic}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
+5. 创建 L2：标题保留原文；必须包含 核心内容 + 文章要点 + **原文主体（中文翻译，保留段落层次）** + 来源
+6. L3 触发：concept/entity/comparison **主动逐项检查**（不因主轴是 concept 就跳过 entity）
+7. 死链治理 + 跨主题引用
 8. LOG + .trash/ + git commit
 
 ### Query（L3 topic 优先 → L2 → L1）
 
-1. rg 0101 找匹配主题域 → 域内 rg 0102-0104
+1. rg 0101 找主题域 → 域内 rg 0102-0104
 2. 无匹配 → 全局 rg → L2 → L1
 3. Top 8 全文，引用 [[wikilink]]
 
@@ -87,17 +96,18 @@ L3 不可人工编辑（D010）。
 ### Lint
 
 自动修复：断裂 wikilink
-报告：孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、L3 source 失效、L3 独立事实
+报告：L2 缺原文主体、孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、文件名格式、resource_refs 不一致、远程图片残留、L3 source 失效、L3 独立事实
 
 ## 落盘验收清单
 
 1. frontmatter 字段齐全
-2. tags 5-10 个、无空格、多词连字符
-3. summary 200-500 字
-4. 链接正确
-5. L3 source 明确
-6. resource_refs 与正文 `![[...]]` 对应
-7. 死链已处理
+2. L2 包含原文主体区块
+3. tags 5-10、无空格、连字符
+4. summary 200-500 字
+5. 图片已落地、resource_refs 1:1、无远程图片残留
+6. entity/comparison 已主动检查
+7. 文件名符合命名规则
+8. 死链已处理
 
 ## Git
 

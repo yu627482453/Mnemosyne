@@ -21,6 +21,10 @@ manual_review:
     description: "必填字段缺失"
     check: "按 schema.yaml 校验"
 
+  - rule: l2_missing_body
+    description: "L2 缺少原文主体区块"
+    check: "检查 L2 页面是否包含 ## 原文主体 章节"
+
   - rule: summary_out_of_range
     description: "summary 不在 200-500 字范围内"
     check: "Grep frontmatter summary length"
@@ -32,6 +36,18 @@ manual_review:
   - rule: tags_format
     description: "tags 含空格或未使用连字符"
     check: "检查所有 tags 是否符合无空格、多词连字符规则"
+
+  - rule: filename_format
+    description: "文件名含空格或主体中使用了 . 作为分隔符"
+    check: "Glob 所有 .md → 检查文件名是否含空格或多余 . 号"
+
+  - rule: resource_refs_consistency
+    description: "resource_refs 与正文本地图片引用不一致"
+    check: "检查 resource_refs 列表与正文 ![[...]] 引用是否 1:1 对齐"
+
+  - rule: remote_image_残留
+    description: "正文中仍存在远程图片 URL"
+    check: "Grep 正文中的 https?://.*\.(png|jpg|jpeg|gif|svg|webp) 模式"
 
   - rule: l3_source_stale
     description: "L3 source 字段引用的 L2 路径不存在"
