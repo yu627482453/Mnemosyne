@@ -1,9 +1,9 @@
-# 健康检查规则 — 默认仅报告；需人工确认后再修复
+# 健康检查规则 — 可自动修复项与需人工确认项
 
 auto_fix:
   - rule: broken_wikilink
     description: "内部 [[wikilink]] 指向不存在"
-    action: "默认仅报告；如用户确认，再标记为注释 <!-- BROKEN: ... -->"
+    action: "标记为注释 <!-- BROKEN: ... -->"
 
 manual_review:
   - rule: orphan_page
@@ -21,14 +21,22 @@ manual_review:
     description: "必填字段缺失"
     check: "按 schema.yaml 校验"
 
-  - rule: summary_too_long
-    description: "summary 超过 80 字/字符（以 schema.yaml 的 max_len=80 为准）"
+  - rule: summary_out_of_range
+    description: "summary 不在 200-500 字范围内"
     check: "Grep frontmatter summary length"
+
+  - rule: summary_missing
+    description: "summary 字段缺失或为空"
+    check: "Grep frontmatter summary"
+
+  - rule: tags_format
+    description: "tags 含空格或未使用连字符"
+    check: "检查所有 tags 是否符合无空格、多词连字符规则"
 
   - rule: l3_source_stale
     description: "L3 source 字段引用的 L2 路径不存在"
     check: "提取 L3 source 列表 → Glob 检查文件是否存在 → 标记 STALE"
 
-  - rule: summary_missing
-    description: "summary 字段缺失或为空"
-    check: "检查 frontmatter summary 字段是否缺失或为空"
+  - rule: l3_independent_fact
+    description: "L3 存在未被 source L2 覆盖的事实陈述"
+    check: "Claude 判断 L3 内容是否可追溯到 source 中的 L2"

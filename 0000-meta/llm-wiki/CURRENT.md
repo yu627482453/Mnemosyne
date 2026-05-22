@@ -64,7 +64,7 @@ updated: 2026-05-20
 source: manual
 source_url: ""
 status: draft
-summary: "基于自注意力机制的序列建模架构"
+summary: "基于自注意力机制的序列建模架构，2017年由Google在Attention Is All You Need中提出。核心创新是完全摒弃RNN和CNN，通过多头自注意力机制实现并行计算和长距离依赖建模。被BERT、GPT等后续模型广泛采用，是当前LLM的基础架构。适用于需要处理序列数据、捕捉全局依赖的NLP任务。"
 ---
 ```
 

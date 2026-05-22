@@ -1,14 +1,12 @@
 # Frontmatter Schema — 机器可校验字段规范
-# 机器可校验字段规范 — Claude 执行 Ingest/Update/Lint 时的校验依据
+# Claude 执行 Ingest/Update/Lint 时的校验依据
 
 common_required:
-  # 仅供通用说明，实际是否 required 以各 layer.fields 定义为准
   title: { type: string, max_len: 120 }
   updated: { type: date, format: YYYY-MM-DD }
 
 layers:
   L1:
-    # inbox 临时文件，仅做弱校验，不做完整 frontmatter 强校验
     fields:
       date:     { type: date, format: YYYY-MM-DD }
       source_url: { type: string }
@@ -20,23 +18,24 @@ layers:
       topic:    { type: string, required: true, pattern: "^\d{4}-.+$" }
       layer:    { type: enum, required: true, values: [L2] }
       kind:     { type: enum, required: true, values: [standard] }
-      tags:     { type: list, min: 3, max: 10 }
+      tags:     { type: list, min: 5, max: 10, no_spaces: true }
       aliases:  { type: list, min: 1 }
       created:  { type: date, required: true, format: YYYY-MM-DD }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       source:   { type: enum, values: [manual, url, file, claude] }
       source_url: { type: string }
+      resource_refs: { type: list, description: "本地资源路径列表" }
       status:   { type: enum, required: true, values: [draft, published] }
-      summary:  { type: string, required: true, max_len: 80 }
+      summary:  { type: string, required: true, min_len: 200, max_len: 500 }
 
   L3:
     fields:
       title:    { type: string, required: true, max_len: 120 }
       layer:    { type: enum, required: true, values: [L3] }
       kind:     { type: enum, required: true, values: [topic, concept, entity, comparison] }
-      processing_path: { type: string, required: true, pattern: "^\S+/\S+$" }
+      processing_path: { type: string }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       source: { type: list, min: 1, description: "L2 源文件相对路径列表" }
-      tags:     { type: list, min: 3, max: 10 }
+      tags:     { type: list, min: 5, max: 10, no_spaces: true }
       status:   { type: enum, values: [draft, published] }
-      summary:  { type: string, max_len: 80 }
+      summary:  { type: string, required: true, min_len: 200, max_len: 500 }

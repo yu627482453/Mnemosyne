@@ -1,20 +1,20 @@
 # Mnemosyne — 智能本地 Wiki 系统
 
-> Claude Code 自动加载入口。每次会话启动时生效。
+> Claude Code 自动加载入口。
 
 ## 系统概述
 
-基于 Obsidian + Claude Code 的知识管理系统。三层架构：
+三层架构，L2 是唯一事实源，L3 由 L2 派生：
 
 | 层级 | 定位 | 目录 | 生命周期 |
 |------|------|------|----------|
-| L1 原始数据层 | 未加工原始素材 | `0003-inbox/` | 临时，完成 L2 标准化后移入 .trash/ |
-| L2 主题知识层 | L1 的标准化数据 | `{编号}-{主题名}/` | 主数据层，不可变（摄入后不改） |
-| L3 知识加工层 | L2 综合后的知识成品 | `0101-0104/` | Claude 持续维护 |
+| L1 原始数据层 | 未加工素材 | `0003-inbox/` | 临时，完成标准化后移入 .trash/ |
+| L2 主题知识层 | 高保真标准化数据（source of truth） | `{编号}-{主题名}/` | 主数据层，不可变 |
+| L3 知识加工层 | L2 派生的 typed wiki | `0101-0104/` | Claude 持续维护 |
 
 - 写入：L1 → L2 → L3
 - 查询：L3（topic 优先）→ L2 → L1
-- 定位：路径 + slug 文件名，无数字 ID
+- L3 不得脱离 L2 自行演化
 
 ## 权威配置
 
@@ -29,13 +29,17 @@
 
 ## Frontmatter（摘要）
 
-**L2** — title, topic, layer:L2, kind:standard, tags(3-10), aliases, created, updated, source(manual/url/file/claude), source_url, status(draft/published), summary(≤80字)
+**L2** — title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, status(draft/published), summary(200-500字)
 
-**L3** — title, layer:L3, kind(topic/concept/entity/comparison), processing_path("大类/主题域"), updated, source([L2路径列表]), tags, status, summary
+**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, summary(200-500字)
+
+**L3 entity** — title, layer:L3, kind:entity, entity_type(Organization/Product/Project/Paper/Person), updated, source, tags, summary
+
+**L3 comparison** — title, layer:L3, kind:comparison, comparison_axis, lhs, rhs, updated, source, tags, summary
 
 **L1** — title, date, source, source_url, status(raw/processing/archived)
 
-> 完整校验见 schema.yaml。L3 无 created，以 updated 代替。
+> 完整校验见 schema.yaml。
 
 ## 目录结构
 
@@ -44,9 +48,9 @@
 0000-meta/                # 模板/脚本/配置
 0003-inbox/               # L1（含 .trash/）
 0101-wiki-topics/         # L3 主题综述（域级：大类/主题域.md）
-0102-wiki-concepts/       # L3 概念加工（概念级：大类/主题域/{slug}.md）
-0103-wiki-entities/       # L3 实体档案（按需创建）
-0104-wiki-comparisons/    # L3 对比分析（按需创建）
+0102-wiki-concepts/       # L3 概念（按主题域：大类/主题域/{slug}.md）
+0103-wiki-entities/       # L3 实体（按类别：{entity_type}/{slug}.md）
+0104-wiki-comparisons/    # L3 对比（按比较轴：{comparison_axis}/{slug}.md）
 0105-wiki-base/           # Base 面板
 0109-log/                 # 操作日志
 ```
@@ -55,21 +59,20 @@
 
 ### Ingest（L1 → L2 → L3）
 
-1. 用户 @ 引用 inbox 文件 → 读取内容
-2. 判断归属主题目录（无则按 topics.yaml 新建）
+1. 用户 @ 引用 inbox 文件 → 读取
+2. 判断归属主题目录（首次归档到某域须用户确认）
 3. 生成 slug（英文优先，3-5 推荐，rg --files 查重）
-4. 按 t-knowledge.md 创建 L2 → tags 优先用词表 → schema 校验
-5. L3 触发：同 slug 则合并（新信息补充、冲突标注、source 追加）；无则新建概念页；域首次则建 0101 综述
-6. 跨主题引用建议（tags 重叠 ≥2 → 加 wikilink）
-7. 询问用户确认后执行 LOG、移入 `.trash/`、git commit
+4. 按 t-knowledge.md 创建 L2（高保真，不过度摘要；默认中文；tags 5-10 无空格连字符；summary 200-500 字）
+5. L3 触发：concept 按主题域归档，entity 按 entity_type 归档，comparison 按 comparison_axis 归档
+6. 死链治理：正式链接仅指已存在页面，未建概念入 planned_links
+7. 跨主题引用建议
+8. LOG + .trash/ + git commit
 
 ### Query（L3 topic 优先 → L2 → L1）
 
-1. rg 0101 找匹配主题域 → 提取 processing_path
-2. 域内 rg 0102-0104/{大类}/{主题域}/
-3. 无匹配 → 全局 rg 0102-0104 → L2 → L1
-4. Top 8 全文，不足扩大，标注检索层级
-5. 回答引用 [[wikilink]]
+1. rg 0101 找匹配主题域 → 域内 rg 0102-0104
+2. 无匹配 → 全局 rg → L2 → L1
+3. Top 8 全文，引用 [[wikilink]]
 
 ### Update（三级变更）
 
@@ -77,14 +80,24 @@
 |------|------|------|
 | 轻微 | 措辞/错别字 | 改正文 → updated → LOG |
 | 中等 | tags/aliases | 改 Frontmatter → LOG |
-| 重大 | title/summary/事实 | 改内容 → rg 搜索 wikilink 引用 → rg 搜索 L3 source 引用 → 同步更新 → LOG |
+| 重大 | title/summary/事实 | 改内容 → rg wikilink → rg L3 source → 同步 → LOG |
 
-L3 不可人工直接编辑内容逻辑；仅允许错别字或格式微调（D010）。
+L3 不可人工编辑（D010）。
 
 ### Lint
 
 自动修复：断裂 wikilink
-报告：孤立页面、draft>30天、Frontmatter 不完整、summary 超长/缺失、L3 source 失效
+报告：孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、L3 source 失效、L3 独立事实
+
+## 落盘验收清单
+
+1. frontmatter 字段齐全
+2. tags 5-10 个、无空格、多词连字符
+3. summary 200-500 字
+4. 链接正确
+5. L3 source 明确
+6. resource_refs 与正文 `![[...]]` 对应
+7. 死链已处理
 
 ## Git
 
@@ -93,5 +106,4 @@ L3 不可人工直接编辑内容逻辑；仅允许错别字或格式微调（D0
 | 知识操作 | `wiki: {操作} {文件} — {摘要}` |
 | 文档变更 | `docs: {描述}` |
 
-提交粒度：Ingest（知识+LOG）、Update（知识+LOG+L3）、Lint（标记文件）
-流程：如用户明确要求，再执行 `git status → add → commit → push`，push 失败通知用户
+流程：用户确认后 `git status → add → commit → push`

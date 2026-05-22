@@ -9,6 +9,7 @@ created: "{{tp.file.creation_date("YYYY-MM-DD")}}"
 updated: "{{tp.file.creation_date("YYYY-MM-DD")}}"
 source: "{{source}}"
 source_url: "{{source_url}}"
+resource_refs: [{{resource_refs}}]
 status: draft
 summary: "{{summary}}"
 ---
@@ -17,7 +18,7 @@ summary: "{{summary}}"
 
 ## 核心内容
 
-<!-- 将 L1 原始素材清洗为结构统一、可检索、可引用的主题知识 -->
+<!-- 高保真保留原文主体，不过度摘要化 -->
 
 ## 要点
 
@@ -25,10 +26,17 @@ summary: "{{summary}}"
 - <!-- 要点 2 -->
 - <!-- 要点 3 -->
 
+## 原文保留
+
+<!-- 若用户确认保留英文原文，放在此处；默认不保留 -->
+
 ## 关联
 
 <!-- [[相关标准化主题知识]] -->
 
 ## 来源
 
-<!-- URL、文件名、书籍章节、对话来源等 -->
+- 作者：
+- 机构：
+- 原文链接：
+- 原始文件：
