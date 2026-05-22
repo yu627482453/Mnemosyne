@@ -28,14 +28,6 @@ vocabulary:
     en: Comparison
   - tag: 综述
     en: Overview
-  - tag: Agent
-    zh: 智能体
-  - tag: Agent架构
-    en: Agent-Architecture
-  - tag: 上下文工程
-    en: Context-Engineering
-  - tag: 基础设施
-    en: Infrastructure
 
 tag_rules:
   min_per_page: 5
