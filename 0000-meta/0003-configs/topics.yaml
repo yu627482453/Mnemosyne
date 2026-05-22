@@ -3,29 +3,18 @@
 domains:
   个人生活:
     range: [1000, 2999]
-    planning:
-      - { id: "1101", name: "健康" }
-      - { id: "1201", name: "投资理财" }
     default_tags: [个人管理, 生活]
 
   AI技术:
     range: [3000, 3999]
-    planning:
-      - { id: "3001", name: "深度学习" }
-      - { id: "3002", name: "LLM" }
     default_tags: [AI, 机器学习]
 
   工作业务:
     range: [4000, 4999]
-    planning:
-      - { id: "4001", name: "项目管理" }
     default_tags: [工作, 生产力]
 
   通用基础:
     range: [5000, 9999]
-    planning:
-      - { id: "5001", name: "计算机科学" }
-      - { id: "5101", name: "物理学" }
     default_tags: [基础知识]
 
 # 新建主题目录规则
