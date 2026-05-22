@@ -62,6 +62,7 @@ python3 -c "import hashlib; print(hashlib.sha256(open(path,rb).read()).hexdigest
 写入 L2 frontmatter 的 `id` 和 `content_hash` 字段。
 
 ### 5. 创建 L2
+n> 翻译建议：原文主体中译可交给 Haiku 处理，节省 Opus token。英文原文分段后逐段 prompt "翻译为中文，保留技术术语和段落结构"。
 
 按 `t-knowledge.md` 模板写入，L2 是 **source of truth**：
 
@@ -75,6 +76,7 @@ python3 -c "import hashlib; print(hashlib.sha256(open(path,rb).read()).hexdigest
 | 来源 | 作者、机构、原文链接、原始文件 |
 
 - `title` 保留原始标题（不缩写），slug 仅用于文件名
+- `source` 写枚举值（manual/url/file/claude），实际 URL 放入 `source_url`
 - 默认中文；若用户确认保留英文原文，放入原文主体中的引用块
 - `tags`：5-10 个，无空格，多词用连字符
 - `summary`：200-500 字
@@ -96,6 +98,7 @@ L3 由 L2 派生，目录按类型组织：
 - 不要仅因为 content 主轴是 concept 就跳过 entity/comparison
 
 同 slug 匹配 → 合并更新。主题域首次有内容 → 新建 0101 综述。
+0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）
 
 ### 6. L3 合并规则
 
@@ -115,8 +118,8 @@ tags 重叠 ≥2 且无 wikilink → 建议关联
 
 ### 10. 更新配置文件
 
-- 新建主题目录 → 追加到 `topics.yaml` 对应 domain 的 `active:` 列表
-- 新增标签（用户已确认）→ 追加到 `tag-vocabulary.yaml` 的 `vocabulary:` 列表
+- 新建主题目录 → 追加 `{id}: {name}` 到 `0100-wiki-meta/configs/topics.yaml` 对应 domain
+- 新增标签（用户已确认）→ 追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml` 的 `vocabulary:` 列表
 
 ### 11. 追加操作日志 + 报告收尾
 
