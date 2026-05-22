@@ -1,41 +1,24 @@
 # 待办事项
 
-> 状态：P0/P1 已完成，待实际操作验证
-> 更新时间：2026-05-20
+> 状态：方案设计完成，待首次正式使用验证
+> 更新时间：2026-05-21
 
-## P0 方案落地前 ✅
+## 已完成
 
-- [x] 基于 `CURRENT.md` 生成根目录 `CLAUDE.md`
-- [x] 创建 `0000-meta/0001-templates/t-knowledge.md`
-- [x] 创建 `0000-meta/0001-templates/t-inbox.md`
-- [x] 创建 `0000-meta/0001-templates/s-topic.md`
-- [x] 创建 `0000-meta/0001-templates/s-concept.md`
-- [x] 创建 `0000-meta/0001-templates/s-entity.md`
-- [x] 创建 `0000-meta/0001-templates/s-comparison.md`
-- [x] 创建 `0000-meta/0003-configs/schema.yaml`
-- [x] 创建 `0000-meta/0003-configs/topics.yaml`
-- [x] 创建 `0000-meta/0003-configs/lint-rules.yaml`
+- [x] P0 方案落地（CLAUDE.md + 模板 + 配置）
+- [x] P1 工作流（5 个 Skill）
+- [x] L3 域级→概念级（方案 A）
+- [x] L3 entity/comparison 按各自维度归档
+- [x] summary 200-500 字规范
+- [x] tags 5-10 无空格连字符规范
+- [x] L2 高保真标准化
+- [x] 死链治理
+- [x] 落盘验收清单
+- [x] 决策记录 D001-D017
 
-## P0 目录与基础文件 ✅
+## 待验证
 
-- [x] 创建 L1/L2/L3 目录骨架
-- [x] 创建 `0100-wiki-meta/INDEX.md`
-- [x] 创建 `0100-wiki-meta/SCHEMA.md`
-- [x] 创建 `0100-wiki-meta/RELATIONS.md`
-- [x] 创建 `0109-log/`
-
-## P1 Claude 工作流 ✅
-
-- [x] 编写 `skill-ingest.md`
-- [x] 编写 `skill-query.md`
-- [x] 编写 `skill-update.md`
-- [x] 编写 `skill-lint.md`
-- [x] 编写 `skill-final-check.md`
-
-## 待确认（已裁决 2026-05-20）
-
-- [x] L1 默认删除 → D008：Ingest 完成后默认删除 L1 原文件，操作时确认归属
-- [x] L2 slug 生成规则 → D009：英文优先，操作时给出 3-5 个推荐选项供确认
-- [x] L3 加工页面是否允许人工直接编辑 → D010：不允许人工直接编辑，最多小幅修改且不影响连接和逻辑
-- [x] `tags` 是否现在就收敛词表 → D011：现在就收敛，P0 即建立 tags 词表
-- [x] `source` 是否需要拆成 `source_type` / `source_ref` → D012：保持单一 `source` 字段
+- [ ] 首次正式 Ingest（真实素材，非测试数据）
+- [ ] 多来源同一概念的级联合并
+- [ ] Lint 完整流程
+- [ ] 跨主题引用实际效果

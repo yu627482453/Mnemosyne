@@ -86,3 +86,21 @@
 - 决策：L3 的 `source` 字段改为列出具体的 L2 源文件路径（如 `[3001-深度学习/transformer.md]`），替代原来的 `source_topics`（仅到目录级）。
 - 原因：L3 是 L2 的知识合成品，需要从 L3 追溯到具体的 L2 来源，而非只知道"來自某个主题目录"。
 - 影响：全部 L3 模板和 Schema 中 `source_topics` 替换为 `source`，值为文件路径列表。
+
+## D015 L3 entity/comparison 按各自维度归档
+
+- 决策：entity 按 `entity_type`（Organization/Product/Project/Paper/Person）归档；comparison 按 `comparison_axis`（Architecture/Execution/Retrieval 等）归档；concept 保持按主题域归档。
+- 原因：entity 和 comparison 天然跨主题，硬塞进 topic 目录导致重复建档和归属任意。
+- 影响：0103/0104 目录结构变更为 `{entity_type}/{slug}.md` 和 `{comparison_axis}/{slug}.md`；entity 增 `entity_type` 字段；comparison 增 `comparison_axis`/`lhs`/`rhs` 字段。
+
+## D016 L2 高保真标准化
+
+- 决策：L2 是高保真标准化层（source of truth），默认保留原文主体，不允许过度摘要化。
+- 原因：L3 由 L2 派生，若 L2 过度摘要则 L3 失去事实根基。
+- 影响：L2 默认中文化；英文原文保留需用户确认；新增 `resource_refs` 字段；来源区保留作者/机构/链接。
+
+## D017 死链治理
+
+- 决策：正式 `[[wikilink]]` 只链接已存在页面；未建概念放入 `planned_links` 或 `<!-- TODO: -->` 注释。
+- 原因：死链破坏 Obsidian Graph 和用户浏览体验；待建概念混入正式链接导致不可区分。
+- 影响：skill-ingest/lint 新增死链检查；落盘验收清单包含死链项。
