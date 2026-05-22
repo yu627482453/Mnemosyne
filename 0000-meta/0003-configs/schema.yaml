@@ -36,6 +36,10 @@ layers:
       processing_path: { type: string }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       source: { type: list, min: 1, description: "L2 源文件相对路径列表" }
+      entity_type: { type: enum, values: [Organization, Product, Project, Paper, Person] }
+      comparison_axis: { type: string }
+      lhs: { type: string }
+      rhs: { type: string }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
       status:   { type: enum, values: [draft, published] }
       summary:  { type: string, required: true, min_len: 200, max_len: 500 }
