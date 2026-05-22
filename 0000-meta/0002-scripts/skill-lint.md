@@ -4,8 +4,6 @@
 
 ## 自动修复
 
-执行以下检查并自动修复（无需用户确认）：
-
 ### 1. 断裂 wikilink
 ```
 rg "\[\[[^]]+\]\]" --only-matching -I ./ → 提取所有 wikilink 目标
@@ -15,36 +13,39 @@ Glob 检查目标 .md 是否存在
 
 ## 人工确认项
 
-以下问题仅报告，由用户决定是否处理：
-
 ### 2. 孤立页面
-检查方式：Glob 所有 .md（排除 inbox/templates/configs），Grep 是否有其他文件 `[[链接到它]]`
-- 无 incoming link → 报告为孤立页面
+Glob 所有 .md（排除 inbox/templates/configs），Grep incoming links
+- 无 incoming link → 报告
 
 ### 3. 长期 draft
-检查方式：Grep `status: draft` 的 L2 文件，计算 `updated` 距今天数
-- >30 天 → 报告，建议 publish 或清理
+Grep `status: draft`，计算 `updated` 距今天数
+- >30 天 → 报告
 
 ### 4. Frontmatter 不完整
-按 `0000-meta/0003-configs/schema.yaml` 逐层校验：
-- L2 缺少必填字段（title/topic/layer/kind/created/updated/status/summary）→ 报告
-- L3 缺少必填字段（title/layer/kind/processing_path/updated）→ 报告
+按 `schema.yaml` 逐层校验必填字段
 
-### 5. summary 问题
+### 5. summary 超范围
 - summary 缺失 → 报告
-- summary >80 字符 → 报告
-- summary 与正文内容明显不符 → 报告（Claude 判断）
+- summary <200 字或 >500 字 → 报告
+- summary 是泛定义而非独特判断 → 报告
 
-### 6. L3 source 一致性
-检查方式：提取所有 L3 页面的 `source` 字段 → Glob 检查 L2 路径是否存在
-- 路径不存在 → 标记 `<!-- STALE: [[路径]] -->`
+### 6. tags 格式
+- tags 含空格 → 报告（多词应用连字符）
+- tags <5 个或 >10 个 → 报告
 
-### 7. 跨主题引用建议
-对每个 L2 文件，检查 tags 重叠的其他主题目录文件
-- 存在重叠但无 wikilink 连接 → 建议建立关联
+### 7. L3 source 一致性
+提取 L3 `source` 字段 → Glob 检查 L2 路径是否存在
+- 不存在 → 标记 `<!-- STALE: [[路径]] -->`
+
+### 8. L3 独立事实
+检查 L3 内容是否存在未被 `source` L2 覆盖的事实陈述
+- 存在 → 报告建议补充 L2
+
+### 9. 跨主题引用建议
+L2 文件 tags 重叠 ≥2 且无 wikilink → 建议关联
 
 ## 提交
 
 ```
-git add {标记文件} → git commit -m "wiki: Lint — {修复数量}自动, {报告数量}待确认" → git push
+git add {标记文件} → git commit -m "wiki: Lint — {修复}自动, {报告}待确认" → git push
 ```
