@@ -1,23 +1,27 @@
-# 主题目录映射 — 大类编号、主题目录、别名和创建策略
+# 主题目录映射
 
 domains:
   个人生活:
     range: [1000, 2999]
     default_tags: [个人管理, 生活]
+    active: []
 
   AI技术:
     range: [3000, 3999]
     default_tags: [AI, 机器学习]
+    active:
+      - { id: "3000", name: "Agent" }
 
   工作业务:
     range: [4000, 4999]
     default_tags: [工作, 生产力]
+    active: []
 
   通用基础:
     range: [5000, 9999]
     default_tags: [基础知识]
+    active: []
 
-# 新建主题目录规则
 topic_creation:
   id_format: "{4位编号}-{中文主题名}"
   id_rule: "同千位已有目录取最大编号 +1"

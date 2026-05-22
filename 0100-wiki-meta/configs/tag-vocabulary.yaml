@@ -1,5 +1,4 @@
 # 受控标签词表 — P0 收敛，新增标签需在此登记
-# Claude 写入时优先使用已有标签；新增标签需用户确认
 
 vocabulary:
   - tag: AI
@@ -28,6 +27,28 @@ vocabulary:
     en: Comparison
   - tag: 综述
     en: Overview
+  - tag: agent-architecture
+    zh: Agent 架构
+  - tag: context-engineering
+    zh: 上下文工程
+  - tag: infrastructure
+    zh: 基础设施
+  - tag: sandbox
+    zh: 沙箱
+  - tag: managed-agents
+    zh: 托管代理
+  - tag: session-management
+    zh: 会话管理
+  - tag: brain-hands-decoupling
+    zh: 脑手分离
+  - tag: meta-harness
+    zh: 元 Harness
+  - tag: architecture
+    zh: 架构
+  - tag: comparison
+    zh: 对比分析
+  - tag: product
+    zh: 产品
 
 tag_rules:
   min_per_page: 5

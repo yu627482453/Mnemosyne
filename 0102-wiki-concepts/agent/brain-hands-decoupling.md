@@ -2,51 +2,36 @@
 title: "Brain-Hands Decoupling"
 layer: L3
 kind: concept
-processing_path: "3000-Agent → 0102-wiki-concepts/agent/brain-hands-decoupling"
+processing_path: "AI技术/Agent"
 updated: 2026-05-22
-source:
-  - "3000-Agent/scaling-managed-agents.md"
-tags:
-  - agent-architecture
-  - AI
-  - LLM
-  - infrastructure
+source: ["3000-Agent/scaling-managed-agents.md"]
+tags: [AI, agent-architecture, infrastructure, brain-hands-decoupling, managed-agents]
+status: draft
 summary: >
-  Brain-Hands Decoupling 是一种 agent 系统架构模式：将"大脑"（LLM 推理 + harness 循环）与
-  "双手"（sandbox、工具、执行环境）通过稳定接口分离。核心接口为 execute(name, input) → string，
-  使 harness 对执行环境无感知——sandbox 可以是容器、手机或任何可执行环境。解耦收益包括：(1) 组件
-  独立故障恢复——harness 和 sandbox 都变为 cattle，可无状态重启；(2) 安全边界清晰——token 不进入
-  sandbox；(3) 按需 provisioning——减少 TTFT；(4) 多 brain 多 hand 横向扩展。
+  将 Agent 系统的 Brain（Claude+Harness）与 Hands（Sandbox+Tools）解耦为独立接口的架构模式。
+  Harness 通过 execute(name, input) 调用沙箱，容器从 Pet 变为 Cattle——故障可自动替换恢复。
+  Session 作为外部持久事件日志支持 wake() 恢复。解耦后 TTFT 中位数下降约 60%，p95 超 90%。
+  安全上凭证永不进入沙箱，通过 token 注入和 MCP vault 代理实现结构性隔离。该模式使 Harness
+  不再对执行环境做假设，支持多脑多手灵活扩展。
 ---
+
+# Brain-Hands Decoupling
 
 ## 定义
 
-Brain-Hands Decoupling（大脑-双手解耦）是 Anthropic Managed Agents 的核心架构模式。它将 agent 系统拆分为三个通过稳定接口通信的独立组件：
+Brain-Hands Decoupling 是将 Agent 系统的推理决策层（Brain）与执行环境层（Hands）通过稳定接口分离的架构模式，核心接口为 execute(name, input) → string。
 
-| 组件 | 角色 | 接口 |
-|------|------|------|
-| **Brain** | Claude + harness 推理循环 | `wake(sessionId)`, `getSession(id)`, `emitEvent(id, event)` |
-| **Hands** | sandbox / 工具执行环境 | `execute(name, input) → string`, `provision({resources})` |
-| **Session** | 持久化事件日志 | `getEvents()` |
+## 解释
 
-## 关键属性
+传统耦合架构中 Harness 内嵌于容器，假设所有资源在容器内。解耦后三者各自独立：
+- Brain（Claude + Harness）通过 execute() 调用 Hands，不感知执行环境细节
+- Hands（Sandbox + Tools）变为 Cattle——故障时新容器 provision() 替换
+- Session 作为 Brain 外部的持久日志，崩溃后 wake(sessionId) 恢复
 
-- **无状态性**：harness 不持有任何需要存活的状态——崩溃后可通过 session log 恢复
-- **工具无关性**：harness 不知道 sandbox 的具体实现，所有工具统一为 `execute(name, input) → string`
-- **按需 provisioning**：sandbox 仅在实际需要时才创建，不阻塞推理启动
-- **安全隔离**：auth token 存储在 sandbox 外部（vault / 资源绑定），沙箱内代码无法访问
+## 关键引用
+- [[scaling-managed-agents]]（L2）— Anthropic 工程博客原文
 
-## 与单体架构的对比
-
-| 维度 | 单体容器 | 解耦架构 |
-|------|----------|----------|
-| 故障恢复 | 容器故障 = session 丢失 | harness/sandbox 独立重启 |
-| 安全 | token 与 untrusted code 同容器 | token 永不进入 sandbox |
-| 启动延迟 | 每 session 完整容器启动 | 按需 provisioning |
-| 扩展 | 1 brain : 1 container | N brains : M hands |
-| 调试 | 需进入含用户数据的容器 | 组件独立可观测 |
-
-## 来源
-
-- [[scaling-managed-agents]]
-- <https://www.anthropic.com/engineering/managed-agents>
+## 相关概念
+- [[meta-harness]] — 元 Harness 设计理念
+- [[session-as-context-object]] — Session 作为上下文对象
+- [[pets-vs-cattle]] — Pets vs Cattle 运维模式
