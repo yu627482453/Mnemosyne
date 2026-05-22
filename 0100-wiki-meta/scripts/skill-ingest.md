@@ -32,6 +32,7 @@ slug 仅用于路径，不替代标题。
 
 1. 扫描 L1 中的图片 URL
 2. 逐张下载到 `0001-resource/{topic}/{slug}/{timestamp}.{ext}`
+   - `{topic}` 必须是完整的主题目录名（如 `3000-Agent`），不是缩写或 slug
 3. **下载失败→暂停通知用户**，等待手动处理后继续
 4. 正文远程引用改写为 `![[0001-resource/...]]`
 5. 写入 `resource_refs`，与正文 1:1 对齐

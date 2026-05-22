@@ -42,6 +42,7 @@ manual_review:
     check: "Glob 所有 .md → 检查文件名是否含空格或多余 . 号"
 
   - rule: resource_refs_consistency
+    description: "resource_refs 与正文 ![[...]] 路径一致，且 topic 部分与 L2 的 topic 字段匹配"
     description: "resource_refs 与正文本地图片引用不一致"
     check: "检查 resource_refs 列表与正文 ![[...]] 引用是否 1:1 对齐"
 
