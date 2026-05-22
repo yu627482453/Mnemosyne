@@ -6,136 +6,111 @@
 
 1. 确认目标文件在 `0003-inbox/` 下且存在
 2. 读取全文，提取标题、来源、核心内容
-3. 扫描原文中的图片引用（`<img>` / `![]()` / Markdown 图片语法）
+3. 扫描原文中的图片引用
 
 ## 拆分判断
 
-满足以下条件拆分为多个 L2 条目：
-- 内容有独立标题层级
-- 每个概念可独立成文（有定义 + 要点）
-- 概念之间有明确边界
-
-不拆分：内容紧密关联、信息量不足独立成文（<3 要点）、用户明确要求合并。
+满足以下条件拆分为多个 L2：有独立标题层级、每个概念可独立成文、概念间有明确边界。
+不拆分：内容紧密关联、信息量不足（<3 要点）、用户要求合并。
 
 ## 执行步骤
 
 ### 1. 判断归属主题目录
 
 - 对照 `0100-wiki-meta/configs/topics.yaml`
-- **首次归档到某主题域，必须询问用户确认**
-- 命中已确认映射时允许自动写入
-- 无匹配：按 topics.yaml 规则创建新主题目录
+- 推荐时同时给中英文选项（如 `AI技术/Agent`）
+- **首次归档须用户确认**；边界主题/多主题交叉必须询问
+- 无匹配：按 topics.yaml 规则创建，格式 `{4位编号}-{中文主题名}`
 
-### 2. 生成 slug（D009）与文件名
+### 2. 生成 slug 与文件名
 
-文件命名规则（D018）：
-- 文件名禁止空格，空格统一转 `-`
-- 文件名主体中非扩展名分隔用的 `.` 一律转 `_`
-- 仅最后一个 `.` 用于扩展名
-- 示例：`Scaling Managed Agents.md` → `Scaling-Managed-Agents.md`
-- slug 仅用于路径定位，不替代标题语义
-
-英文优先，3-5 推荐选项，`rg --files` 查重，重名追加 `-2`、`-3`。
+命名规则（D018）：空格→`-`，主体`.`→`_`，仅最后一个`.`是扩展名。
+英文优先，3-5 推荐选项，`rg --files` 查重，重名追加 `-2`/`-3`。
+slug 仅用于路径，不替代标题。
 
 ### 3. 处理图片资源
 
-1. 扫描 L1 原文中的图片 URL
-2. 逐张下载到 `0001-resource/{topic}/{slug}/{timeStamp}.{ext}`
-   - 示例：`0001-resource/3001-Agent/managed-agents/20260522-143015.png`
-3. **若下载失败 → 暂停并通知用户**："图片下载失败，请手动下载后放入对应目录，然后回复继续"
-4. 全部下载成功后，将正文中的远程图片引用改写为本地 `![[0001-resource/...]]`
-5. 同步写入 `resource_refs` 列表
-6. 若无图片，`resource_refs` 留空 `[]`
+1. 扫描 L1 中的图片 URL
+2. 逐张下载到 `0001-resource/{topic}/{slug}/{timestamp}.{ext}`
+3. **下载失败→暂停通知用户**，等待手动处理后继续
+4. 正文远程引用改写为 `![[0001-resource/...]]`
+5. 写入 `resource_refs`，与正文 1:1 对齐
+6. 无图片则 `resource_refs: []`
 
-### 4. 生成 ID 与 content_hash（D019）
-
-创建 L2 文件前，先计算两个 hash：
+### 4. 生成 id 与 content_hash
 
 ```bash
-# id: 身份 hash（topic + slug + created[:10] → SHA256[:8]）
-python3 -c "import hashlib,json; s=json.dumps({topic:{topic},slug:{slug},created:{created}},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
+# id: SHA256(topic+slug+created)[:8]
+python3 -c "import hashlib,json; s=json.dumps({topic:'{topic}',slug:'{slug}',created:'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
 
-# content_hash: 内容 hash（文件全文 → SHA256[:8]）
-python3 -c "import hashlib; print(hashlib.sha256(open(path,rb).read()).hexdigest()[:8])"
+# content_hash: 写完后对文件全文 SHA256[:8]
+python3 -c "import hashlib; print(hashlib.sha256(open('{path}','rb').read()).hexdigest()[:8])"
 ```
 
-写入 L2 frontmatter 的 `id` 和 `content_hash` 字段。
-
 ### 5. 创建 L2
-n> 翻译建议：原文主体中译可交给 Haiku 处理，节省 Opus token。英文原文分段后逐段 prompt "翻译为中文，保留技术术语和段落结构"。
 
-按 `t-knowledge.md` 模板写入，L2 是 **source of truth**：
+> 翻译建议：原文主体中译可交给 Haiku，分段 prompt "翻译为中文，保留技术术语和段落结构"。
+
+按 `t-knowledge.md` 模板写入，L2 是 source of truth：
 
 | 区块 | 要求 |
 |------|------|
-| frontmatter | 字段齐全，符合 schema.yaml |
-| 核心内容 | 1-2 段浓缩要点，帮助检索 |
-| 文章要点 | 3 条以上，列表形式 |
-| **原文主体** | **高保真中文翻译，保留原文段落层次；绝不过度摘要** |
-| 关联 | [[wikilink]] 到相关知识 |
+| frontmatter | 字段齐全（尤其 `topic` 填目录名如 `3000-Agent`；`source` 填枚举值 url/manual/file/claude；`source_url` 填实际 URL；`status: draft`） |
+| 核心内容 | 1-2 段浓缩，帮助检索 |
+| 文章要点 | 3 条以上 |
+| **原文主体** | 高保真中文翻译，保留原文段落层次 |
 | 来源 | 作者、机构、原文链接、原始文件 |
 
-- `title` 保留原始标题（不缩写），slug 仅用于文件名
-- `source` 写枚举值（manual/url/file/claude），实际 URL 放入 `source_url`
-- 默认中文；若用户确认保留英文原文，放入原文主体中的引用块
-- `tags`：5-10 个，无空格，多词用连字符
+- `title` 保留原始标题；slug 仅用于文件名
+- `tags`：5-10 个，无空格，多词连字符，**inline 格式** `[tag1, tag2]`
 - `summary`：200-500 字
-- `resource_refs`：与正文 `![[...]]` 1:1 对齐
+- `resource_refs`：与正文 `![[...]]` 1:1
 
-### 5. 判断 L3 触发（D004/D013/D015）
+### 6. 判断 L3 触发
 
-L3 由 L2 派生，目录按类型组织：
+L3 由 L2 派生，目录按类型：
 
-| L3 类型 | 目录 | 触发条件 |
-|---------|------|---------|
-| concept | `0102/{大类}/{主题域}/{slug}.md` | 正文讨论机制/方法/原则/模式 |
-| entity | `0103/{entity_type}/{slug}.md` | 正文涉及独立产品/平台/组织/人物/论文 |
-| comparison | `0104/{comparison_axis}/{slug}.md` | 正文主轴是差异/取舍 |
+| 类型 | 目录 | 触发条件 |
+|------|------|---------|
+| concept | `0102/{大类}/{主题域}/{slug}.md` | 机制/方法/原则/模式 |
+| entity | `0103/{entity_type}/{slug}.md` | 独立产品/平台/组织/人物/论文 |
+| comparison | `0104/{comparison_axis}/{slug}.md` | 差异/取舍 |
 
-**entity/comparison 主动检查**：每次 Ingest 完成 L2 后，必须逐项检查：
-- 是否提到了具体的产品名/公司名/论文名？→ 创建或更新 entity 页
-- 是否有明确的 A vs B 对比结构？→ 创建或更新 comparison 页
-- 不要仅因为 content 主轴是 concept 就跳过 entity/comparison
+**entity/comparison 主动逐项检查**：不要因主轴是 concept 就跳过。
 
-同 slug 匹配 → 合并更新。主题域首次有内容 → 新建 0101 综述。
-0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）
+0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）。
 
-### 6. L3 合并规则
+### 7. L3 合并规则
 
-1. 读入已有 L3 全文
-2. 新信息补充，冲突标注，重复不修改
-3. source 字段追加新 L2 路径
-4. 更新 updated
+同 slug 匹配→合并：新信息补充、冲突标注、source 追加、更新 updated。
 
-### 7. 死链治理
+### 8. 死链治理
 
-- 正式 `[[wikilink]]` 只链接已存在页面
-- 未建概念 → `planned_links` / `<!-- TODO: [[概念]] -->`
+正式 [[wikilink]] 仅链接已存在页面；未建概念→`planned_links`/`<!-- TODO: -->`。
 
-### 8. 跨主题引用建议
+### 9. 跨主题引用 + 更新配置
 
-tags 重叠 ≥2 且无 wikilink → 建议关联
+- tags 重叠≥2 且无 wikilink→建议关联
+- 新建主题目录→追加到 `0100-wiki-meta/configs/topics.yaml`
+- 新标签（用户确认后）→追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
 
-### 10. 更新配置文件
+### 10. 写入前强制校验（阻塞步骤）
 
-- 新建主题目录 → 追加 `{id}: {name}` 到 `0100-wiki-meta/configs/topics.yaml` 对应 domain
-- 新增标签（用户已确认）→ 追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml` 的 `vocabulary:` 列表
+**以下每一项必须通过，否则不得写入：**
 
-### 11. 追加操作日志 + 报告收尾
+| # | 检查项 | 依据 |
+|---|--------|------|
+| 1 | `topic` 匹配 `^\d{4}-.+$`（如 `3000-Agent`） | schema.yaml L2 |
+| 2 | `source` 是枚举值（url/manual/file/claude），非 URL 字符串 | schema.yaml L2 |
+| 3 | `tags` ≥5 个，无空格，inline 格式 `[t1, t2]` | schema.yaml L2 |
+| 4 | `summary` 200-500 字 | schema.yaml L2 |
+| 5 | `status: draft`（首次创建默认 draft） | schema.yaml L2 |
+| 6 | L3 `processing_path` 匹配 `^\S+/\S+$`（如 `AI技术/Agent`） | schema.yaml L3 |
+| 7 | L3 `tags` ≥5 个 | schema.yaml L3 |
+| 8 | L3 `summary` 200-500 字 | schema.yaml L3 |
+| 9 | 0101 topic 综述已创建或更新 | 规则 |
+| 10 | config 文件已更新（如有新主题/新标签） | 规则 |
 
-询问是否移入 `.trash/`（D008），用户确认后执行。
+### 11. 操作日志 + 报告收尾
 
-## 落盘前验收清单
-
-1. frontmatter 字段齐全（schema.yaml）
-2. L2 包含 **原文主体** 区块且不是摘要
-3. tags 5-10 个、无空格、多词连字符
-4. summary 200-500 字
-5. 图片已落地 + resource_refs 1:1 + 正文无远程图片残留
-6. entity/comparison 已主动检查
-7. 死链已处理
-8. 文件名符合命名规则（无空格，`.` 仅用于扩展名）
-
-## 字段校验
-
-对照 `schema.yaml` 逐层检查必填字段。
+询问是否移入 `.trash/`（D008），确认后执行 git commit。

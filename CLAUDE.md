@@ -76,7 +76,7 @@
 5. 创建 L2：标题保留原文；必须包含 核心内容 + 文章要点 + **原文主体（中文翻译，保留段落层次）** + 来源
 6. L3 触发：concept/entity/comparison **主动逐项检查**（不因主轴是 concept 就跳过 entity）
 7. 死链治理 + 跨主题引用
-8. LOG + .trash/ + git commit
+9. LOG + .trash/ + git commit
 
 ### Query（L3 topic 优先 → L2 → L1）
 
