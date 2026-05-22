@@ -2,6 +2,7 @@
 title: "{{title}}"
 topic: "{{topic}}"
 layer: L2
+id: "{{id}}"
 kind: standard
 tags: [{{tags}}]
 aliases: [{{aliases}}]
@@ -12,6 +13,7 @@ source_url: "{{source_url}}"
 resource_refs: [{{resource_refs}}]
 status: draft
 summary: "{{summary}}"
+content_hash: "{{content_hash}}"
 ---
 
 # {{title}}

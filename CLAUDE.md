@@ -22,14 +22,14 @@
 |------|------|
 | `0000-meta/llm-wiki/CURRENT.md` | 方案入口 |
 | `0000-meta/llm-wiki/DECISIONS.md` | 决策记录 |
-| `0000-meta/0003-configs/schema.yaml` | 字段校验 |
-| `0000-meta/0003-configs/topics.yaml` | 主题映射 |
-| `0000-meta/0003-configs/tag-vocabulary.yaml` | 受控标签词表 |
-| `0000-meta/0003-configs/lint-rules.yaml` | 健康检查 |
+| `0100-wiki-meta/configs/schema.yaml` | 字段校验 |
+| `0100-wiki-meta/configs/topics.yaml` | 主题映射 |
+| `0100-wiki-meta/configs/tag-vocabulary.yaml` | 受控标签词表 |
+| `0100-wiki-meta/configs/lint-rules.yaml` | 健康检查 |
 
 ## Frontmatter（摘要）
 
-**L2** — title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, status(draft/published), summary(200-500字)
+**L2** — id, title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, content_hash, status(draft/published), summary(200-500字)
 
 **L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, summary(200-500字)
 

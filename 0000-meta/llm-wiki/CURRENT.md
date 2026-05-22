@@ -59,6 +59,7 @@ slug 仅用于路径定位，不替代标题语义。L2 title 保留原始标题
 title: "Scaling Managed Agents: Decoupling the brain from the hands"
 topic: "3001-Agent"
 layer: L2
+id: "a3f2b1c9"
 kind: standard
 tags: [AI, LLM, Agent, agent-architecture, context-engineering, infrastructure, overview]
 aliases: [managed-agents, 托管代理, 脑手分离架构]
@@ -69,6 +70,7 @@ source_url: "https://www.anthropic.com/engineering/managed-agents"
 resource_refs: ["0001-resource/3001-Agent/managed-agents/20260522-143015.png"]
 status: draft
 summary: "Anthropic 的 Managed Agents 是一种托管式长时间运行代理服务……（200-500字）"
+content_hash: "d4e5f6a7"
 ---
 ```
 
@@ -84,6 +86,7 @@ updated: 2026-05-22
 source: ["3001-Agent/managed-agents.md"]
 tags: [AI, LLM, Agent, agent-architecture, context-engineering, infrastructure, overview]
 summary: "Managed Agents 是 Anthropic 在 Claude Platform 上提供的托管式代理服务……（200-500字）"
+content_hash: "d4e5f6a7"
 ---
 ```
 
@@ -99,6 +102,7 @@ updated: 2026-05-22
 source: ["3001-Agent/managed-agents.md"]
 tags: [AI, organization, agent, infrastructure]
 summary: "Anthropic 是一家 AI 安全与研究公司……（200-500字）"
+content_hash: "d4e5f6a7"
 ---
 ```
 
@@ -116,6 +120,7 @@ updated: 2026-05-22
 source: ["3001-Agent/managed-agents.md"]
 tags: [infrastructure, architecture, reliability, agent]
 summary: "对比有状态 Pet 模式与无状态 Cattle 模式在代理系统中的适用性……（200-500字）"
+content_hash: "d4e5f6a7"
 ---
 ```
 

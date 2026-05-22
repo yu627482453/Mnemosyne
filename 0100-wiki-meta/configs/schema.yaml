@@ -17,6 +17,8 @@ layers:
       title:    { type: string, required: true, max_len: 120 }
       topic:    { type: string, required: true, pattern: "^\d{4}-.+$" }
       layer:    { type: enum, required: true, values: [L2] }
+      id:      { type: string, required: true, description: "身份hash: SHA256(topic+slug+created)[:8]" }
+      content_hash: { type: string, description: "内容hash: SHA256(文件全文)[:8]" }
       kind:     { type: enum, required: true, values: [standard] }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
       aliases:  { type: list, min: 1 }

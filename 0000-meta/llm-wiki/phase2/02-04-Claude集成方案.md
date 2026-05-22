@@ -90,10 +90,10 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
 
 ## 三、提示词管理
 
-提示词统一存放在 `0000-meta/0002-scripts/`：
+提示词统一存放在 `0100-wiki-meta/scripts/`：
 
 ```
-0000-meta/0002-scripts/
+0100-wiki-meta/scripts/
 ├── prompt-ingest.md        # 知识摄入提示词
 ├── prompt-classify.md      # 自动分类提示词
 ├── prompt-link.md          # 关联建议提示词
@@ -106,7 +106,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
 
 用户在 Claude Code 中 `@` 引用提示词文件 + inbox 文件：
 ```
-@"0000-meta/0002-scripts/prompt-ingest.md" @"0003-inbox/新知识.md" 处理
+@"0100-wiki-meta/scripts/prompt-ingest.md" @"0003-inbox/新知识.md" 处理
 ```
 
 或者直接调用（Claude 已知晓工作流后）：
@@ -152,7 +152,7 @@ Claude Code 原生具备完整的文件系统读写能力（Read/Write/Edit/Grep
 | **主集成模式** | 文件直读写（零依赖、最可靠） |
 | **辅助模式** | CLI（反向链接、标签统计，需 Obsidian 运行） |
 | **交互方式** | 手动触发，`@` 引用文件或自然语言指令 |
-| **提示词** | `0000-meta/0002-scripts/` 下独立管理 |
+| **提示词** | `0100-wiki-meta/scripts/` 下独立管理 |
 | **工作流** | Ingest / Query / Lint 三核心操作 |
 
 **关键判断**：Claude Code 的文件读写能力足以覆盖 90% 的场景，CLI 仅在需要 Obsidian 独有分析能力时调用。不需要任何中间层或插件——vault 的文件系统就是集成接口。

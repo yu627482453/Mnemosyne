@@ -110,3 +110,9 @@
 - 决策：文件名禁止空格（转 `-`）；文件名主体中的 `.` 转 `_`（仅最后一个 `.` 是扩展名）；L2 `title` 保留原始标题，slug 仅用于路径定位。
 - 原因：空格和多余 `.` 在命令行和 wikilink 中产生歧义；slug 不应替代标题语义。
 - 影响：skill-ingest §2 增加命名规则；lint 增加 `filename_format` 检查。
+
+## D019 L2 使用身份 hash 作为 ID + 内容 hash 作为完整性指纹
+
+- 决策：L2 `id` = SHA256(topic + slug + created[:10])[:8]，身份不变则 ID 不变；`content_hash` = SHA256(文件全文)[:8]，内容变化时自动变化。
+- 原因：稳定 ID 便于外部引用和扩展；content_hash 提供内容完整性校验能力。
+- 影响：schema.yaml L2 新增 `id`(必填) 和 `content_hash`(可选)；skill-ingest §4 增加 hash 生成步骤。

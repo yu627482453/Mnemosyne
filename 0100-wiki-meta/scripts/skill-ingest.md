@@ -21,7 +21,7 @@
 
 ### 1. 判断归属主题目录
 
-- 对照 `0000-meta/0003-configs/topics.yaml`
+- 对照 `0100-wiki-meta/configs/topics.yaml`
 - **首次归档到某主题域，必须询问用户确认**
 - 命中已确认映射时允许自动写入
 - 无匹配：按 topics.yaml 规则创建新主题目录
@@ -47,7 +47,21 @@
 5. 同步写入 `resource_refs` 列表
 6. 若无图片，`resource_refs` 留空 `[]`
 
-### 4. 创建 L2（高保真标准化文档）
+### 4. 生成 ID 与 content_hash（D019）
+
+创建 L2 文件前，先计算两个 hash：
+
+```bash
+# id: 身份 hash（topic + slug + created[:10] → SHA256[:8]）
+python3 -c "import hashlib,json; s=json.dumps({topic:{topic},slug:{slug},created:{created}},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
+
+# content_hash: 内容 hash（文件全文 → SHA256[:8]）
+python3 -c "import hashlib; print(hashlib.sha256(open(path,rb).read()).hexdigest()[:8])"
+```
+
+写入 L2 frontmatter 的 `id` 和 `content_hash` 字段。
+
+### 5. 创建 L2
 
 按 `t-knowledge.md` 模板写入，L2 是 **source of truth**：
 
@@ -99,7 +113,12 @@ L3 由 L2 派生，目录按类型组织：
 
 tags 重叠 ≥2 且无 wikilink → 建议关联
 
-### 9. 追加操作日志 + 报告收尾
+### 10. 更新配置文件
+
+- 新建主题目录 → 追加到 `topics.yaml` 对应 domain 的 `active:` 列表
+- 新增标签（用户已确认）→ 追加到 `tag-vocabulary.yaml` 的 `vocabulary:` 列表
+
+### 11. 追加操作日志 + 报告收尾
 
 询问是否移入 `.trash/`（D008），用户确认后执行。
 
