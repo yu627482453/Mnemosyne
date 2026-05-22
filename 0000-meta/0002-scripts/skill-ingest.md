@@ -40,11 +40,15 @@
 ### 3. 处理图片资源
 
 1. 扫描 L1 原文中的图片 URL
+2. 逐张下载到 `0001-resource/{topic}/{slug}/{timeStamp}.{ext}`
+   - 示例：`0001-resource/3001-Agent/managed-agents/20260522-143015.png`
+3. **若下载失败 → 暂停并通知用户**，等待用户手动处理后回复继续
+4. 全部下载成功后，将正文中的远程图片引用改写为本地 `![[0001-resource/...]]`
+5. 同步写入 `resource_refs` 列表
+6. 若无图片，`resource_refs` 留空 `[]`
 2. 下载到 `0001-resource/{topic}/{slug}/{timeStamp}.{ext}`
    - 示例：`0001-resource/3001-Agent/managed-agents/20260522-143015.png`
-3. 将正文中的远程图片引用改写为本地 `![[0001-resource/...]]`
-4. 同步写入 `resource_refs` 列表
-5. 若无图片，`resource_refs` 留空 `[]`
+3. 全部下载成功后，将正文中的远程图片引用改写为本地 `![[0001-resource/...]]`
 
 ### 4. 创建 L2（高保真标准化文档）
 
