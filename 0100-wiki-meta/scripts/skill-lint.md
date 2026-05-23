@@ -1,4 +1,6 @@
 # skill-lint：健康检查
+> 模型约束：Lint 检查必须使用 Haiku 模型，不得使用 Opus/Sonnet。
+
 
 > 触发：用户要求检查知识库健康状态
 

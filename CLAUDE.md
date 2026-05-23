@@ -97,6 +97,7 @@ L3 不可人工编辑（D010）。
 
 ### Lint
 
+> 模型约束：Lint 和翻译操作使用 Haiku 模型。
 自动修复：断裂 wikilink
 报告：L2 缺原文主体、孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、文件名格式、resource_refs 不一致、远程图片残留、L3 source 失效、L3 独立事实
 

@@ -50,7 +50,7 @@ python3 -c "import hashlib; print(hashlib.sha256(open('{path}','rb').read()).hex
 
 ### 5. 创建 L2
 
-> 翻译建议：原文主体中译可交给 Haiku，分段 prompt "翻译为中文，保留技术术语和段落结构"。
+> 翻译：原文主体中译必须使用 Haiku 模型，分段 prompt "翻译为中文，保留技术术语和段落结构"。
 
 按 `t-knowledge.md` 模板写入，L2 是 source of truth：
 
