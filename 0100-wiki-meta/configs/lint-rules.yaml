@@ -8,67 +8,31 @@ auto_fix:
 manual_review:
   - rule: orphan_page
     description: "无任何 incoming wikilink 的页面"
-    check: "Glob 所有 .md → Grep 检查 incoming links"
-
   - rule: long_draft
     description: "status=draft 超过 30 天"
-    check: "Glob frontmatter status + date delta"
-
   - rule: missing_cross_ref
     description: "可能遗漏的跨主题引用建议"
-
   - rule: incomplete_frontmatter
-    description: "必填字段缺失"
-    check: "按 schema.yaml 校验"
-
+    description: "必填字段缺失（按 schema.yaml 校验）"
   - rule: l2_missing_body
     description: "L2 缺少原文主体区块"
-    check: "检查 L2 页面是否包含 ## 原文主体 章节"
-
   - rule: summary_out_of_range
     description: "summary 不在 200-500 字范围内"
-    check: "Grep frontmatter summary length"
-
   - rule: summary_missing
     description: "summary 字段缺失或为空"
-    check: "Grep frontmatter summary"
-
   - rule: tags_format
     description: "tags 含空格或未使用连字符"
-    check: "检查所有 tags 是否符合无空格、多词连字符规则"
-
   - rule: filename_format
     description: "文件名含空格或主体中使用了 . 作为分隔符"
-    check: "Glob 所有 .md → 检查文件名是否含空格或多余 . 号"
-
   - rule: resource_refs_consistency
-    description: "resource_refs 与正文 ![[...]] 路径一致，且 topic 部分与 L2 的 topic 字段匹配"
-    description: "resource_refs 与正文本地图片引用不一致"
-    check: "检查 resource_refs 列表与正文 ![[...]] 引用是否 1:1 对齐"
-
+    description: "resource_refs 与正文 ![[...]] 引用不一致或 topic 不匹配"
   - rule: remote_image_残留
     description: "正文中仍存在远程图片 URL"
-    check: "Grep 正文中的 https?://.*\.(png|jpg|jpeg|gif|svg|webp) 模式"
-
   - rule: l3_source_stale
-  - rule: content_hash_mismatch
-  - rule: planned_links_missing
-    description: "L2 wikilink 指向不存在的页面"
-    check: "运行 python3 0100-wiki-meta/scripts/check-planned-links.py"
-    description: "L2 content_hash 与实际文件内容不一致"
-    check: "运行 python3 0100-wiki-meta/scripts/check-content-hash.py"
-    description: "L3 source 字段引用的 L2 路径不存在"
-    check: "提取 L3 source 列表 → Glob 检查文件是否存在 → 标记 STALE"
-
+    description: "L3 source 引用失效或 L3 未覆盖同 slug 新 L2"
   - rule: l3_independent_fact
-  - rule: l3_source_stale
+    description: "L3 存在未被 source L2 覆盖的事实陈述"
   - rule: content_hash_mismatch
+    description: "L2 content_hash 与实际文件不一致"
   - rule: planned_links_missing
     description: "L2 wikilink 指向不存在的页面"
-    check: "运行 python3 0100-wiki-meta/scripts/check-planned-links.py"
-    description: "L2 content_hash 与实际文件内容不一致"
-    check: "运行 python3 0100-wiki-meta/scripts/check-content-hash.py"
-    description: "L3 存在但 source 列表未覆盖同 slug 的新 L2 条目"
-    check: "同 slug 的 L2 和 L3 比较：L2 updated > L3 updated → L3 可能需更新"
-    description: "L3 存在未被 source L2 覆盖的事实陈述"
-    check: "Claude 判断 L3 内容是否可追溯到 source 中的 L2"
