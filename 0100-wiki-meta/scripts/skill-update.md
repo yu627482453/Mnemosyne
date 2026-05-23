@@ -16,11 +16,13 @@
 ## 变更分级
 
 ### 轻微变更
+> 模型：此步骤可用 Haiku。
 措辞修正、错别字、格式调整
 → 修改正文 → 更新 updated → LOG → git commit
    - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
 
 ### 中等变更
+> 模型：此步骤可用 Haiku。
 `tags` / `aliases` 增删改
 → 修改 Frontmatter → 更新 updated → LOG → git commit
    - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"

@@ -16,6 +16,7 @@
 - 对比分析 → 优先 0104 comparison
 
 ### 2. 第一轮：检索 0101 topic 综述
+> 模型：检索步骤可用 Haiku。
 
 ```
 rg -i "关键词" 0101-wiki-topics/
