@@ -1,4 +1,7 @@
 # skill-lint：健康检查
+
+> 执行要求：开始前先用 TaskCreate 创建包含各项检查的 tasklist，每完成一项标记。
+
 > 模型约束：Lint 检查必须使用 Haiku 模型，不得使用 Opus/Sonnet。
 
 

@@ -1,5 +1,8 @@
 # skill-ingest：知识摄入（L1 → L2 → L3）
 
+> 执行要求：开始前先用 TaskCreate 创建包含全部步骤(1-11)的 tasklist，每完成一步标记 completed。
+
+
 > 触发：用户 `@` 引用 inbox 文件要求处理
 
 ## 前置检查
