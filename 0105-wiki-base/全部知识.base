@@ -1,0 +1,5 @@
+{
+  "name": "全部知识",
+  "filter": {},
+  "columns": ["title", "topic", "layer", "kind", "status", "updated"]
+}

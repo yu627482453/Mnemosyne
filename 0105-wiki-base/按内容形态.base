@@ -1,0 +1,5 @@
+{
+  "name": "按内容形态",
+  "group": "kind",
+  "columns": ["title", "layer", "topic", "tags", "updated"]
+}

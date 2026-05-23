@@ -51,9 +51,24 @@ manual_review:
     check: "Grep 正文中的 https?://.*\.(png|jpg|jpeg|gif|svg|webp) 模式"
 
   - rule: l3_source_stale
+  - rule: content_hash_mismatch
+  - rule: planned_links_missing
+    description: "L2 wikilink 指向不存在的页面"
+    check: "运行 python3 0100-wiki-meta/scripts/check-planned-links.py"
+    description: "L2 content_hash 与实际文件内容不一致"
+    check: "运行 python3 0100-wiki-meta/scripts/check-content-hash.py"
     description: "L3 source 字段引用的 L2 路径不存在"
     check: "提取 L3 source 列表 → Glob 检查文件是否存在 → 标记 STALE"
 
   - rule: l3_independent_fact
+  - rule: l3_source_stale
+  - rule: content_hash_mismatch
+  - rule: planned_links_missing
+    description: "L2 wikilink 指向不存在的页面"
+    check: "运行 python3 0100-wiki-meta/scripts/check-planned-links.py"
+    description: "L2 content_hash 与实际文件内容不一致"
+    check: "运行 python3 0100-wiki-meta/scripts/check-content-hash.py"
+    description: "L3 存在但 source 列表未覆盖同 slug 的新 L2 条目"
+    check: "同 slug 的 L2 和 L3 比较：L2 updated > L3 updated → L3 可能需更新"
     description: "L3 存在未被 source L2 覆盖的事实陈述"
     check: "Claude 判断 L3 内容是否可追溯到 source 中的 L2"

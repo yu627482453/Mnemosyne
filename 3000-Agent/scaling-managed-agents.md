@@ -17,7 +17,7 @@ aliases:
   - Managed Agents 架构
   - Brain-Hands Decoupling
 created: 2026-05-22
-updated: 2026-05-22
+updated: 2026-05-23
 source: url
 source_url: "https://www.anthropic.com/engineering/managed-agents"
 resource_refs:
@@ -34,7 +34,8 @@ summary: >
   pets 到 cattle 的基础设施演进——harness 和容器都可无状态重启；(2) 安全边界重构——auth token 永
   不暴露在 sandbox 内；(3) session 作为 context window 之外的持久化上下文对象；(4) 多 brain 多
   hand 的横向扩展能力。解耦后 p50 TTFT 下降约 60%，p95 下降超 90%。整体定位为"元 harness"——
-  对具体 harness 实现不做假设，只定义通用接口，以适应未来模型能力的演进。
+  对具体 harness 实现不做假设，只定义通用接口，以适应未来模型能力的演进。该架构的核心理念来自
+  操作系统的虚拟化设计思想。
 ---
 
 ## 核心内容
