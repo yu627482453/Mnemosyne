@@ -45,10 +45,10 @@ slug 仅用于路径，不替代标题。
 
 ```bash
 # id: SHA256(topic+slug+created)[:8]
-python3 -c "import hashlib,json; s=json.dumps({topic:'{topic}',slug:'{slug}',created:'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
+python3 || python -c "import hashlib,json; s=json.dumps({topic:'{topic}',slug:'{slug}',created:'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
 
 # content_hash: 写完后对文件全文 SHA256[:8]
-python3 -c "import hashlib; print(hashlib.sha256(open('{path}','rb').read()).hexdigest()[:8])"
+python3 || python -c "import hashlib; print(hashlib.sha256(open('{path}','rb').read()).hexdigest()[:8])"
 ```
 
 ### 5. 创建 L2
