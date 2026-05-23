@@ -15,16 +15,19 @@
 ### 轻微变更
 措辞修正、错别字、格式调整
 → 修改正文 → 更新 updated → LOG → git commit
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
 
 ### 中等变更
 `tags` / `aliases` 增删改
 → 修改 Frontmatter → 更新 updated → LOG → git commit
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
 
 ### 重大变更
 `title` 重命名 / `summary` 重写 / 核心事实变更
 1. 先输出受影响范围和最小改动建议
 2. 修改正文/ Frontmatter
 3. 更新 updated
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
 4. Grep wikilink 引用：`rg -l "\[\[{slug}\]\]" ./`
 5. 列出受影响文件，用户确认
 6. 更新受影响文件引用

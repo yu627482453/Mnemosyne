@@ -25,7 +25,7 @@ resource_refs:
   - "0001-resource/3000-Agent/scaling-managed-agents/20260522-2.png"
   - "0001-resource/3000-Agent/scaling-managed-agents/20260522-3.png"
   - "0001-resource/3000-Agent/scaling-managed-agents/20260522-4.png"
-content_hash: 54d6496c
+content_hash: 0df582cb
 status: draft
 summary: >
   Anthropic 工程博客介绍 Managed Agents 的架构设计理念——将 agent 系统的"大脑"（harness/推理循环）

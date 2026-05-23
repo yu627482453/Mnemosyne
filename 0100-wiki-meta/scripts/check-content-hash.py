@@ -9,12 +9,12 @@ for root, dirs, files in os.walk(vault_root):
     for f in files:
         if not f.endswith(".md"): continue
         path = os.path.join(root, f)
-        with open(path, "rb") as fh:
+        with open(path, "r", encoding="utf-8", errors="ignore") as fh:
             content = fh.read()
-        actual_hash = hashlib.sha256(content).hexdigest()[:8]
-        # Extract frontmatter content_hash
-        text = content.decode("utf-8", errors="ignore")
-        m = re.search(r"content_hash:\s*\"?([a-f0-9]{8})\"?", text)
+        # Normalize line endings for hash (CRLF→LF)
+        content = content.replace("\r\n", "\n").replace("\r", "\n")
+        actual_hash = hashlib.sha256(content.encode("utf-8")).hexdigest()[:8]
+        m = re.search(r"content_hash:\s*\"?([a-f0-9]{8})\"?", content)
         if m and m.group(1) != actual_hash:
             issues.append(f"{path}: expected={m.group(1)} actual={actual_hash}")
 
