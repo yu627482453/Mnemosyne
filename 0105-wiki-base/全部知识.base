@@ -1,6 +1,6 @@
-name: 知识库
+name: Knowledge Base
 views:
-  - name: 全部
+  - name: All
     type: table
     columns: [title, topic, layer, kind, status, tags, updated]
     sort: { field: updated, order: desc }
@@ -11,12 +11,12 @@ views:
     columns: [title, topic, layer, kind, updated]
     sort: { field: updated, order: desc }
 
-  - name: 按层级
+  - name: By Layer
     type: table
     group: layer
     columns: [title, topic, kind, tags, updated]
 
-  - name: 按形态
+  - name: By Kind
     type: table
     group: kind
     columns: [title, layer, topic, tags, updated]
