@@ -1,12 +1,5 @@
 name: 全部知识
-filter: {}
-columns:
-  - title
-  - topic
-  - layer
-  - kind
-  - status
-  - updated
-views:
-  - type: table
-    name: 表格
+columns: [title, topic, layer, kind, status, tags, updated]
+sort:
+  field: updated
+  order: desc

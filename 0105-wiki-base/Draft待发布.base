@@ -1,12 +1,7 @@
 name: Draft 待发布
 filter:
   status: draft
-columns:
-  - title
-  - topic
-  - layer
-  - kind
-  - updated
-views:
-  - type: table
-    name: 表格
+columns: [title, topic, layer, kind, updated]
+sort:
+  field: updated
+  order: desc
