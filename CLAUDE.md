@@ -46,7 +46,7 @@
 - 文件名禁止空格 → 空格统一转 `-`
 - 文件名主体中的 `.` → 转 `_`（仅最后一个 `.` 是扩展名）
 - slug 仅用于路径定位，不替代标题；L2 title 保留原始标题
-- 图片资源：`0001-resource/{topic}/{slug}/{timeStamp}.{ext}`
+- 图片资源：`0001-resource/{topic}/{slug}/{timeStamp}.{ext}`（`{topic}` 必须是完整目录名如 `3000-Agent`，非缩写）
 
 ## 目录结构
 
@@ -71,7 +71,7 @@
 1. 用户 @ 引用 inbox → 读取 → 扫描图片
 2. 判断归属主题目录（首次归档须用户确认）
 3. 生成 slug（英文优先，3-5 推荐）；文件名按命名规则处理
-4. 图片落地：下载 → `0001-resource/{topic}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
+4. 图片落地：下载 → `0001-resource/{topic（完整目录名）}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
 5. 创建 L2：标题保留原文；必须包含 核心内容 + 文章要点 + **原文主体（中文翻译，保留段落层次）** + 来源
 6. L3 触发：concept/entity/comparison 主动逐项检查
 7. 写入前强制校验：topic/tags/summary/source/processing_path（schema.yaml 硬约束，不过不得落盘）
