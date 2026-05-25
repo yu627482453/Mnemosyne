@@ -1,7 +1,0 @@
-name: Draft 待发布
-filter:
-  status: draft
-columns: [title, topic, layer, kind, updated]
-sort:
-  field: updated
-  order: desc

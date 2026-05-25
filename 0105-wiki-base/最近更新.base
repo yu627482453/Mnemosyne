@@ -1,6 +1,0 @@
-name: 最近更新
-columns: [title, topic, layer, updated, summary]
-sort:
-  field: updated
-  order: desc
-limit: 20

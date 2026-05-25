@@ -1,5 +1,22 @@
-name: 全部知识
-columns: [title, topic, layer, kind, status, tags, updated]
-sort:
-  field: updated
-  order: desc
+name: 知识库
+views:
+  - name: 全部
+    type: table
+    columns: [title, topic, layer, kind, status, tags, updated]
+    sort: { field: updated, order: desc }
+
+  - name: Draft
+    type: table
+    filter: { status: draft }
+    columns: [title, topic, layer, kind, updated]
+    sort: { field: updated, order: desc }
+
+  - name: 按层级
+    type: table
+    group: layer
+    columns: [title, topic, kind, tags, updated]
+
+  - name: 按形态
+    type: table
+    group: kind
+    columns: [title, layer, topic, tags, updated]
