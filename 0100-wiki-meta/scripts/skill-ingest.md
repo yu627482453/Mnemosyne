@@ -92,7 +92,7 @@ L3 由 L2 派生，目录按类型：
 ### 8. 死链治理
 > 模型：此步骤可用 Haiku。
 
-正式 [[wikilink]] 仅链接已存在页面；未建概念→`planned_links`/`<!-- TODO: -->`。
+正式 [[wikilink]] 正常使用（Obsidian 灰色标记缺失）；未建概念同时写入 frontmatter `planned_links`
 
 ### 9. 跨主题引用 + 更新配置
 

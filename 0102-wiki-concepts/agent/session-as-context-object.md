@@ -32,4 +32,4 @@ Session 作为 Context Window 外部的持久化上下文对象，通过 getEven
 ## 相关概念
 - [[brain-hands-decoupling]] — 脑手分离
 - [[meta-harness]] — 元 Harness
-- <!-- TODO: [[context-engineering]] --> — 上下文工程
+- [[context-engineering]] — 上下文工程
