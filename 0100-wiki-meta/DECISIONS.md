@@ -15,7 +15,7 @@
 - **D009**: slug英文优先，3-5推荐选项。
 - **D010**: L3不允许人工编辑内容逻辑。
 - **D011**: tags词表收敛到tag-vocabulary.yaml。
-- **D017**: 正式wikilink仅链接已存在页面；未建概念入planned_links。
+- **D017**: 断裂wikilink正常使用（Obsidian灰色标记）+ frontmatter planned_links列表
 - **D018**: 文件名空格→-，主体.→_；title保留原始标题。
 
 ## 待验证
