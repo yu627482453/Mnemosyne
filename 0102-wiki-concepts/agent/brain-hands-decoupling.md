@@ -5,6 +5,7 @@ kind: concept
 processing_path: "AI技术/Agent"
 updated: 2026-05-22
 source: ["3000-Agent/scaling-managed-agents.md"]
+planned_links: ['pets-vs-cattle']
 tags: [AI, agent-architecture, infrastructure, brain-hands-decoupling, managed-agents]
 status: draft
 summary: >

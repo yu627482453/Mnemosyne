@@ -65,6 +65,8 @@ python 0100-wiki-meta/scripts/check-content-hash.py . 2>/dev/null || python3 010
 ```
 
 ### 12. planned_links 缺失
+n### 13. planned_links 释放
+如果 `planned_links` 中的页面已经创建，应将其从列表中移除并转为正式 wikilink。
 ```bash
 python 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null || python3 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null
 ```

@@ -26,6 +26,7 @@ layers:
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       source:   { type: enum, values: [manual, url, file, claude] }
       source_url: { type: string }
+      planned_links: { type: list, description: "待建概念的 wikilink 目标列表" }
       resource_refs: { type: list, description: "本地资源路径列表" }
       status:   { type: enum, required: true, values: [draft, published] }
       summary:  { type: string, required: true, min_len: 200, max_len: 500 }

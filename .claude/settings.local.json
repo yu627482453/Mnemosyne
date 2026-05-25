@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(python *)",
+      "Bash(python3 *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:anthropic.com)",
+      "WebFetch(domain:github.com)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python 0100-wiki-meta/scripts/validate-frontmatter.py \"$CLAUDE_TOOL_OUTPUT\" 2>&1 || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd D:/obsidian && git status --short 2>&1 | head -20"
+          }
+        ]
+      }
+    ]
+  }
+}

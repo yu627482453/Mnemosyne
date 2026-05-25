@@ -5,6 +5,7 @@ kind: concept
 processing_path: "AI技术/Agent"
 updated: 2026-05-22
 source: ["3000-Agent/scaling-managed-agents.md"]
+planned_links: ['context-engineering']
 tags: [AI, context-engineering, session-management, agent-architecture, managed-agents]
 status: draft
 summary: >
@@ -31,4 +32,4 @@ Session 作为 Context Window 外部的持久化上下文对象，通过 getEven
 ## 相关概念
 - [[brain-hands-decoupling]] — 脑手分离
 - [[meta-harness]] — 元 Harness
-- [[context-engineering]] — 上下文工程
+- <!-- TODO: [[context-engineering]] --> — 上下文工程
