@@ -1,5 +1,11 @@
-{
-  "name": "按内容形态",
-  "group": "kind",
-  "columns": ["title", "layer", "topic", "tags", "updated"]
-}
+name: 按内容形态
+group: kind
+columns:
+  - title
+  - layer
+  - topic
+  - tags
+  - updated
+views:
+  - type: table
+    name: 表格

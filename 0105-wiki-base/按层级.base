@@ -1,5 +1,11 @@
-{
-  "name": "按层级",
-  "group": "layer",
-  "columns": ["title", "topic", "kind", "tags", "updated"]
-}
+name: 按层级
+group: layer
+columns:
+  - title
+  - topic
+  - kind
+  - tags
+  - updated
+views:
+  - type: table
+    name: 表格

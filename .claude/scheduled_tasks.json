@@ -5,11 +5,11 @@
       "cron": "7 7 * * *",
       "prompt": "阅读 `0100-wiki-meta/scripts/run-lint.sh`，执行其中的 lint 检查，然后报告结果。如果发现需要修复的问题，先列出问题清单不要自动修改。",
       "createdAt": 1779630884222,
+      "lastFiredAt": 1779671479230,
       "recurring": true,
       "createdBySessionId": "ff121d14-ac9c-4f20-a3c0-3619c2ee667f",
-      "createdByPid": 14716,
-      "createdByProcStart": "639152970763638850",
-      "lastFiredAt": 1779671479230
+      "createdByPid": 7540,
+      "createdByProcStart": "639152983319921520"
     },
     {
       "id": "2673375c",
@@ -18,8 +18,8 @@
       "createdAt": 1779630893126,
       "recurring": true,
       "createdBySessionId": "ff121d14-ac9c-4f20-a3c0-3619c2ee667f",
-      "createdByPid": 14716,
-      "createdByProcStart": "639152970763638850"
+      "createdByPid": 7540,
+      "createdByProcStart": "639152983319921520"
     }
   ]
 }
