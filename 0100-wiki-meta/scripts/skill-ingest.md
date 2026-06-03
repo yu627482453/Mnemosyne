@@ -68,7 +68,7 @@ python3 || python -c "import hashlib; print(hashlib.sha256(open('{path}','rb').r
 
 - `title` 保留原始标题；slug 仅用于文件名
 - `tags`：5-10 个，无空格，多词连字符，**inline 格式** `[tag1, tag2]`
-- `summary`：200-500 字
+- `summary`：200 字以上
 - `resource_refs`：与正文 `![[...]]` 1:1
 
 ### 6. 判断 L3 触发
@@ -110,11 +110,11 @@ L3 由 L2 派生，目录按类型：
 | 1 | `topic` 匹配 `^\d{4}-.+$`（如 `3000-Agent`） | schema.yaml L2 |
 | 2 | `source` 是枚举值（url/manual/file/claude），非 URL 字符串 | schema.yaml L2 |
 | 3 | `tags` ≥5 个，无空格，inline 格式 `[t1, t2]` | schema.yaml L2 |
-| 4 | `summary` 200-500 字 | schema.yaml L2 |
+| 4 | `summary` 200 字以上 | schema.yaml L2 |
 | 5 | `status: draft`（首次创建默认 draft） | schema.yaml L2 |
 | 6 | L3 `processing_path` 匹配 `^\S+/\S+$`（如 `AI技术/Agent`） | schema.yaml L3 |
 | 7 | L3 `tags` ≥5 个 | schema.yaml L3 |
-| 8 | L3 `summary` 200-500 字 | schema.yaml L3 |
+| 8 | L3 `summary` 200 字以上 | schema.yaml L3 |
 | 9 | 0101 topic 综述已创建或更新 | 规则 |
 | 10 | config 文件已更新（如有新主题/新标签） | 规则 |
 
