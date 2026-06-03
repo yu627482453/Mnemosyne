@@ -17,7 +17,7 @@ manual_review:
   - rule: l2_missing_body
     description: "L2 缺少原文主体区块"
   - rule: summary_out_of_range
-    description: "summary 不在 200-500 字范围内"
+    description: "summary 不在 200 字以上"
   - rule: summary_missing
     description: "summary 字段缺失或为空"
   - rule: tags_format
