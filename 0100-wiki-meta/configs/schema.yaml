@@ -45,4 +45,4 @@ layers:
       rhs: { type: string }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
       status:   { type: enum, values: [draft, published] }
-      summary:  { type: string, required: true, min_len: 200, max_len: 500 }
+      summary:  { type: string, required: true, min_len: 200 }
