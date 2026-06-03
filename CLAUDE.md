@@ -29,9 +29,9 @@
 
 ## Frontmatter（摘要）
 
-**L2** — id, title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, content_hash, status(draft/published), summary(200-500字)
+**L2** — id, title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, content_hash, status(draft/published), summary(200字以上)
 
-**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, summary(200-500字)
+**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, summary(200字以上)
 
 **L3 entity** — title, layer:L3, kind:entity, entity_type(Organization/Product/Project/Paper/Person), updated, source, tags, summary
 
