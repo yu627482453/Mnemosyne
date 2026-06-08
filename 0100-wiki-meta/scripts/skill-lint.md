@@ -8,10 +8,11 @@
 
 ### 1. 断裂 wikilink
 ```bash
-rg "\[\[[^]]+\]\]" --only-matching -I ./ | sed 's/\[\[//;s/\]\]//' | sort -u | while read link; do
-  target=$(echo "$link" | sed 's/|.*//')
-  slug=$(basename "$target" .md)
-  found=$(find . -name "${slug}.md" -not -path "./.git/*" -not -path "./.trash/*" 2>/dev/null)
+rg "\[\[[^]]+\]\]" --no-filename --only-matching -I --glob "*.md" ./ | sed 's/^\[\[//;s/\]\]$//' | sed 's/|.*//' | sort -u | while read link; do
+  echo "$link" | grep -qE '(\{\{|\.\.\.|\[\[|\^|\$)' && continue
+  echo "$link" | grep -q "^0001-resource/" && continue
+  slug=$(basename "$link" .md)
+  found=$(find . -iname "${slug}.md" -not -path "./.git/*" -not -path "./.trash/*" -not -path "./0000-meta/*" -not -path "./0100-wiki-meta/*" 2>/dev/null)
   [ -z "$found" ] && echo "BROKEN: [[$link]]"
 done
 ```
