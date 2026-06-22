@@ -1,25 +1,24 @@
 {
   "tasks": [
     {
-      "id": "2395bead",
+      "id": "5de1233e",
       "cron": "7 7 * * *",
-      "prompt": "阅读 `0100-wiki-meta/scripts/run-lint.sh`，执行其中的 lint 检查，然后报告结果。如果发现需要修复的问题，先列出问题清单不要自动修改。",
-      "createdAt": 1779630884222,
-      "lastFiredAt": 1779671479230,
+      "prompt": "请确认：是否执行今日的 Lint 检查？任务内容：阅读 `0100-wiki-meta/scripts/run-lint.sh`，执行其中的 lint 检查，然后报告结果。如果发现需要修复的问题，先列出问题清单不要自动修改。",
+      "createdAt": 1782090754775,
       "recurring": true,
-      "createdBySessionId": "ff121d14-ac9c-4f20-a3c0-3619c2ee667f",
-      "createdByPid": 7540,
-      "createdByProcStart": "639152983319921520"
+      "createdBySessionId": "62157fc7-abbe-4dab-9b67-e61455314e98",
+      "createdByPid": 18420,
+      "createdByProcStart": "639177155409179490"
     },
     {
-      "id": "2673375c",
+      "id": "88a016db",
       "cron": "17 18 * * *",
-      "prompt": "Check `git status --short` in D:/obsidian. If there are uncommitted changes, list them and wait for user instruction. If clean, run `git push` to ensure everything is pushed.",
-      "createdAt": 1779630893126,
+      "prompt": "请确认：是否执行今日的 Git 状态检查？任务内容：Check `git status --short` in D:/obsidian. If there are uncommitted changes, list them and wait for user instruction. If clean, run `git push` to ensure everything is pushed.",
+      "createdAt": 1782090755946,
       "recurring": true,
-      "createdBySessionId": "ff121d14-ac9c-4f20-a3c0-3619c2ee667f",
-      "createdByPid": 7540,
-      "createdByProcStart": "639152983319921520"
+      "createdBySessionId": "62157fc7-abbe-4dab-9b67-e61455314e98",
+      "createdByPid": 18420,
+      "createdByProcStart": "639177155409179490"
     }
   ]
 }
