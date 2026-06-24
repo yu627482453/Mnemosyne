@@ -2,6 +2,7 @@
 title: "{{lhs}} vs {{rhs}}"
 layer: L3
 kind: comparison
+processing_path: "{{category}}/{{topic_domain}}"
 comparison_axis: "{{comparison_axis}}"
 lhs: "{{lhs}}"
 rhs: "{{rhs}}"

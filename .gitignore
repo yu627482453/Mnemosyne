@@ -2,3 +2,9 @@
 
 .trash/
 .bashrc
+.DS_Store
+.mina/
+__pycache__/
+*.pyc
+*.swp
+*.swo

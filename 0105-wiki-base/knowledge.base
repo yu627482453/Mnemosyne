@@ -2,21 +2,24 @@ name: Knowledge Base
 views:
   - name: All
     type: table
-    columns: [title, topic, layer, kind, status, tags, updated]
+    columns: [title, layer, kind, status, tags, updated]
     sort: { field: updated, order: desc }
 
-  - name: Draft
+  - name: L2 Sources
+    type: table
+    filter: { layer: L2 }
+    columns: [title, topic, status, source, tags, updated]
+    sort: { field: updated, order: desc }
+
+  - name: L3 Wiki
+    type: table
+    filter: { layer: L3 }
+    group: processing_path
+    columns: [title, processing_path, kind, status, tags, updated]
+
+  - name: Draft Review
     type: table
     filter: { status: draft }
-    columns: [title, topic, layer, kind, updated]
-    sort: { field: updated, order: desc }
-
-  - name: By Layer
-    type: table
     group: layer
-    columns: [title, topic, kind, tags, updated]
-
-  - name: By Kind
-    type: table
-    group: kind
-    columns: [title, layer, topic, tags, updated]
+    columns: [title, layer, kind, updated]
+    sort: { field: updated, order: desc }

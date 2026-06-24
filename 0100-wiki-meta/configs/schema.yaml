@@ -18,25 +18,25 @@ layers:
       topic:    { type: string, required: true, pattern: "^\d{4}-.+$" }
       layer:    { type: enum, required: true, values: [L2] }
       id:      { type: string, required: true, description: "身份hash: SHA256(topic+slug+created)[:8]" }
-      content_hash: { type: string, description: "内容hash: SHA256(文件全文)[:8]" }
+      content_hash: { type: string, description: "内容hash: SHA256(正文内容，不含frontmatter)[:8]" }
       kind:     { type: enum, required: true, values: [standard] }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
       aliases:  { type: list, min: 1 }
       created:  { type: date, required: true, format: YYYY-MM-DD }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
-      source:   { type: enum, values: [manual, url, file, claude] }
+      source:   { type: enum, required: true, values: [manual, url, file, claude] }
       source_url: { type: string }
       planned_links: { type: list, description: "待建概念的 wikilink 目标列表" }
       resource_refs: { type: list, description: "本地资源路径列表" }
       status:   { type: enum, required: true, values: [draft, published] }
-      summary:  { type: string, required: true, min_len: 200 }
+      summary:  { type: string, required: true, min_len: 200, max_len: 500 }
 
   L3:
     fields:
       title:    { type: string, required: true, max_len: 120 }
       layer:    { type: enum, required: true, values: [L3] }
       kind:     { type: enum, required: true, values: [topic, concept, entity, comparison] }
-      processing_path: { type: string }
+      processing_path: { type: string, required: true, pattern: "^\\S+/\\S+$" }
       updated:  { type: date, required: true, format: YYYY-MM-DD }
       source: { type: list, min: 1, description: "L2 源文件相对路径列表" }
       entity_type: { type: enum, values: [Organization, Product, Project, Paper, Person] }
@@ -45,4 +45,4 @@ layers:
       rhs: { type: string }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
       status:   { type: enum, values: [draft, published] }
-      summary:  { type: string, required: true, min_len: 200 }
+      summary:  { type: string, required: true, min_len: 200, max_len: 500 }

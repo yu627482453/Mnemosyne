@@ -26,7 +26,7 @@ manual_review:
     description: "文件名含空格或主体中使用了 . 作为分隔符"
   - rule: resource_refs_consistency
     description: "resource_refs 与正文 ![[...]] 引用不一致或 topic 不匹配"
-  - rule: remote_image_残留
+  - rule: remote_image_residual
     description: "正文中仍存在远程图片 URL"
   - rule: l3_source_stale
     description: "L3 source 引用失效或 L3 未覆盖同 slug 新 L2"
@@ -36,3 +36,9 @@ manual_review:
     description: "L2 content_hash 与实际文件不一致"
   - rule: planned_links_missing
     description: "L2 wikilink 指向不存在的页面"
+  - rule: l3_missing_processing_path
+    description: "L3 页面缺少 processing_path"
+  - rule: tag_not_in_vocabulary
+    description: "页面使用了未登记的标签"
+  - rule: base_column_invalid
+    description: "Base panel 引用了当前 layer 不存在的字段"

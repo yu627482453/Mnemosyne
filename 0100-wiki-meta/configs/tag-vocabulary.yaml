@@ -1,57 +1,36 @@
-# 受控标签词表 — P0 收敛，新增标签需在此登记
+# 受控标签词表 — 新增标签需在此登记
 
 vocabulary:
-  - tag: AI
-    zh: 人工智能
-  - tag: 机器学习
-    en: ML
-  - tag: 深度学习
-    en: Deep-Learning
-  - tag: NLP
-    zh: 自然语言处理
-  - tag: LLM
-    zh: 大语言模型
-  - tag: 注意力机制
-    en: Attention
-  - tag: 计算机视觉
-    en: CV
-  - tag: 项目管理
-    en: Project-Management
-  - tag: 生产力
-    en: Productivity
-  - tag: 个人管理
-    en: Personal-Management
-  - tag: 基础知识
-    en: Fundamentals
-  - tag: 对比
-    en: Comparison
-  - tag: 综述
-    en: Overview
-  - tag: agent-architecture
-    zh: Agent 架构
-  - tag: context-engineering
-    zh: 上下文工程
-  - tag: infrastructure
-    zh: 基础设施
-  - tag: sandbox
-    zh: 沙箱
-  - tag: managed-agents
-    zh: 托管代理
-  - tag: session-management
-    zh: 会话管理
-  - tag: brain-hands-decoupling
-    zh: 脑手分离
-  - tag: meta-harness
-    zh: 元 Harness
-  - tag: architecture
-    zh: 架构
-  - tag: comparison
-    zh: 对比分析
-  - tag: product
-    zh: 产品
+  - agent
+  - agent-loop
+  - agent-architecture
+  - agent-classification
+  - LLM-agent
+  - symbolic-AI
+  - reinforcement-learning
+  - prompt-engineering
+  - PEAS
+  - multi-agent
+  - workflow
+  - autonomy
+  - task-environment
+  - perception-action-cycle
+  - paradigm-shift
+  - context-engineering
+  - infrastructure
+  - sandbox
+  - managed-agents
+  - session-management
+  - brain-hands-decoupling
+  - meta-harness
+  - AI
+  - 机器学习
+  - attention
+  - comparison
 
 tag_rules:
   min_per_page: 5
   max_per_page: 10
   new_tag_requires_confirmation: true
   prefer_existing: true
+  naming_convention: "英文 slug 为主，中文学科名保留；多词用连字符"

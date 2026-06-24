@@ -48,6 +48,28 @@
 - slug 仅用于路径定位，不替代标题；L2 title 保留原始标题
 - 图片资源：`0001-resource/{topic}/{slug}/{timeStamp}.{ext}`（`{topic}` 必须是完整目录名如 `3000-Agent`，非缩写）
 
+### 语言规范
+
+| 层级 | 规则 | 示例 |
+|------|------|------|
+| L2 topic 目录 | `{编号}-{显示名}`，技术术语可英文 | `3000-Agent`、`3001-RAG与检索` |
+| L3 concept 目录 | 英文 slug | `agent/`、`llm-basics/`、`model-training/` |
+| L3 concept 文件名 | 英文 kebab-case，专有名词保留原形 | `agent-loop.md`、`CLIP.md`、`ReAct.md` |
+| L3 topic 页面 | 显示名，中英文均可 | `Agent.md`、`RAG与检索.md` |
+| tags | 默认英文 slug；仅无通用英文对应的学科名用中文 | ✓ 机器学习、✓ agent-loop ✗ 注意力机制（用 attention） |
+| processing_path | `{中文大类}/{topic显示名}` | `AI技术/LLM基础`、`AI技术/Agent` |
+| 正文 | 统一中文 | 技术术语首次出现可附英文原文 |
+
+### L2 与 L3 的关系
+
+L2 按**来源**组织，L3 按**知识域**组织，两者是多对一映射：
+
+- 一个 L2 文件可派生多个不同 topic 的 L3 concept
+- L3 `source` 字段指向 L2 路径，用于回溯
+- L2 目录不需要与 L3 目录对齐
+
+示例：`hello-agents-ch3-llm-basics.md`（L2, `3000-Agent/`）→ `transformer-architecture.md`（L3, `llm-basics/`）
+
 ## 目录结构
 
 ```
@@ -56,7 +78,7 @@
 0001-resource/            # 本地资源（图片/附件）
 0003-inbox/               # L1
 0101-wiki-topics/         # L3 主题综述（域级）
-0102-wiki-concepts/       # L3 概念（按主题域）
+0102-wiki-concepts/       # L3 概念（按主题域：agent/、rag/、image-generation/、llm-basics/、model-training/、ai-engineering/）
 0103-wiki-entities/       # L3 实体（按 entity_type）
 0104-wiki-comparisons/    # L3 对比（按 comparison_axis）
 0105-wiki-base/           # Base 面板
@@ -72,8 +94,12 @@
 2. 判断归属主题目录（须用户确认）
 3. 生成 slug（英文优先，3-5 推荐）；文件名按命名规则处理
 4. 图片落地：下载 → `0001-resource/{topic（完整目录名）}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
-5. 创建 L2：标题保留原文；必须包含 核心内容 + 文章要点 + **原文主体（中文翻译，保留段落层次）** + 来源
-6. L3 触发：concept/entity/comparison 主动逐项检查
+5. 创建 L2：标题保留原文；正文采用分区结构（上半：核心提炼 + 关键概念 + 原文要点 + 来源；下半：原文笔记）
+6. L3 触发：逐个检查可派生的 concept/entity/comparison，对每个给出推荐：
+   - 是否建 L3（满足其一：独立机制 / 跨源引用≥2 / 工具价值）
+   - processing_path 及所属目录（推荐 topic 及理由）
+   不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）
+   交由用户确认后落盘。一个 L2 可派生多个不同 topic 的 L3。
 7. 写入前强制校验：topic/tags/summary/source/processing_path（schema.yaml 硬约束，不过不得落盘）
 8. 死链治理（断裂wikilink正常用+planned_links）+ 跨主题引用 + 更新 config
 9. LOG + .trash/ + git commit
@@ -103,7 +129,7 @@ L3 不可人工编辑（D010）。
 ## 落盘验收清单
 
 1. frontmatter 字段齐全
-2. L2 包含原文主体区块
+2. L2 包含核心提炼区 + 原文笔记区
 3. tags 5-10、无空格、连字符
 4. summary 200-500 字
 5. 图片已落地、resource_refs 1:1、无远程图片残留
@@ -118,4 +144,5 @@ L3 不可人工编辑（D010）。
 | 知识操作 | `wiki: {操作} {文件} — {摘要}` |
 | 文档变更 | `docs: {描述}` |
 
-流程：用户确认后 `git status → add → commit → push`
+流程：用户确认后 `git status → add → commit`
+**`git push` 必须单独交用户确认，禁止自行推送。**

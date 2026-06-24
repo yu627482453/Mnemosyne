@@ -8,7 +8,7 @@
 - **D006**: L3使用processing_path。
 - **D012**: source保持单一字段。
 - **D014**: L3 source为文件级L2路径列表。
-- **D019**: L2 id=SHA256(topic+slug+created)[:8]；content_hash=SHA256(全文)[:8]。
+- **D019**: L2 id=SHA256(topic+slug+created)[:8]；content_hash=SHA256(正文内容，不含frontmatter)[:8]。
 
 ### 操作
 - **D008**: L1标准化后移入.trash/，用户确认后执行。

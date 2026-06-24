@@ -3,6 +3,7 @@ title: "{{entity}}"
 layer: L3
 kind: entity
 entity_type: "{{entity_type}}"
+processing_path: "{{category}}/{{topic_domain}}"
 updated: "{{date}}"
 source: [{{source}}]
 tags: [{{tags}}]
