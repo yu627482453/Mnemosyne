@@ -77,6 +77,8 @@ try:
             elif slen > 500:
                 issues.append(f"summary 有 {slen} 字，需要 ≤500")
         kind = fm.get("kind", "")
+        if kind not in ("topic", "concept", "entity", "comparison"):
+            issues.append(f"kind '{kind}' 不在枚举值 [topic, concept, entity, comparison]")
         if kind == "entity" and not fm.get("entity_type"):
             issues.append("kind=entity 但缺少 entity_type")
         if kind == "comparison":

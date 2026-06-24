@@ -2,7 +2,7 @@
 - **D004**: topic/concept/entity/comparison属L3加工形态。
 - **D013**: L3按概念/实体/对比独立建页；0101为域级主题综述。
 - **D015**: entity按entity_type归档；comparison按comparison_axis归档；concept按主题域。
-- **D016**: L2必须含原文主体，不允许过度摘要化。
+- **D016**: L2必须含核心提炼区 + 原文笔记区，不允许仅有原文搬运。
 
 ### 字段
 - **D006**: L3使用processing_path。
