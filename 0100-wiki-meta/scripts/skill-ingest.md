@@ -150,14 +150,16 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 | 2 | `source` 是枚举值（url/manual/file/claude），非 URL 字符串 | schema.yaml L2 |
 | 3 | `tags` ≥5 个，无空格，inline 格式 `[t1, t2]` | schema.yaml L2 |
 | 4 | `summary` 200 字以上 | schema.yaml L2 |
-| 5 | `status: draft`（首次创建默认 draft） | schema.yaml L2 |
-| 6 | L3 `processing_path` 匹配 `^\S+/\S+$`（如 `AI技术/Agent`） | schema.yaml L3 |
-| 7 | L3 `tags` ≥5 个 | schema.yaml L3 |
-| 8 | L3 `summary` 200 字以上 | schema.yaml L3 |
-| 9 | 0101 topic 综述已创建或更新，且列出了所有关联 L3 | 规则 |
-| 10 | config 文件已更新（如有新主题/新标签） | 规则 |
-| 11 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 8 |
-| 12 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
+| 5 | `status: published`（首次 ingest 校验全部通过后默认标记） | schema.yaml L2 |
+| 6 | 所有 `tags` 均在 `tag-vocabulary.yaml` 中已登记 | 规则 |
+| 7 | L3 `processing_path` 匹配 `^\S+/\S+$`（如 `AI技术/Agent`） | schema.yaml L3 |
+| 8 | L3 `tags` ≥5 个 | schema.yaml L3 |
+| 9 | L3 `summary` 200 字以上 | schema.yaml L3 |
+| 10 | L3 所有 `tags` 均在 `tag-vocabulary.yaml` 中已登记 | 规则 |
+| 11 | 0101 topic 综述已创建或更新，且列出了所有关联 L3 | 规则 |
+| 12 | config 文件已更新（如有新主题/新标签） | 规则 |
+| 13 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 8 |
+| 14 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
 
 ### 11. 操作日志 + 报告收尾
 

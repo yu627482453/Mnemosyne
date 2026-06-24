@@ -134,6 +134,7 @@ L2 正文采用分区结构，上半为提炼，下半为原文：
 | 重大 | title/summary/事实 | 改内容 → rg wikilink → rg L3 source → 同步 → LOG |
 
 L3 不可人工编辑（D010）。
+**Update 不改变 status。** draft→published 需用户手动确认并通过 ingest 校验（步骤 10）。
 
 ### Lint
 
