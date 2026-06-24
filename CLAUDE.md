@@ -55,8 +55,10 @@
 | 层级 | 规则 | 示例 |
 |------|------|------|
 | L2 topic 目录 | `{编号}-{显示名}`，技术术语可英文 | `3000-Agent`、`3001-RAG与检索` |
-| L3 concept 目录 | 英文 slug | `agent/`、`llm-basics/`、`model-training/` |
-| L3 concept 文件名 | 英文 kebab-case，专有名词保留原形 | `agent-loop.md`、`CLIP.md`、`ReAct.md` |
+| L3 concept 目录 | 英文 slug，全小写 | `agent/`、`llm-basics/`、`model-training/` |
+| L3 entity 目录 | 英文 slug，全小写（如 `product/`、`organization/`） | `0103/product/` |
+| L3 comparison 目录 | 英文 slug，全小写 | `automation-paradigm/` |
+| L3 concept/entity/comparison 文件名 | 英文 kebab-case，全小写，专有名词保留原形 | `agent-loop.md`、`clip.md`、`react.md` |
 | L3 topic 页面 | 显示名，中英文均可 | `Agent.md`、`RAG与检索.md` |
 | tags | 默认英文 slug；仅无通用英文对应的学科名用中文 | ✓ 机器学习、✓ agent-loop ✗ 注意力机制（用 attention） |
 | processing_path | `{中文大类}/{topic显示名}` | `AI技术/LLM基础`、`AI技术/Agent` |
@@ -103,7 +105,6 @@ L2 正文采用分区结构，上半为提炼，下半为原文：
 
 ### Ingest（L1 → L2 → L3）
 
-0. 拆分检查（详见 skill-ingest.md 步骤 0）
 1. 用户 @ 引用 inbox → 读取 → 扫描图片
 2. 判断归属主题目录（须用户确认）
 3. 生成 slug（英文优先，3-5 推荐）；文件名按命名规则处理

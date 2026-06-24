@@ -11,52 +11,40 @@
 2. 读取全文，提取标题、来源、核心内容
 3. 扫描原文中的图片引用
 
-### 步骤 0：拆分检查
+## L2 拆分判断
 
-检查 inbox 文件是否需要拆分：
+> 不拆 inbox 文件，在创建 L2 时按知识概念逻辑拆分。
 
-**触发条件**（满足任一即触发拆分）：
-- 原文超过 5000 字
-- 包含 3+ 个可独立成文的章节（有独立 `#`/`##` 标题且各节概念不重叠）
+**拆分条件**（满足任一即建议拆分为多个 L2）：
+- 包含 3+ 个独立知识概念（有独立标题且概念间可独立成文）
 - 跨 2+ 个 topic 域（如同时涉及 Agent + LLM基础）
+- 原文超过 10000 字且各节概念不重叠
 
 **不拆分**：内容紧密关联拆开后上下文断裂、用户要求合并。
 
-#### 拆分流程
+**拆分粒度**：
+- 每个 L2 对应一个独立知识主题
+- 多个 L2 共享同一 `source_url`，各自 `source` 指向同一 inbox 文件
+- slug 命名：`{原slug}-{概念slug}`（如 `hello-agents-ch1-agent-loop`）
 
-1. 读取原文件结构，识别章节边界（`#` / `##` 分隔）
-2. 为每个章节创建 `0003-inbox/{原文件名}-{章节slug}.md`
-3. 每个拆分文件：
-   - 保留原 frontmatter，加 `split_from: "{原文件名}"`
-   - `status: raw`
-   - 仅包含该章节内容
-4. 原文件保留在 inbox，标记 `status: split`
+**必须先输出 L2 拆分计划表，等用户确认后才能创建 L2 文件：**
 
-#### 后置调整
+| # | L2 slug | 来源章节 | 推荐 topic | 概念摘要 |
+|---|---------|---------|-----------|---------|
+| 1 | hello-agents-ch1-what-is-agent | §1.1 什么是智能体 | 3000-Agent | 智能体定义四要素 |
+| 2 | hello-agents-ch1-agent-mechanism | §1.2 构成与运行原理 | 3000-Agent | PEAS 模型、Agent Loop |
+| 3 | hello-agents-ch1-build-first-agent | §1.3 动手体验 | 3000-Agent | 实践案例 |
 
-拆分完成后，展示拆分清单供用户确认：
-
-| # | 新文件名 | 来源章节 | 推荐 topic | 字数 | 备注 |
-|---|---------|---------|-----------|------|------|
-| 1 | ch1-what-is-agent.md | ## 什么是智能体 | 3000-Agent | 1200 | |
-| 2 | ch1-agent-loop.md | ## Agent Loop | 3000-Agent | 1800 | |
-| 3 | ch1-llm-basics.md | ## LLM 基础 | 3003-LLM基础 | 2500 | 跨域 |
-
-用户可执行：
-- **改名**：调整拆分文件名
-- **合并**：把 2+ 个拆分文件合回一个
-- **再拆**：某个拆分文件仍太大，继续拆
+**用户确认操作：**
+- **确认全部**：按计划创建 L2
+- **改名**：调整 L2 slug
+- **合并**：把 2+ 个 L2 合为一个
+- **再拆**：某个 L2 仍太大，继续拆
 - **调整 topic**：改推荐归属
 - **删除**：某个章节不需要 ingest
-- **确认**：进入步骤 1 正常 ingest 流程
+- **不拆**：整个文件作为单个 L2
 
-拆分确认后，后续步骤对**每个拆分文件**分别执行。
-
-## 拆分判断（L2 层）
-
-拆分后的 inbox 文件在创建 L2 时，仍可能需要进一步拆分：
-满足以下条件拆分为多个 L2：有独立标题层级、每个概念可独立成文、概念间有明确边界。
-不拆分：内容紧密关联、信息量不足（<3 要点）、用户要求合并。
+**未获用户确认前，禁止创建任何 L2 文件。**
 
 ## 执行步骤
 
@@ -156,6 +144,17 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 一个 L2 可派生多个不同 topic 的 L3。
 0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）。
 
+**L3 文件名 slug 规则**：
+- 全小写英文 kebab-case（如 `agent-loop.md`，非 `AgentLoop.md`）
+- entity 文件名也全小写（如 `crewai.md`，非 `CrewAI.md`）
+- 专有名词保留原形仅小写（如 `llm-judge.md`，非 `LLMJudge.md`）
+
+**L3 目录规则**：
+- entity 子目录全小写（如 `0103-wiki-entities/product/`，非 `Product/`）
+- comparison 子目录全小写英文 slug（如 `0104-wiki-comparisons/automation-paradigm/`，非 `自动化范式/`）
+
+**Topic 页面完整性**：创建或更新 topic 页面时，必须列出所有本次创建的关联 L3（concept + entity + comparison），确保无遗漏。
+
 ### 7. L3 合并规则
 
 同 slug 匹配→合并：新信息补充、冲突标注、source 追加、更新 updated。
@@ -163,13 +162,17 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 ### 8. 死链治理
 > 模型：此步骤可用 Haiku。
 
-正式 [[wikilink]] 正常使用（Obsidian 灰色标记缺失）；未建概念同时写入 frontmatter `planned_links`
+**L2 正文**：正式 [[wikilink]] 正常使用；未建概念同时写入 frontmatter `planned_links`。
+
+**L3 正文**：扫描每个 L3 文件正文中的所有 [[wikilink]]，逐一确认：
+- 已存在的 L3 文件 → 正常使用
+- 不存在的 → 写入该文件的 `planned_links`（纯 slug 字符串，如 `planning`，非 `[[planning]]`）
 
 ### 9. 跨主题引用 + 更新配置
 
 - tags 重叠≥2 且无 wikilink→建议关联
 - 新建主题目录→追加到 `0100-wiki-meta/configs/topics.yaml`
-- 新标签（用户确认后）→追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
+- 新标签：列出所有新 tag 清单表（tag / 语言 / 是否有近似 tag），**用户逐个确认或批量确认后**再追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
 
 ### 10. 写入前强制校验（阻塞步骤）
 > 模型：此步骤可用 Haiku。
@@ -186,8 +189,10 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 | 6 | L3 `processing_path` 匹配 `^\S+/\S+$`（如 `AI技术/Agent`） | schema.yaml L3 |
 | 7 | L3 `tags` ≥5 个 | schema.yaml L3 |
 | 8 | L3 `summary` 200 字以上 | schema.yaml L3 |
-| 9 | 0101 topic 综述已创建或更新 | 规则 |
+| 9 | 0101 topic 综述已创建或更新，且列出了所有关联 L3 | 规则 |
 | 10 | config 文件已更新（如有新主题/新标签） | 规则 |
+| 11 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 8 |
+| 12 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
 
 ### 11. 操作日志 + 报告收尾
 
