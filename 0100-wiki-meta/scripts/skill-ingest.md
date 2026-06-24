@@ -113,6 +113,7 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - 全小写英文 kebab-case（如 `agent-loop.md`，非 `AgentLoop.md`）
 - entity 文件名也全小写（如 `crewai.md`，非 `CrewAI.md`）
 - 专有名词保留原形仅小写（如 `llm-judge.md`，非 `LLMJudge.md`）
+- 正文 wikilink 也用全小写 slug（`[[claude-code]]`），需显示原名时用别名（`[[claude-code|Claude Code]]`）
 
 **L3 目录规则**：
 - entity 子目录全小写（如 `0103-wiki-entities/product/`，非 `Product/`）
