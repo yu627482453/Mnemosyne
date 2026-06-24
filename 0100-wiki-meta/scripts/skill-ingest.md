@@ -124,20 +124,36 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 - `summary`：200 字以上
 - `resource_refs`：与正文 `![[...]]` 1:1
 
-### 6. 判断 L3 触发
+### 6. 判断 L3 触发（阻塞确认步骤）
 
-L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison，对每个给出推荐：
+L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
-| 类型 | 目录 | 触发条件 |
-|------|------|---------|
-| concept | `0102/{topic_slug}/{slug}.md` | 满足其一：独立机制 / 跨源引用≥2 / 工具价值 |
-| entity | `0103/{entity_type}/{slug}.md` | 独立产品/平台/组织/人物/论文 |
-| comparison | `0104/{comparison_axis}/{slug}.md` | 差异/取舍 |
+**必须先输出 L3 创建计划表，等用户确认后才能创建任何 L3 文件：**
+
+| # | 类型 | slug | processing_path | 目录 | 理由 |
+|---|------|------|-----------------|------|------|
+| 1 | concept | agent-loop | AI技术/Agent | `0102/agent/` | 独立机制 |
+| 2 | concept | transformer-architecture | AI技术/LLM基础 | `0102/llm-basics/` | 跨域独立概念 |
+| 3 | entity | DALL-E | AI技术/图像生成 | `0103/product/` | 独立产品 |
+
+| 类型 | 触发条件 |
+|------|---------|
+| concept | 满足其一：独立机制 / 跨源引用≥2 / 工具价值 |
+| entity | 独立产品/平台/组织/人物/论文 |
+| comparison | 差异/取舍 |
 
 不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
-**processing_path 及所属目录须推荐 topic 及理由，交由用户确认后落盘。**
-一个 L2 可派生多个不同 topic 的 L3。
 
+**用户确认操作：**
+- **确认全部**：按计划落盘
+- **调整目录**：修改某个 L3 的 processing_path 和目录
+- **删除**：某个 L3 不需要创建
+- **新增**：补充遗漏的 L3
+- **合并**：把 2+ 个 L3 合为一个
+
+**未获用户确认前，禁止创建任何 L3 文件。**
+
+一个 L2 可派生多个不同 topic 的 L3。
 0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）。
 
 ### 7. L3 合并规则
