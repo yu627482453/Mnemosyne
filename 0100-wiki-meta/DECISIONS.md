@@ -14,7 +14,7 @@
 - **D008**: L1标准化后移入.trash/，用户确认后执行。
 - **D009**: slug英文优先，3-5推荐选项。
 - **D010**: L3不允许人工编辑内容逻辑。
-- **D011**: tags词表收敛到tag-vocabulary.yaml。
+- **D011**: 新 tag 需在 tag-vocabulary.yaml 登记确认。
 - **D017**: 断裂wikilink正常使用（Obsidian灰色标记）+ frontmatter planned_links列表
 - **D018**: 文件名空格→-，主体.→_；title保留原始标题。
 

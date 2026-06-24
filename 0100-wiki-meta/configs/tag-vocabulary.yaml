@@ -5,11 +5,11 @@ vocabulary:
   - agent-loop
   - agent-architecture
   - agent-classification
-  - LLM-agent
-  - symbolic-AI
+  - llm-agent
+  - symbolic-ai
   - reinforcement-learning
   - prompt-engineering
-  - PEAS
+  - peas
   - multi-agent
   - workflow
   - autonomy

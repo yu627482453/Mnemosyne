@@ -6,8 +6,8 @@ id: "{{id}}"
 kind: standard
 tags: [{{tags}}]
 aliases: [{{aliases}}]
-created: "{{tp.file.creation_date("YYYY-MM-DD")}}"
-updated: "{{tp.file.creation_date("YYYY-MM-DD")}}"
+created: "{{date}}"
+updated: "{{date}}"
 source: "{{source}}"
 source_url: "{{source_url}}"
 resource_refs: [{{resource_refs}}]

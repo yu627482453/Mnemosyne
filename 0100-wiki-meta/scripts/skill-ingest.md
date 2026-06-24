@@ -23,7 +23,7 @@
 - 对照 `0100-wiki-meta/configs/topics.yaml`
 - 推荐时同时给中英文选项（如 `AI技术/Agent`）
 - **首次归档须用户确认**；边界主题/多主题交叉必须询问
-- 无匹配：按 topics.yaml 规则创建，格式 `{4位编号}-{中文主题名}`
+- 无匹配：按 topics.yaml 规则创建，格式 `{4位编号}-{显示名}`
 
 ### 2. 生成 slug 与文件名
 > 模型：此步骤可用 Haiku。
@@ -59,17 +59,18 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 
 ### 5. 创建 L2
 
-> 翻译：原文主体中译必须使用 Haiku 模型，分段 prompt "翻译为中文，保留技术术语和段落结构"。
+> 翻译：原文中译使用 Haiku 模型，分段 prompt "翻译为中文，保留技术术语和段落结构"。
 
-按 `t-knowledge.md` 模板写入，L2 是 source of truth：
+按 `t-knowledge.md` 模板写入，L2 是 source of truth，正文采用分区结构：
 
 | 区块 | 要求 |
 |------|------|
 | frontmatter | 字段齐全（尤其 `topic` 填目录名如 `3000-Agent`；`source` 填枚举值 url/manual/file/claude；`source_url` 填实际 URL；`status: draft`） |
-| 核心内容 | 1-2 段浓缩，帮助检索 |
-| 文章要点 | 3 条以上 |
-| **原文主体** | 高保真中文翻译，保留原文段落层次 |
+| 核心提炼 | 用自己的话概括本文核心观点 |
+| 关键概念 | 本文涉及的重要概念 wikilink 列表 |
+| 原文要点 | 章节大纲 + 关键论点，非全文搬运 |
 | 来源 | 作者、机构、原文链接、原始文件 |
+| 原文笔记 | `---` 分隔后的原文中文翻译，保留段落层次 |
 
 - `title` 保留原始标题；slug 仅用于文件名
 - `tags`：5-10 个，无空格，多词连字符，**inline 格式** `[tag1, tag2]`
@@ -78,15 +79,17 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 
 ### 6. 判断 L3 触发
 
-L3 由 L2 派生，目录按类型：
+L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison，对每个给出推荐：
 
 | 类型 | 目录 | 触发条件 |
 |------|------|---------|
-| concept | `0102/{大类}/{主题域}/{slug}.md` | 机制/方法/原则/模式 |
+| concept | `0102/{topic_slug}/{slug}.md` | 满足其一：独立机制 / 跨源引用≥2 / 工具价值 |
 | entity | `0103/{entity_type}/{slug}.md` | 独立产品/平台/组织/人物/论文 |
 | comparison | `0104/{comparison_axis}/{slug}.md` | 差异/取舍 |
 
-**entity/comparison 主动逐项检查**：不要因主轴是 concept 就跳过。
+不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
+**processing_path 及所属目录须推荐 topic 及理由，交由用户确认后落盘。**
+一个 L2 可派生多个不同 topic 的 L3。
 
 0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）。
 

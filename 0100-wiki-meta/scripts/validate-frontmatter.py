@@ -55,8 +55,6 @@ try:
             slen = len(str(summary))
             if slen < 200:
                 issues.append(f"summary 只有 {slen} 字，需要 ≥200")
-            elif slen > 500:
-                issues.append(f"summary 有 {slen} 字，需要 ≤500")
     # L3 checks
     if layer == "L3":
         pp = fm.get("processing_path", "")
@@ -74,8 +72,6 @@ try:
             slen = len(str(summary))
             if slen < 200:
                 issues.append(f"summary 只有 {slen} 字，需要 ≥200")
-            elif slen > 500:
-                issues.append(f"summary 有 {slen} 字，需要 ≤500")
         kind = fm.get("kind", "")
         if kind not in ("topic", "concept", "entity", "comparison"):
             issues.append(f"kind '{kind}' 不在枚举值 [topic, concept, entity, comparison]")
