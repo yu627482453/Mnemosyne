@@ -19,20 +19,20 @@
 > 模型：此步骤可用 Haiku。
 措辞修正、错别字、格式调整
 → 修改正文 → 更新 updated → LOG → git commit
-   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib,re; c=open(path,'r').read(); body=re.split(r'^---\s*$',c,maxsplit=2,flags=re.MULTILINE)[2] if c.startswith('---') else c; print(hashlib.sha256(body.encode()).hexdigest()[:8])"
 
 ### 中等变更
 > 模型：此步骤可用 Haiku。
 `tags` / `aliases` 增删改
 → 修改 Frontmatter → 更新 updated → LOG → git commit
-   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib,re; c=open(path,'r').read(); body=re.split(r'^---\s*$',c,maxsplit=2,flags=re.MULTILINE)[2] if c.startswith('---') else c; print(hashlib.sha256(body.encode()).hexdigest()[:8])"
 
 ### 重大变更
 `title` 重命名 / `summary` 重写 / 核心事实变更
 1. 先输出受影响范围和最小改动建议
 2. 修改正文/ Frontmatter
 3. 更新 updated
-   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib; print(hashlib.sha256(open(path,\"rb\").read()).hexdigest()[:8])"
+   - 若修改了正文，更新 `content_hash`: python3 -c "import hashlib,re; c=open(path,'r').read(); body=re.split(r'^---\s*$',c,maxsplit=2,flags=re.MULTILINE)[2] if c.startswith('---') else c; print(hashlib.sha256(body.encode()).hexdigest()[:8])"
 4. Grep wikilink 引用：`rg -l "\[\[{slug}\]\]" ./`
 5. 列出受影响文件，用户确认
 6. 更新受影响文件引用
@@ -51,5 +51,6 @@
 ## 提交
 用户确认后：
 ```
-git add {变更文件} → git commit -m "wiki: Update {文件名} — {变更摘要}" → git push
+git add {变更文件} → git commit -m "wiki: Update {文件名} — {变更摘要}"
 ```
+**`git push` 必须单独交用户确认，禁止自行推送。**

@@ -24,18 +24,20 @@
 | `0100-wiki-meta/configs/topics.yaml` | 主题映射 |
 | `0100-wiki-meta/configs/tag-vocabulary.yaml` | 受控标签词表 |
 | `0100-wiki-meta/configs/lint-rules.yaml` | 健康检查 |
+| `0100-wiki-meta/DECISIONS.md` | 设计决策记录 |
 | `0100-wiki-meta/scripts/skill-ingest.md` | 摄入流程 |
 | `0100-wiki-meta/scripts/skill-lint.md` | 检查流程 |
+| `0100-wiki-meta/scripts/validate-frontmatter.py` | Frontmatter 校验脚本 |
 
 ## Frontmatter（摘要）
 
 **L2** — id, title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, content_hash, status(draft/published), summary(200字以上)
 
-**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, summary(200字以上)
+**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, status, summary(200字以上)
 
-**L3 entity** — title, layer:L3, kind:entity, entity_type(Organization/Product/Project/Paper/Person), updated, source, tags, summary
+**L3 entity** — title, layer:L3, kind:entity, entity_type(Organization/Product/Project/Paper/Person), processing_path, updated, source, tags, status, summary
 
-**L3 comparison** — title, layer:L3, kind:comparison, processing_path, comparison_axis, lhs, rhs, updated, source, tags, summary
+**L3 comparison** — title, layer:L3, kind:comparison, processing_path, comparison_axis, lhs, rhs, updated, source, tags, status, summary
 
 **L1** — title, date, source, source_url, status(raw/processing/archived)
 
@@ -86,6 +88,17 @@ L2 按**来源**组织，L3 按**知识域**组织，两者是多对一映射：
 .trash/                   # 回收站
 ```
 
+## L2 正文结构
+
+L2 正文采用分区结构，上半为提炼，下半为原文：
+
+1. **核心提炼** — 用自己的话概括本文核心观点
+2. **关键概念** — 本文涉及的重要概念 wikilink 列表
+3. **原文要点** — 章节大纲 + 关键论点，非全文搬运
+4. **来源** — 作者、机构、原文链接、原始文件
+5. `---` 分隔线
+6. **原文笔记** — 原文中文翻译，保留段落层次
+
 ## 四操作规范
 
 ### Ingest（L1 → L2 → L3）
@@ -131,7 +144,7 @@ L3 不可人工编辑（D010）。
 1. frontmatter 字段齐全
 2. L2 包含核心提炼区 + 原文笔记区
 3. tags 5-10、无空格、连字符
-4. summary 200-500 字
+4. summary ≥ 200 字
 5. 图片已落地、resource_refs 1:1、无远程图片残留
 6. entity/comparison 已主动检查
 7. 文件名符合命名规则

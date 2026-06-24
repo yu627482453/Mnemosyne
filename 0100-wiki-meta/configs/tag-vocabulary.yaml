@@ -1,32 +1,7 @@
 # 受控标签词表 — 新增标签需在此登记
 
 vocabulary:
-  - agent
-  - agent-loop
-  - agent-architecture
-  - agent-classification
-  - llm-agent
-  - symbolic-ai
-  - reinforcement-learning
-  - prompt-engineering
-  - peas
-  - multi-agent
-  - workflow
-  - autonomy
-  - task-environment
-  - perception-action-cycle
-  - paradigm-shift
-  - context-engineering
-  - infrastructure
-  - sandbox
-  - managed-agents
-  - session-management
-  - brain-hands-decoupling
-  - meta-harness
-  - AI
-  - 机器学习
-  - attention
-  - comparison
+
 
 tag_rules:
   min_per_page: 5

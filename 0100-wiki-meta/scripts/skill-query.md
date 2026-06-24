@@ -26,9 +26,9 @@ rg -i "关键词" 0101-wiki-topics/
 
 ### 3. 第二轮：域内检索
 
-概念按主题域搜索：
+概念按 topic_slug 搜索：
 ```
-rg -i "关键词" 0102-wiki-concepts/{大类}/{主题域}/
+rg -i "关键词" 0102-wiki-concepts/
 ```
 
 实体按类型搜索（Organization/Product/Project/Paper/Person）：

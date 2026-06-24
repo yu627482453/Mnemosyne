@@ -9,13 +9,7 @@ domains:
   AI技术:
     range: [3000, 3999]
     default_tags: [AI, 机器学习]
-    active:
-      - { id: "3000", name: "Agent", slug: "agent" }
-      - { id: "3001", name: "RAG与检索", slug: "rag" }
-      - { id: "3002", name: "图像生成", slug: "image-generation" }
-      - { id: "3003", name: "LLM基础", slug: "llm-basics" }
-      - { id: "3004", name: "模型训练与评估", slug: "model-training" }
-      - { id: "3005", name: "AI工程工具", slug: "ai-engineering" }
+    active: []
 
   工作业务:
     range: [4000, 4999]

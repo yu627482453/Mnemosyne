@@ -46,10 +46,15 @@ slug 仅用于路径，不替代标题。
 
 ```bash
 # id: SHA256(topic+slug+created)[:8]
-python3 || python -c "import hashlib,json; s=json.dumps({topic:'{topic}',slug:'{slug}',created:'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
+python3 -c "import hashlib,json; s=json.dumps({'topic':'{topic}','slug':'{slug}','created':'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])" || python -c "import hashlib,json; s=json.dumps({'topic':'{topic}','slug':'{slug}','created':'{created}'},sort_keys=True); print(hashlib.sha256(s.encode()).hexdigest()[:8])"
 
 # content_hash: 仅对正文部分（frontmatter 之后的内容）SHA256[:8]
-python3 || python -c "
+python3 -c "
+import hashlib,re
+with open('{path}','r') as f: c=f.read()
+body=re.split(r'^---\s*$',c,maxsplit=2,flags=re.MULTILINE)[2] if c.startswith('---') else c
+print(hashlib.sha256(body.encode()).hexdigest()[:8])
+" || python -c "
 import hashlib,re
 with open('{path}','r') as f: c=f.read()
 body=re.split(r'^---\s*$',c,maxsplit=2,flags=re.MULTILINE)[2] if c.startswith('---') else c

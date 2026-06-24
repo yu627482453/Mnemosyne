@@ -65,8 +65,13 @@ rg "https?://[^)]*\.(png|jpg|jpeg|gif|svg|webp)" --glob "*.md" -l ./
 python 0100-wiki-meta/scripts/check-content-hash.py . 2>/dev/null || python3 0100-wiki-meta/scripts/check-content-hash.py . 2>/dev/null
 ```
 
-### 12. planned_links 缺失
-### 13. planned_links 释放
+### 12. L2 正文结构
+检查 L2 文件是否包含核心提炼区和原文笔记区（以 `---` 分隔）。缺失 → 报告。
+
+### 13. planned_links 缺失
+检查 L2 正文中的 `[[wikilink]]` 是否都已列入 `planned_links` 或已有对应文件。
+
+### 14. planned_links 释放
 如果 `planned_links` 中的页面已经创建，应将其从列表中移除并转为正式 wikilink。
 ```bash
 python 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null || python3 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null
