@@ -1,0 +1,29 @@
+# L3 概念目录子分类规范
+
+agent:
+  - core          # 核心机制
+  - frameworks    # 框架范式
+  - applications  # 应用场景
+  - techniques    # 技术细节
+
+rag:
+  - core          # 核心概念
+  - techniques    # 优化技术
+  - applications  # 应用场景
+
+llm-basics:
+  - architecture  # 模型架构
+  - training      # 训练技术
+  - inference     # 推理优化
+
+model-training:
+  - techniques    # 训练方法
+  - optimization  # 优化策略
+
+image-generation:
+  - models        # 生成模型
+  - techniques    # 技术细节
+
+ai-engineering:
+  - deployment    # 部署相关
+  - tools         # 工具链

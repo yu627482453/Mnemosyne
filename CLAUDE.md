@@ -45,23 +45,27 @@
 
 ## 命名规则
 
-- 文件名禁止空格 → 空格统一转 `-`
-- 文件名主体中的 `.` → 转 `_`（仅最后一个 `.` 是扩展名）
-- slug 仅用于路径定位，不替代标题；L2 title 保留原始标题
-- 图片资源：`0001-resource/{topic}/{slug}/{timeStamp}.{ext}`（`{topic}` 必须是完整目录名如 `3000-Agent`，非缩写）
+**文件名转换规则**：
+- 空格 → `-`
+- `.` → `_`（仅最后一个 `.` 是扩展名）
+- 特殊字符（`/ : * ? " < > | + #`）→ `_`
+- 文件名统一英文 kebab-case 全小写
+
+**图片资源路径**：`0001-resource/{topic}/{slug}-{timestamp}.{ext}`
+- 示例：`0001-resource/3000-Agent/agent-loop-20260625143022.png`
 
 ### 语言规范
 
 | 层级 | 规则 | 示例 |
 |------|------|------|
 | L2 topic 目录 | `{编号}-{显示名}`，技术术语可英文 | `3000-Agent`、`3001-RAG与检索` |
-| L3 concept 目录 | 英文 slug，全小写 | `agent/`、`llm-basics/`、`model-training/` |
-| L3 entity 目录 | 英文 slug，全小写（如 `product/`、`organization/`） | `0103/product/` |
-| L3 comparison 目录 | 英文 slug，全小写 | `automation-paradigm/` |
-| L3 concept/entity/comparison 文件名 | 英文 kebab-case，全小写，专有名词保留原形 | `agent-loop.md`、`clip.md`、`react.md` |
-| L3 topic 页面 | 显示名，中英文均可 | `Agent.md`、`RAG与检索.md` |
-| tags | 默认英文 slug；仅无通用英文对应的学科名用中文 | ✓ 机器学习、✓ agent-loop ✗ 注意力机制（用 attention） |
-| processing_path | `{中文大类}/{topic显示名}` | `AI技术/LLM基础`、`AI技术/Agent` |
+| L2/L3 文件名 | 英文 kebab-case 全小写 | `agent-loop.md`、`rag-basics.md` |
+| L3 concept 目录 | 英文 slug 全小写，支持子分类 | `agent/core/`、`agent/frameworks/` |
+| L3 entity 目录 | 英文 slug 全小写，按 entity_type | `product/`、`organization/` |
+| L3 comparison 目录 | 英文 slug 全小写 | `automation-paradigm/` |
+| title 字段 | 统一中文（frontmatter） | `title: "Agent 循环机制"` |
+| tags | 英文 slug，连字符连接 | `agent-loop`、`tool-calling` |
+| processing_path | `{中文大类}/{topic显示名}` | `AI技术/Agent` |
 | 正文 | 统一中文 | 技术术语首次出现可附英文原文 |
 
 ### L2 与 L3 的关系

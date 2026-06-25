@@ -1,6 +1,6 @@
 # skill-ingest：知识摄入（L1 → L2 → L3）
 
-> 执行要求：开始前先用 TaskCreate 创建包含全部步骤(1-11)的 tasklist，每完成一步标记 completed。
+> 执行要求：开始前先用 TaskCreate 创建包含全部步骤(1-10)的 tasklist，每完成一步标记 completed。
 
 
 > 触发：用户 `@` 引用 inbox 文件要求处理
@@ -13,31 +13,48 @@
 
 ## 执行步骤
 
-### 1. 判断归属主题目录
-
-- 对照 `0100-wiki-meta/configs/topics.yaml`
-- 推荐时同时给中英文选项（如 `AI技术/Agent`）
-- **首次归档须用户确认**；边界主题/多主题交叉必须询问
-- 无匹配：按 topics.yaml 规则创建，格式 `{4位编号}-{显示名}`
-
-### 2. 生成 slug 与文件名
+### 1. 主题目录与 slug 推荐（合并确认）
 > 模型：此步骤可用 Haiku。
 
-命名规则（D018）：空格→`-`，主体`.`→`_`，仅最后一个`.`是扩展名。
-英文优先，3-5 推荐选项，`rg --files` 查重，重名追加 `-2`/`-3`。
-slug 仅用于路径，不替代标题。
+**主题目录推荐**（5+ 候选）：
+- 对照 `0100-wiki-meta/configs/topics.yaml`
+- 给出 5+ 推荐选项，每个附理由（匹配度、已有相关笔记数）
+- 格式：`{编号}-{显示名}`（如 `3000-Agent`）
+- 边界主题/多主题交叉标注
+- 无匹配时建议新建主题目录
 
-### 3. 处理图片资源
+**slug 推荐**（5+ 候选）：
+- 文件名转换：空格→`-`，`.`→`_`，特殊字符→`_`
+- 全英文 kebab-case 全小写（title 字段用中文）
+- 5+ 推荐选项，每个附理由（简洁度、语义准确度）
+- `rg --files` 查重，重名追加 `-2`/`-3`
+
+**交互格式**：
+```
+📋 主题目录推荐：
+  1. 3000-Agent ⭐️ （匹配 95%，已有 12 篇）
+  2. 3200-LLM基础 （匹配 60%，涉及底层）
+  3. 新建：3050-Multi-Agent （建议）
+
+📋 文件名推荐：
+  1. agent-loop.md ⭐️ （简洁，核心术语）
+  2. agent-execution-cycle.md （完整描述）
+  3. autonomous-agent-loop.md （强调自主性）
+
+请选择或输入自定义：
+```
+
+### 2. 处理图片资源
 
 1. 扫描 L1 中的图片 URL
-2. 逐张下载到 `0001-resource/{topic}/{slug}/{timestamp}.{ext}`
-   - `{topic}` 必须是完整的主题目录名（如 `3000-Agent`），不是缩写或 slug
+2. 逐张下载到 `0001-resource/{topic}/{slug}-{timestamp}.{ext}`
+   - 示例：`0001-resource/3000-Agent/agent-loop-20260625143022.png`
 3. **下载失败→暂停通知用户**，等待手动处理后继续
 4. 正文远程引用改写为 `![[0001-resource/...]]`
 5. 写入 `resource_refs`，与正文 1:1 对齐
 6. 无图片则 `resource_refs: []`
 
-### 4. 生成 id 与 content_hash
+### 3. 生成 id 与 content_hash
 
 ```bash
 # id: SHA256(topic+slug+created)[:8]
@@ -57,7 +74,7 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 "
 ```
 
-### 5. 创建 L2
+### 4. 创建 L2
 
 > 翻译：原文中译使用 Haiku 模型，分段 prompt "翻译为中文，保留技术术语和段落结构"。
 
@@ -77,25 +94,28 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 - `summary`：200 字以上
 - `resource_refs`：与正文 `![[...]]` 1:1
 
-### 6. 判断 L3 触发（阻塞确认步骤）
+### 5. 判断 L3 触发（阻塞确认步骤）
 
 L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
+**评分模型（0-10分）**：
+- 有独立定义段落：+3
+- 有代码示例：+2
+- 有配图说明：+1
+- 在多处被引用：+2
+- 是领域核心术语：+2
+- **≥6分**：推荐创建；**3-5分**：由用户决定；**<3分**：不建议
+
 **必须先输出 L3 创建计划表，等用户确认后才能创建任何 L3 文件：**
 
-| # | 类型 | slug | processing_path | 目录 | 理由 |
-|---|------|------|-----------------|------|------|
-| 1 | concept | agent-loop | AI技术/Agent | `0102/agent/` | 独立机制 |
-| 2 | concept | transformer-architecture | AI技术/LLM基础 | `0102/llm-basics/` | 跨域独立概念 |
-| 3 | entity | DALL-E | AI技术/图像生成 | `0103/product/` | 独立产品 |
+| # | 类型 | slug | 评分 | processing_path | 目录 | 理由 |
+|---|------|------|------|-----------------|------|------|
+| 1 | concept | agent-loop | 8 | AI技术/Agent | `0102/agent/core/` | 独立定义+代码示例+核心术语 |
+| 2 | concept | transformer | 7 | AI技术/LLM基础 | `0102/llm-basics/` | 独立定义+配图+核心术语 |
+| 3 | entity | dall-e | 6 | AI技术/图像生成 | `0103/product/` | 独立产品+多处引用 |
+| 4 | - | history-concept | 2 | - | - | ❌ 不建议（教科书分类列举） |
 
-| 类型 | 触发条件 |
-|------|---------|
-| concept | 满足其一：独立机制 / 跨源引用≥2 / 工具价值 |
-| entity | 独立产品/平台/组织/人物/论文 |
-| comparison | 差异/取舍 |
-
-不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
+不建 L3：评分<3、教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
 
 **用户确认操作：**
 - **确认全部**：按计划落盘
@@ -116,16 +136,17 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - 正文 wikilink 也用全小写 slug（`[[claude-code]]`），需显示原名时用别名（`[[claude-code|Claude Code]]`）
 
 **L3 目录规则**：
-- entity 子目录全小写（如 `0103-wiki-entities/product/`，非 `Product/`）
-- comparison 子目录全小写英文 slug（如 `0104-wiki-comparisons/automation-paradigm/`，非 `自动化范式/`）
+- concept 支持子分类（如 `0102/agent/core/`、`0102/agent/frameworks/`）
+- entity 子目录全小写（如 `0103/product/`，非 `Product/`）
+- comparison 子目录全小写英文 slug（如 `0104/automation-paradigm/`，非 `自动化范式/`）
 
 **Topic 页面完整性**：创建或更新 topic 页面时，必须列出所有本次创建的关联 L3（concept + entity + comparison），确保无遗漏。
 
-### 7. L3 合并规则
+### 6. L3 合并规则
 
 同 slug 匹配→合并：新信息补充、冲突标注、source 追加、更新 updated。
 
-### 8. 死链治理
+### 7. 死链治理
 > 模型：此步骤可用 Haiku。
 
 **L2 正文**：正式 [[wikilink]] 正常使用；未建概念同时写入 frontmatter `planned_links`。
@@ -134,13 +155,13 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - 已存在的 L3 文件 → 正常使用
 - 不存在的 → 写入该文件的 `planned_links`（纯 slug 字符串，如 `planning`，非 `[[planning]]`）
 
-### 9. 跨主题引用 + 更新配置
+### 8. 跨主题引用 + 更新配置
 
 - tags 重叠≥2 且无 wikilink→建议关联
 - 新建主题目录→追加到 `0100-wiki-meta/configs/topics.yaml`
 - 新标签：列出所有新 tag 清单表（tag / 语言 / 是否有近似 tag），**用户逐个确认或批量确认后**再追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
 
-### 10. 写入前强制校验（阻塞步骤）
+### 9. 写入前强制校验（阻塞步骤）
 > 模型：此步骤可用 Haiku。
 
 **以下每一项必须通过，否则不得写入：**
@@ -159,9 +180,9 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 | 10 | L3 所有 `tags` 均在 `tag-vocabulary.yaml` 中已登记 | 规则 |
 | 11 | 0101 topic 综述已创建或更新，且列出了所有关联 L3 | 规则 |
 | 12 | config 文件已更新（如有新主题/新标签） | 规则 |
-| 13 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 8 |
+| 13 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 7 |
 | 14 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
 
-### 11. 操作日志 + 报告收尾
+### 10. 操作日志 + 报告收尾
 
 询问是否移入 `.trash/`（D008），确认后执行 git commit。
