@@ -34,11 +34,45 @@ def parse_frontmatter(path: Path) -> dict | None:
     except Exception:
         return None
 
+def sync_topics(cur):
+    """同步 topics.yaml 到数据库"""
+    topics_file = WIKI_ROOT / "0100-wiki-meta" / "configs" / "topics.yaml"
+    if not topics_file.exists():
+        return
+    with open(topics_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    cur.execute("DELETE FROM topics")
+    # 简单解析 domains 部分
+    in_domains = False
+    current_domain = None
+    for line in content.split('\n'):
+        line = line.rstrip()
+        if 'domains:' in line:
+            in_domains = True
+            continue
+        if in_domains and line and not line.startswith(' '):
+            break
+        if in_domains and line.strip().endswith(':') and not line.strip().startswith('-'):
+            current_domain = line.strip().rstrip(':')
+        elif current_domain and 'range:' in line:
+            # 提取 [start, end]
+            match = re.search(r'\[(\d+),\s*(\d+)\]', line)
+            if match:
+                range_start = int(match.group(1))
+                range_end = int(match.group(2))
+                cur.execute("""
+                    INSERT INTO topics (topic_dir, display_name, category, range_start, range_end)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (current_domain, current_domain, current_domain, range_start, range_end))
+                current_domain = None
+
 def index_notes():
     """索引所有笔记"""
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
+    sync_topics(cur)
     cur.execute("DELETE FROM note_tags")
     cur.execute("DELETE FROM notes")
 
