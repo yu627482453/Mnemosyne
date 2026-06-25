@@ -4,6 +4,12 @@
 > 模型约束：Lint 检查必须使用 Haiku 模型。
 > 执行要求：开始前先用 TaskCreate 创建包含各项检查的 tasklist，每完成一项标记。
 
+## 前置：同步索引
+
+```bash
+python "D:\obsidian\0100-wiki-meta\scripts\index-notes.py"
+```
+
 ## 自动修复
 
 ### 1. 断裂 wikilink

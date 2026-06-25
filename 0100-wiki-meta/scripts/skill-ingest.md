@@ -276,6 +276,10 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 | 13 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 7 |
 | 14 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
 
-### 10. 操作日志 + 报告收尾
+### 10. 更新索引 + 操作日志 + 报告收尾
+
+```bash
+python "D:\obsidian\0100-wiki-meta\scripts\index-notes.py"
+```
 
 询问是否移入 `.trash/`（D008），确认后执行 git commit。
