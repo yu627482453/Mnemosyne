@@ -11,7 +11,3 @@ __pycache__/
 
 # 图片资源不纳入版本控制
 0001-resource/
-
-# SQLite 索引数据库
-.wiki.db
-.wiki.db-journal
