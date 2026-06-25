@@ -1,7 +1,108 @@
 # 受控标签词表 — 新增标签需在此登记
 
 vocabulary:
-
+  - tag: ai-agent
+    language: en
+    category: Agent
+  - tag: agent-design
+    language: en
+    category: Agent
+  - tag: agentic-systems
+    language: en
+    category: Agent
+  - tag: workflows
+    language: en
+    category: Agent
+  - tag: prompt-engineering
+    language: en
+    category: LLM
+  - tag: tool-use
+    language: en
+    category: Agent
+  - tag: retrieval
+    language: en
+    category: RAG
+  - tag: multi-agent
+    language: en
+    category: Agent
+  - tag: prompt-chaining
+    language: en
+    category: Agent
+  - tag: workflow
+    language: en
+    category: Agent
+  - tag: task-decomposition
+    language: en
+    category: Agent
+  - tag: sequential-processing
+    language: en
+    category: Workflow
+  - tag: agent-patterns
+    language: en
+    category: Agent
+  - tag: routing
+    language: en
+    category: Workflow
+  - tag: classification
+    language: en
+    category: ML
+  - tag: workflow-branching
+    language: en
+    category: Workflow
+  - tag: specialized-handlers
+    language: en
+    category: Architecture
+  - tag: llm-enhancement
+    language: en
+    category: LLM
+  - tag: agent-basics
+    language: en
+    category: Agent
+  - tag: agent-loop
+    language: en
+    category: Agent
+  - tag: autonomous-agent
+    language: en
+    category: Agent
+  - tag: perception-action-cycle
+    language: en
+    category: Agent
+  - tag: self-direction
+    language: en
+    category: Agent
+  - tag: orchestrator-workers
+    language: en
+    category: Agent
+  - tag: parallel-execution
+    language: en
+    category: Performance
+  - tag: evaluator-optimizer
+    language: en
+    category: Agent
+  - tag: iterative-refinement
+    language: en
+    category: Quality
+  - tag: feedback-loop
+    language: en
+    category: Quality
+  - tag: quality-improvement
+    language: en
+    category: Quality
+  - tag: agentic-workflow
+    language: en
+    category: Agent
+  - tag: workflow-patterns
+    language: en
+    category: Workflow
+  - tag: llm-orchestration
+    language: en
+    category: LLM
+  - tag: agent-architecture
+    language: en
+    category: Agent
+  - tag: hybrid-systems
+    language: en
+    category: Architecture
 
 tag_rules:
   min_per_page: 5
