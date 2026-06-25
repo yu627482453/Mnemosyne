@@ -28,6 +28,7 @@
 | `0100-wiki-meta/scripts/skill-ingest.md` | 摄入流程 |
 | `0100-wiki-meta/scripts/skill-lint.md` | 检查流程 |
 | `0100-wiki-meta/scripts/validate-frontmatter.py` | Frontmatter 校验脚本 |
+| `0100-wiki-meta/scripts/check-config-sync.py` | 配置同步校验（ingest 结尾强制运行） |
 
 ## Frontmatter（摘要）
 
@@ -115,13 +116,24 @@ L2 正文采用分区结构，上半为提炼，下半为原文：
 4. 图片落地：下载 → `0001-resource/{topic（完整目录名）}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
 5. 创建 L2：标题保留原文；正文采用分区结构（上半：核心提炼 + 关键概念 + 原文要点 + 来源；下半：原文笔记）
 6. L3 触发：逐个检查可派生的 concept/entity/comparison，对每个给出推荐：
+   - **kind 判定规则**：
+     - comparison — 两个及以上独立范式的对比分析（含 comparison_axis/lhs/rhs）；命名含 "vs" 或内容为分类框架对比的 → comparison，不放 concept
+     - entity — 具体的人/组织/产品/项目/论文（可独立搜索的外部实体）
+     - concept — 机制/模式/方法论（不属上述两类的抽象概念）
    - 是否建 L3（满足其一：独立机制 / 跨源引用≥2 / 工具价值）
    - processing_path 及所属目录（推荐 topic 及理由）
    不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）
    交由用户确认后落盘。一个 L2 可派生多个不同 topic 的 L3。
 7. 写入前强制校验：topic/tags/summary/source/processing_path（schema.yaml 硬约束，不过不得落盘）
-8. 死链治理（断裂wikilink正常用+planned_links）+ 跨主题引用 + 更新 config
-9. LOG + .trash/ + git commit
+8. 配置同步与引用治理（逐项检查，不可跳过）：
+   - 8a. **topics.yaml** — L2 归入的 topic 是否在对应 domain 的 `active` 列表中？若不在则追加
+   - 8b. **tag-vocabulary.yaml** — 本次 ingest 引入的新标签是否全部登记？
+   - 8c. **0101-wiki-topics/** — 该 topic 是否首次有 L2 入驻？若是则创建域级主题综述页
+   - 8d. **.wiki.db** — 新建的 L2/L3 文件是否已同步到 SQLite 索引？
+   - 8e. **死链治理** — 断裂 wikilink 正常使用 + planned_links 记录；清理 L2 planned_links 中已创建的 L3
+   - 8f. **跨主题引用检查** — L3 的 `[[wikilink]]` 是否引用了其他 domain 的概念？若是确认引用合理性
+   - 8g. **运行 `check-config-sync.py`** — 脚本退出码非 0 则阻断 commit，所有输出项必须为 PASS 或经用户确认的 SKIP
+9. LOG（Step 8 逐项标记 PASS/SKIP/FAIL，FAIL 必须修复或用户确认跳过）+ .trash/ + git commit
 
 ### Query（L3 topic 优先 → L2 → L1）
 
@@ -144,7 +156,7 @@ L3 不可人工编辑（D010）。
 
 > 模型约束：Lint 和翻译操作使用 Haiku 模型。
 自动修复：断裂 wikilink
-报告：L2 缺核心提炼区或原文笔记区、孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、文件名格式、resource_refs 不一致、远程图片残留、L3 source 失效、L3 独立事实
+报告：L2 缺核心提炼区或原文笔记区、孤立页面、draft>30天、Frontmatter 不完整、summary 超范围、tags 格式、文件名格式、resource_refs 不一致、远程图片残留、L3 source 失效、L3 独立事实、topic 未注册到 active、active topic 缺综述页
 
 ## 落盘验收清单
 
@@ -156,6 +168,8 @@ L3 不可人工编辑（D010）。
 6. entity/comparison 已主动检查
 7. 文件名符合命名规则
 8. 死链已处理
+9. 配置同步 — `check-config-sync.py` 退出码 0
+10. LOG 文件 Step 8 逐项标记 PASS/SKIP/FAIL
 
 ## Git
 

@@ -42,3 +42,7 @@ manual_review:
     description: "页面使用了未登记的标签"
   - rule: base_column_invalid
     description: "Base panel 引用了当前 layer 不存在的字段"
+  - rule: topic_not_in_active
+    description: "L2 的 topic 未注册到 topics.yaml 对应 domain 的 active 列表"
+  - rule: topic_missing_summary_page
+    description: "active topic 缺少 0101-wiki-topics 域级综述页"
