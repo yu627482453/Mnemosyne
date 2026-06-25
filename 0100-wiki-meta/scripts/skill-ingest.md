@@ -203,10 +203,11 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
 | # | 类型 | slug | 评分 | 子分类推荐 | processing_path | 完整路径 | 理由 | 相似概念 |
 |---|------|------|------|-----------|-----------------|----------|------|---------|
-| 1 | concept | agent-loop | 8 | core/ ⭐️ | AI技术/Agent | `0102/agent/core/` | 独立定义+代码+术语 | 无 |
-| 2 | concept | transformer | 7 | architecture/ ⭐️ | AI技术/LLM基础 | `0102/llm-basics/architecture/` | 独立定义+配图+核心 | 无 |
-| 3 | entity | dall-e | 6 | - | AI技术/图像生成 | `0103/product/` | 独立产品+多处引用 | 无 |
-| 4 | - | loop-init | 2 | - | - | - | ❌ 过细节（属于 agent-loop 内部） | agent-loop (0.92) |
+| 1 | concept | agent-loop | 8 | core/ ⭐️ | AI技术/Agent | `0102-wikiconcepts/agent/core/` | 独立定义+代码+术语 | 无 |
+| 2 | concept | transformer | 7 | architecture/ ⭐️ | AI技术/LLM基础 | `0102-wikiconcepts/llm-basics/architecture/` | 独立定义+配图+核心 | 无 |
+| 3 | entity | dall-e | 6 | - | AI技术/图像生成 | `0103-wiki-entities/product/` | 独立产品+多处引用 | 无 |
+| 4 | comparisons | Agent vs Workflow | 6 | - | AI技术/Agent | `0104-wiki-comparisons/product/` | 独立产品+多处引用 | 无 |
+| 5 | - | loop-init | 2 | - | - | - | ❌ 过细节（属于 agent-loop 内部） | agent-loop (0.92) |x
 
 不建 L3：评分<3、教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
 
