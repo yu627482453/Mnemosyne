@@ -9,7 +9,8 @@ domains:
   AI技术:
     range: [3000, 3999]
     default_tags: [AI, 机器学习]
-    active: []
+    active:
+      - 3000-Agent
 
   工作业务:
     range: [4000, 4999]
