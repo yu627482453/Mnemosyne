@@ -98,6 +98,15 @@ print(hashlib.sha256(body.encode()).hexdigest()[:8])
 
 L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
+**前置检查**：
+1. **语义去重**：`rg --files 0102/` 检索已存在的 L3，用语义相似度判断是否重复
+   - 相似度 >0.85 → 提示"可能与 [[existing-concept]] 重复，建议合并"
+   - 相似度 0.7-0.85 → 提示"与 [[existing-concept]] 相关，确认是否独立"
+
+2. **子分类推荐**：参考 `l3-structure.yaml` 的 `examples` 和 `criteria`
+   - 给出 3 个候选子分类 + 匹配理由
+   - 示例：`core/`（匹配 criteria: "Agent 运行的基础组件"）
+
 **评分模型（0-10分）**：
 - 有独立定义段落：+3
 - 有代码示例：+2
@@ -105,15 +114,16 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - 在多处被引用：+2
 - 是领域核心术语：+2
 - **≥6分**：推荐创建；**3-5分**：由用户决定；**<3分**：不建议
+- **过细节扣分**：如果是已有概念的子步骤（如"初始化循环状态"属于"agent-loop"） → -3分
 
 **必须先输出 L3 创建计划表，等用户确认后才能创建任何 L3 文件：**
 
-| # | 类型 | slug | 评分 | processing_path | 目录 | 理由 |
-|---|------|------|------|-----------------|------|------|
-| 1 | concept | agent-loop | 8 | AI技术/Agent | `0102/agent/core/` | 独立定义+代码示例+核心术语 |
-| 2 | concept | transformer | 7 | AI技术/LLM基础 | `0102/llm-basics/` | 独立定义+配图+核心术语 |
-| 3 | entity | dall-e | 6 | AI技术/图像生成 | `0103/product/` | 独立产品+多处引用 |
-| 4 | - | history-concept | 2 | - | - | ❌ 不建议（教科书分类列举） |
+| # | 类型 | slug | 评分 | 子分类推荐 | processing_path | 完整路径 | 理由 | 相似概念 |
+|---|------|------|------|-----------|-----------------|----------|------|---------|
+| 1 | concept | agent-loop | 8 | core/ ⭐️ | AI技术/Agent | `0102/agent/core/` | 独立定义+代码+术语 | 无 |
+| 2 | concept | transformer | 7 | architecture/ ⭐️ | AI技术/LLM基础 | `0102/llm-basics/architecture/` | 独立定义+配图+核心 | 无 |
+| 3 | entity | dall-e | 6 | - | AI技术/图像生成 | `0103/product/` | 独立产品+多处引用 | 无 |
+| 4 | - | loop-init | 2 | - | - | - | ❌ 过细节（属于 agent-loop 内部） | agent-loop (0.92) |
 
 不建 L3：评分<3、教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
 
