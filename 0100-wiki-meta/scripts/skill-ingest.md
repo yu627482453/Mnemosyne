@@ -278,8 +278,19 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
 ### 10. 更新索引 + 操作日志 + 报告收尾
 
+**更新 SQLite 索引**：
 ```bash
 python "D:\obsidian\0100-wiki-meta\scripts\index-notes.py"
+```
+
+**验证索引完整性**：
+```bash
+# 确认笔记数量
+sqlite3 .wiki.db "SELECT COUNT(*), layer FROM notes GROUP BY layer;"
+# 确认 topics 已同步
+sqlite3 .wiki.db "SELECT COUNT(*) FROM topics;"
+# 确认标签关系
+sqlite3 .wiki.db "SELECT COUNT(*) FROM note_tags;"
 ```
 
 询问是否移入 `.trash/`（D008），确认后执行 git commit。

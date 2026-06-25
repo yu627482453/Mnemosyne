@@ -83,6 +83,29 @@ python 0100-wiki-meta/scripts/check-content-hash.py . 2>/dev/null || python3 010
 python 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null || python3 0100-wiki-meta/scripts/check-planned-links.py . 2>/dev/null
 ```
 
+### 15. SQLite 索引完整性
+检查文件数与数据库记录数是否一致。
+```bash
+FILE_COUNT=$(find . -name "*.md" -not -path "./.git/*" -not -path "./.trash/*" -not -path "./0000-meta/*" -not -path "./0100-wiki-meta/*" | wc -l)
+DB_COUNT=$(sqlite3 .wiki.db "SELECT COUNT(*) FROM notes;")
+[ "$FILE_COUNT" -ne "$DB_COUNT" ] && echo "WARNING: 文件数($FILE_COUNT) ≠ 数据库记录数($DB_COUNT)，需重新索引"
+```
+
+### 16. topics 表同步状态
+检查 topics 表是否为空。
+```bash
+TOPIC_COUNT=$(sqlite3 .wiki.db "SELECT COUNT(*) FROM topics;")
+[ "$TOPIC_COUNT" -eq 0 ] && echo "WARNING: topics 表为空，运行 index-notes.py 同步"
+```
+
+### 17. 孤立标签检查
+检查 note_tags 中是否有未在 tags 表登记的标签。
+```bash
+sqlite3 .wiki.db "SELECT DISTINCT tag FROM note_tags WHERE tag NOT IN (SELECT tag FROM tags);" | while read orphan; do
+  [ -n "$orphan" ] && echo "ORPHAN TAG: $orphan (需添加到 tag-vocabulary.yaml)"
+done
+```
+
 ## 提交
 ```
 git add {标记文件} → git commit -m "wiki: Lint — {修复数量}自动, {报告数量}待确认"
