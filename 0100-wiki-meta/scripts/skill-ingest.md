@@ -199,7 +199,7 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - **≥6分**：推荐创建；**3-5分**：由用户决定；**<3分**：不建议
 - **过细节扣分**：如果是已有概念的子步骤（如"初始化循环状态"属于"agent-loop"） → -3分
 
-**必须先输出 L3 创建计划表，等用户确认后才能创建任何 L3 文件：**
+**IMPORTANT: 必须使用 AskUserQuestion 工具展示 L3 创建计划表，等待用户明确确认（确认全部/调整目录/删除/新增/合并）后才能创建任何 L3 文件。禁止在用户确认前创建任何 L3 文件。**
 
 | # | 类型 | slug | 评分 | 子分类推荐 | processing_path | 完整路径 | 理由 | 相似概念 |
 |---|------|------|------|-----------|-----------------|----------|------|---------|
@@ -253,7 +253,7 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
 - tags 重叠≥2 且无 wikilink→建议关联
 - 新建主题目录→追加到 `0100-wiki-meta/configs/topics.yaml`
-- 新标签：列出所有新 tag 清单表（tag / 语言 / 是否有近似 tag），**用户逐个确认或批量确认后**再追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
+- 新标签：**IMPORTANT: 必须使用 AskUserQuestion 工具展示新标签清单表（tag / 语言 / 是否有近似 tag），等待用户逐个确认或批量确认后**才能追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
 
 ### 9. 写入前强制校验（阻塞步骤）
 > 模型：此步骤可用 Haiku。
