@@ -124,6 +124,7 @@ L2 正文采用分区结构，上半为提炼，下半为原文：
    - processing_path 及所属目录（推荐 topic 及理由）
    不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）
    交由用户确认后落盘。一个 L2 可派生多个不同 topic 的 L3。
+   - **图片复用**：创建 L3 时检查源 L2 的`resource_refs`，若存在与该概念直接相关的图片（如架构图、流程图），用 `![[filename]]` 嵌入到 L3 正文的"定义"段之后。不复制文件，仅引用已有资源。
 7. 写入前强制校验：topic/tags/summary/source/processing_path（schema.yaml 硬约束，不过不得落盘）
 8. 配置同步与引用治理（逐项检查，不可跳过）：
    - 8a. **topics.yaml** — L2 归入的 topic 是否在对应 domain 的 `active` 列表中？若不在则追加
