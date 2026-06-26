@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """索引所有笔记到 SQLite 数据库"""
+import warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+
 import sqlite3
 import json
 import re
@@ -57,7 +60,7 @@ def sync_topics(cur):
 
 def index_notes():
     """索引所有笔记到 SQLite"""
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, detect_types=0)
     cur = conn.cursor()
 
     # 先清空关联表再清空主表，避免外键约束冲突
