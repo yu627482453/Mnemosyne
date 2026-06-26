@@ -5,7 +5,7 @@
       "cron": "7 7 * * *",
       "prompt": "IMPORTANT: 必须先使用 AskUserQuestion 工具询问用户是否执行今日的 Lint 检查，等待用户明确回复后才能继续。任务内容：阅读 `0100-wiki-meta/scripts/run-lint.sh`，执行其中的 lint 检查，然后报告结果。如果发现需要修复的问题，先列出问题清单不要自动修改。",
       "createdAt": 1782090754775,
-      "lastFiredAt": 1782347339346,
+      "lastFiredAt": 1782431306487,
       "recurring": true,
       "createdBySessionId": "62157fc7-abbe-4dab-9b67-e61455314e98",
       "createdByPid": 18420,

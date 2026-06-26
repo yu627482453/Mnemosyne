@@ -11,6 +11,7 @@ domains:
     default_tags: [AI, 机器学习]
     active:
       - 3000-Agent
+      - 3001-RAG与检索
 
   工作业务:
     range: [4000, 4999]

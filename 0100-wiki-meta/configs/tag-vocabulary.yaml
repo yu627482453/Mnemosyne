@@ -263,6 +263,218 @@ vocabulary:
     category: RAG
     description: "从知识库中检索相关信息的技术"
 
+
+  - tag_en: rag
+    tag_zh: 检索增强生成
+    aliases: [RAG, 检索增强]
+    category: RAG
+    description: "通过外部知识库检索增强LLM响应的技术"
+
+  - tag_en: embedding
+    tag_zh: 向量嵌入
+    aliases: [向量化, embedding模型]
+    category: RAG
+    description: "将文本转换为高维向量的技术"
+
+  - tag_en: bm25
+    tag_zh: 最佳匹配算法
+    aliases: [BM25算法, 词汇匹配]
+    category: RAG
+    description: "基于TF-IDF的词汇匹配排名函数"
+
+  - tag_en: contextual-retrieval
+    tag_zh: 上下文检索
+    aliases: [情境化检索, Contextual-Retrieval]
+    category: RAG
+    description: "为chunks添加上下文后再检索的优化方法"
+
+  - tag_en: reranking
+    tag_zh: 重排序
+    aliases: [二次排序, rerank]
+    category: RAG
+    description: "对初始检索结果进行二次精排的技术"
+
+  - tag_en: semantic-search
+    tag_zh: 语义搜索
+    aliases: [语义检索, 语义匹配]
+    category: RAG
+    description: "基于语义相似度的检索方法"
+
+  - tag_en: vector-search
+    tag_zh: 向量检索
+    aliases: [向量搜索, 向量匹配]
+    category: RAG
+    description: "通过向量相似度检索的方法"
+
+  - tag_en: hybrid-search
+    tag_zh: 混合检索
+    aliases: [混合搜索, 语义+词汇]
+    category: RAG
+    description: "结合语义检索和词汇匹配的混合方法"
+
+  - tag_en: knowledge-base
+    tag_zh: 知识库
+    aliases: [知识库系统, KB]
+    category: RAG
+    description: "存储领域知识的数据库"
+
+  - tag_en: contextual-embeddings
+    tag_zh: 上下文嵌入
+    aliases: [情境化嵌入]
+    category: RAG
+    description: "为chunks添加上下文后再embedding"
+
+  - tag_en: contextual-bm25
+    tag_zh: 上下文BM25
+    aliases: [情境化BM25]
+    category: RAG
+    description: "为chunks添加上下文后再建立BM25索引"
+
+  - tag_en: chunk-contextualization
+    tag_zh: 分块上下文化
+    aliases: [chunk情境化]
+    category: RAG
+    description: "为文档块添加上下文说明的技术"
+
+  - tag_en: retrieval-accuracy
+    tag_zh: 检索准确率
+    aliases: [检索精度, 召回率]
+    category: RAG
+    description: "衡量检索系统准确性的指标"
+
+  - tag_en: retrieval-optimization
+    tag_zh: 检索优化
+    aliases: [检索增强, 检索改进]
+    category: RAG
+    description: "提升检索质量的优化技术"
+
+  - tag_en: anthropic-technique
+    tag_zh: Anthropic技术
+    aliases: [Anthropic方法]
+    category: RAG
+    description: "Anthropic公司提出的技术方法"
+
+
+  - tag_en: lexical-matching
+    tag_zh: 词汇匹配
+    aliases: [词法匹配, 精确匹配]
+    category: RAG
+    description: "基于词汇精确匹配的检索方法"
+
+  - tag_en: tf-idf
+    tag_zh: 词频逆文档频率
+    aliases: [TF-IDF, 词频统计]
+    category: RAG
+    description: "衡量词在文档集合中重要性的统计方法"
+
+  - tag_en: ranking-function
+    tag_zh: 排名函数
+    aliases: [排序函数, 评分函数]
+    category: RAG
+    description: "计算文档相关性得分的函数"
+
+  - tag_en: exact-match
+    tag_zh: 精确匹配
+    aliases: [完全匹配, 字符串匹配]
+    category: RAG
+    description: "查找完全相同字符串的匹配方法"
+
+  - tag_en: information-retrieval
+    tag_zh: 信息检索
+    aliases: [IR, 文档检索]
+    category: RAG
+    description: "从大规模数据中检索相关信息的技术"
+
+  - tag_en: keyword-search
+    tag_zh: 关键词搜索
+    aliases: [关键字检索, 词汇搜索]
+    category: RAG
+    description: "基于关键词的传统搜索方法"
+
+  - tag_en: ranking-model
+    tag_zh: 排序模型
+    aliases: [排名模型, 评分模型]
+    category: RAG
+    description: "用于计算相关性排序的机器学习模型"
+
+  - tag_en: search-quality
+    tag_zh: 搜索质量
+    aliases: [检索质量, 查询质量]
+    category: RAG
+    description: "衡量搜索系统效果的综合指标"
+
+  - tag_en: precision-recall
+    tag_zh: 精确率召回率
+    aliases: [precision-recall, PR曲线]
+    category: RAG
+    description: "信息检索的核心评估指标"
+
+  - tag_en: cross-encoder
+    tag_zh: 交叉编码器
+    aliases: [cross-encoder模型]
+    category: RAG
+    description: "联合编码查询和文档的重排序模型"
+
+  - tag_en: dense-retrieval
+    tag_zh: 密集检索
+    aliases: [稠密检索, 向量检索]
+    category: RAG
+    description: "基于密集向量表示的检索方法"
+
+  - tag_en: cosine-similarity
+    tag_zh: 余弦相似度
+    aliases: [余弦距离, cosine距离]
+    category: RAG
+    description: "衡量向量夹角相似度的度量方法"
+
+  - tag_en: embedding-model
+    tag_zh: 嵌入模型
+    aliases: [向量化模型, embedding模型]
+    category: RAG
+    description: "将文本转换为向量的神经网络模型"
+
+  - tag_en: vector-representation
+    tag_zh: 向量表示
+    aliases: [向量化表示, 向量编码]
+    category: RAG
+    description: "将离散符号映射到连续向量空间"
+
+  - tag_en: prompt-augmentation
+    tag_zh: 提示词增强
+    aliases: [prompt增强, 提示扩充]
+    category: RAG
+    description: "通过检索内容增强LLM提示词"
+
+  - tag_en: context-injection
+    tag_zh: 上下文注入
+    aliases: [上下文增强, 背景注入]
+    category: RAG
+    description: "将检索内容注入到LLM提示词中"
+
+  - tag_en: rag-optimization
+    tag_zh: RAG优化
+    aliases: [RAG增强, RAG改进]
+    category: RAG
+    description: "提升RAG系统性能的优化方法"
+
+  - tag_en: llm-application
+    tag_zh: LLM应用
+    aliases: [大模型应用, LLM应用场景]
+    category: LLM
+    description: "基于大语言模型的应用系统"
+
+  - tag_en: prompt-caching
+    tag_zh: 提示词缓存
+    aliases: [prompt缓存, 缓存优化]
+    category: LLM
+    description: "复用常用提示词以降低成本和延迟"
+
+  - tag_en: claude-feature
+    tag_zh: Claude特性
+    aliases: [Claude功能]
+    category: Product
+    description: "Claude模型的特有功能"
+
   # ── ML ─────────────────────────────────────────────
   - tag_en: classification
     tag_zh: 分类
@@ -349,6 +561,109 @@ vocabulary:
     aliases: [并发, 并发处理]
     category: Performance
     description: "多个任务交替执行以提升资源利用率"
+
+
+  - tag_en: cost-optimization
+    tag_zh: 成本优化
+    aliases: [费用优化, 成本降低]
+    category: Performance
+    description: "降低系统运行成本的优化策略"
+
+  - tag_en: latency-reduction
+    tag_zh: 延迟降低
+    aliases: [延迟优化, 响应加速]
+    category: Performance
+    description: "减少系统响应时间的优化技术"
+
+  - tag_en: cache-reuse
+    tag_zh: 缓存复用
+    aliases: [缓存重用, cache重用]
+    category: Performance
+    description: "复用已缓存内容以提升性能"
+
+  - tag_en: token-savings
+    tag_zh: Token节省
+    aliases: [token优化, token成本降低]
+    category: Performance
+    description: "减少LLM token消耗的优化方法"
+
+  - tag_en: inference-acceleration
+    tag_zh: 推理加速
+    aliases: [推理优化, 推理提速]
+    category: Performance
+    description: "提升LLM推理速度的技术"
+
+  - tag_en: api-optimization
+    tag_zh: API优化
+    aliases: [接口优化, API性能优化]
+    category: Architecture
+    description: "提升API调用效率的优化技术"
+
+  - tag_en: api-service
+    tag_zh: API服务
+    aliases: [接口服务, Web服务]
+    category: Product
+    description: "通过API提供的在线服务"
+
+  - tag_en: embedding-provider
+    tag_zh: 嵌入服务商
+    aliases: [embedding提供商, 向量化服务]
+    category: Organization
+    description: "提供embedding API的服务商"
+
+  - tag_en: reranking-provider
+    tag_zh: 重排序服务商
+    aliases: [rerank提供商, 重排服务]
+    category: Organization
+    description: "提供reranking API的服务商"
+
+  - tag_en: nlp-platform
+    tag_zh: NLP平台
+    aliases: [自然语言处理平台]
+    category: Product
+    description: "提供NLP能力的综合平台"
+
+  - tag_en: enterprise-ai
+    tag_zh: 企业AI
+    aliases: [企业级AI, 企业人工智能]
+    category: Product
+    description: "面向企业的AI解决方案"
+
+  - tag_en: voyage-ai
+    tag_zh: Voyage AI
+    aliases: [Voyage公司]
+    category: Organization
+    description: "专注于检索优化的AI服务商"
+
+  - tag_en: voyage-embeddings
+    tag_zh: Voyage嵌入
+    aliases: [Voyage向量化]
+    category: Product
+    description: "Voyage AI的embedding产品"
+
+  - tag_en: voyage-embedding
+    tag_zh: Voyage嵌入(单)
+    aliases: [Voyage向量]
+    category: Product
+    description: "Voyage embedding模型"
+
+  - tag_en: cohere
+    tag_zh: Cohere
+    aliases: [Cohere公司]
+    category: Organization
+    description: "企业级NLP API服务商"
+
+  - tag_en: cohere-rerank
+    tag_zh: Cohere重排序
+    aliases: [Cohere rerank]
+    category: Product
+    description: "Cohere的reranking产品"
+
+  - tag_en: gemini-embedding
+    tag_zh: Gemini嵌入
+    aliases: [Gemini向量化]
+    category: Product
+    description: "Google Gemini的embedding模型"
 
   # ── Quality ────────────────────────────────────────
   - tag_en: iterative-refinement
