@@ -189,6 +189,25 @@ def index_notes():
                 VALUES (?, ?, ?, 'wikilink')
             """, (rel_path, slug, target_path))
 
+        # L3 反向索引：填充 file_produces 表
+        if layer == 'L3':
+            sources = meta.get('source') or []
+            if isinstance(sources, str):
+                sources = [sources]
+            for src_path in sources:
+                # 查找对应 L2 的 ingested_files 记录
+                cur.execute(
+                    "SELECT id FROM ingested_files WHERE source_path LIKE ?",
+                    (f"%{src_path}%",)
+                )
+                row = cur.fetchone()
+                if row:
+                    cur.execute("""
+                        INSERT OR IGNORE INTO file_produces
+                        (source_file_id, produced_page_path, page_layer)
+                        VALUES (?, ?, 'L3')
+                    """, (row[0], rel_path))
+
         # 统计新增或更新
         if rel_path in indexed:
             updated_count += 1

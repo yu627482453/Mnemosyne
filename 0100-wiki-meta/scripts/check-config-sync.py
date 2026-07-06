@@ -13,7 +13,7 @@ def load_all_frontmatter():
     """收集所有 L2/L3 文件的 frontmatter"""
     notes = []
     for md in ROOT.rglob("*.md"):
-        rel = str(md.relative_to(ROOT))
+        rel = str(md.relative_to(ROOT)).replace('\\', '/')
         if any(p in rel for p in ['.trash', '.git', '0000-meta', '0100-wiki-meta', '0003-inbox', '0109-log']):
             continue
         try:
@@ -101,10 +101,19 @@ if db_path.exists():
         cur.execute("SELECT path FROM notes")
         indexed_paths = {row[0] for row in cur.fetchall()}
         conn.close()
+
+        # 正向检查：文件是否在 DB 中
         for n in notes:
             p = n.get('_path', '')
             if p and p not in indexed_paths:
                 err("not_indexed", f"{p} 未同步到 .wiki.db")
+
+        # 反向检查：DB 中是否有已删除文件的过期条目
+        file_paths = {n.get('_path') for n in notes}
+        for indexed_path in indexed_paths:
+            if indexed_path not in file_paths:
+                err("stale_index",
+                    f"DB 中存在过期条目：{indexed_path}（文件已删除，请重新运行 index-notes.py）")
     except Exception as e:
         err("wiki_db", f"无法读取 .wiki.db: {e}")
 else:

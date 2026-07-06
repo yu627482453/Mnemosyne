@@ -17,12 +17,21 @@ cat 0100-wiki-meta/hot.md
 
 如果热缓存中有相关线索，直接跳转到提到的页面，节省 60%+ token。
 
-### 步骤 2：Topic 优先检索
+### 步骤 2：SQLite FTS5 检索（优先）
 
-如果热缓存无相关信息：
-1. 从用户查询中提取主题关键词
-2. 匹配到具体 topic 目录（如 3000-Agent/）
-3. 在该 topic 下检索
+优先使用 SQLite 全文检索（FTS5），已实现分层逻辑（L3 topic → L3 concept/entity/comparison → L2 → L1）：
+
+```bash
+python "D:\obsidian\0100-wiki-meta\scripts\query.py" "<关键词>" 8
+```
+
+返回结果直接包含 layer/title/summary/path，跳过文件系统扫描。
+
+**如果结果为空或不足**，降级到步骤 2b。
+
+### 步骤 2b：rg 兜底检索（FTS5 无匹配时）
+
+当 FTS5 检索无结果或结果不满意时，使用 rg 扫描：
 
 ```bash
 rg "关键词" 0101-wiki-topics/

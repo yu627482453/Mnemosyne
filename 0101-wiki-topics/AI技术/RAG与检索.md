@@ -2,6 +2,7 @@
 title: "RAG与检索"
 layer: L3
 kind: topic
+topic: "3001-RAG与检索"
 processing_path: "AI技术/RAG与检索"
 updated: "2026-06-26"
 tags: [rag, retrieval, embedding, semantic-search, knowledge-base, llm-application]
