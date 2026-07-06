@@ -9,8 +9,12 @@ def init_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
-    # 启用外键约束
-    cur.execute("PRAGMA foreign_keys = ON")
+    # 性能优化 PRAGMA
+    cur.execute("PRAGMA journal_mode=WAL")
+    cur.execute("PRAGMA synchronous=NORMAL")
+    cur.execute("PRAGMA cache_size=-32000")
+    cur.execute("PRAGMA temp_store=MEMORY")
+    cur.execute("PRAGMA foreign_keys=ON")
 
     # 表 1: notes（核心笔记表）
     cur.execute("""
@@ -113,6 +117,58 @@ def init_db():
             WHERE rowid = new.rowid;
         END
     """)
+
+    # 检查版本并执行迁移
+    cur.execute("PRAGMA user_version")
+    version = cur.fetchone()[0]
+
+    if version < 1:
+        # Delta 跟踪：记录已摄入的源文件
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS ingested_files (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_path TEXT NOT NULL UNIQUE,
+                content_hash TEXT NOT NULL,
+                ingested_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                file_size INTEGER,
+                status TEXT CHECK(status IN ('active','archived')) DEFAULT 'active'
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ingested_hash ON ingested_files(content_hash)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_ingested_status ON ingested_files(status)")
+
+        # 文件产出的页面关联
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS file_produces (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_file_id INTEGER NOT NULL,
+                produced_page_path TEXT NOT NULL,
+                page_layer TEXT NOT NULL CHECK(page_layer IN ('L2','L3')),
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (source_file_id) REFERENCES ingested_files(id) ON DELETE CASCADE,
+                UNIQUE(source_file_id, produced_page_path)
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_fp_source ON file_produces(source_file_id)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_fp_page ON file_produces(produced_page_path)")
+
+        # Wikilinks 关系表：记录 [[wikilink]] 引用关系
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS wikilinks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_path TEXT NOT NULL,
+                target_slug TEXT NOT NULL,
+                target_path TEXT,
+                link_type TEXT CHECK(link_type IN ('wikilink','planned')) DEFAULT 'wikilink',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(source_path, target_slug, link_type)
+            )
+        """)
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_wl_source ON wikilinks(source_path)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_wl_target ON wikilinks(target_slug)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_wl_dead ON wikilinks(target_path) WHERE target_path IS NULL")
+
+        cur.execute("PRAGMA user_version = 1")
 
     conn.commit()
     conn.close()

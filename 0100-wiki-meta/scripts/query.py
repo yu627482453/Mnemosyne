@@ -8,6 +8,8 @@ DB_PATH = Path(__file__).parent.parent.parent / ".wiki.db"
 
 def query(keyword: str, limit: int = 8):
     conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     cur = conn.cursor()
 
     # 1. L3 topic 优先

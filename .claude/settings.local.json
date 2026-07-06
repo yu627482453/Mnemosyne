@@ -6,7 +6,11 @@
       "Bash(python3 *)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:anthropic.com)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(sqlite3 .wiki.db \".tables\")",
+      "Bash(sqlite3 .wiki.db \".schema wikilinks\")",
+      "Bash(sqlite3 .wiki.db \"SELECT name FROM sqlite_master WHERE type='table' AND name='wikilinks'\")",
+      "Bash(sqlite3 .wiki.db \"SELECT COUNT\\(*\\) FROM wikilinks\")"
     ]
   },
   "hooks": {

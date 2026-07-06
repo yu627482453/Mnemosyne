@@ -27,6 +27,8 @@ def sync_tag_vocabulary():
     valid_tags = {entry.get('tag_en') for entry in vocab if entry.get('tag_en')}
 
     conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     cur = conn.cursor()
 
     # 1. 清理 note_tags 中不在词表的标签

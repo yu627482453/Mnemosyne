@@ -10,6 +10,8 @@ DB_PATH = Path(__file__).parent.parent.parent / ".wiki.db"
 def check_file(source_path):
     """检查文件是否已摄入"""
     conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     cursor = conn.cursor()
 
     cursor.execute(
@@ -31,6 +33,8 @@ def check_file(source_path):
 def record_ingestion(source_path, content_hash, l2_pages=None, l3_pages=None):
     """记录文件摄入结果"""
     conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     cursor = conn.cursor()
 
     try:

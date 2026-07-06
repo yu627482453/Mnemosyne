@@ -176,8 +176,10 @@ python "D:\obsidian\0100-wiki-meta\scripts\delta-track.py" check "$SOURCE_FILE"
 
 **如果用户选择下载图片**：
 1. 扫描 L1 中的图片 URL
-2. 逐张下载到 `0001-resource/{topic}/{slug}-{N}.{ext}`
-   - 示例：`0001-resource/3000-Agent/agent-loop-01.png`（序号从 01 开始，补齐两位）
+2. 逐张下载到 `0001-resource/{topic}/{slug}-{timestamp}.{ext}`
+   - **命名格式**：`{slug}-{timestamp}.{ext}`，其中 timestamp 格式为 `YYYYMMDDHHmmss`
+   - 示例：`0001-resource/3000-Agent/agent-loop-20260706132245.png`
+   - **废弃格式**：不再使用序号格式（如 `agent-loop-01.png`）
    - **超时控制**：单张图片下载超时 30 秒
    - **失败处理**：下载失败 → 记录到 frontmatter `failed_images: [url1, url2]`，继续执行（用户可事后手动下载）
    - **建议**：可并行下载多张图片以提升效率

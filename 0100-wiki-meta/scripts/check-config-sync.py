@@ -95,6 +95,8 @@ db_path = ROOT / ".wiki.db"
 if db_path.exists():
     try:
         conn = sqlite3.connect(db_path)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA foreign_keys=ON")
         cur = conn.cursor()
         cur.execute("SELECT path FROM notes")
         indexed_paths = {row[0] for row in cur.fetchall()}

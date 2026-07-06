@@ -11,6 +11,8 @@ def similarity(a, b):
 
 def check_similar_titles(new_title, threshold=0.8):
     conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     cursor = conn.cursor()
     cursor.execute("SELECT path, title FROM notes WHERE layer='L3' AND kind='concept'")
 

@@ -30,6 +30,32 @@ def parse_frontmatter(path: Path) -> dict | None:
         return None
 
 
+def extract_wikilinks(md_file: Path) -> list[tuple[str, str | None]]:
+    """提取 [[wikilink]]，返回 [(slug, resolved_path), ...]"""
+    try:
+        with open(md_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        # 提取所有 [[wikilink]]（不含 | 和 # 后的部分）
+        links = re.findall(r'\[\[([^\]|#]+)', content)
+        results = []
+
+        for slug in links:
+            slug = slug.strip()
+            # 尝试解析为实际路径
+            target_path = None
+            for candidate in WIKI_ROOT.rglob(f"{slug}.md"):
+                rel = str(candidate.relative_to(WIKI_ROOT)).replace('\\', '/')
+                if '.trash' not in rel and '.git' not in rel:
+                    target_path = rel
+                    break
+            results.append((slug, target_path))
+
+        return results
+    except Exception:
+        return []
+
+
 def sync_topics(cur):
     """同步 topics.yaml 到数据库（active topic 单独落行，display_name 使用 topic 编号+名）"""
     topics_file = WIKI_ROOT / "0100-wiki-meta" / "configs" / "topics.yaml"
@@ -59,18 +85,19 @@ def sync_topics(cur):
 
 
 def index_notes():
-    """索引所有笔记到 SQLite"""
+    """增量索引所有笔记到 SQLite"""
     conn = sqlite3.connect(DB_PATH, detect_types=0)
     cur = conn.cursor()
 
-    # 先清空关联表再清空主表，避免外键约束冲突
-    cur.execute("DELETE FROM note_tags")
-    cur.execute("DELETE FROM tags")
-    cur.execute("DELETE FROM notes")
+    # 获取当前索引状态（path → updated）
+    cur.execute("SELECT path, updated FROM notes")
+    indexed = {row[0]: str(row[1]) for row in cur.fetchall()}
 
     sync_topics(cur)
 
-    indexed = 0
+    added = updated_count = deleted = 0
+    current_paths = set()
+
     for md_file in WIKI_ROOT.rglob("*.md"):
         if any(p in md_file.parts for p in ['.trash', '.git', '0000-meta', '0001-resource', '0003-inbox', '0100-wiki-meta', '0109-log']):
             continue
@@ -84,6 +111,12 @@ def index_notes():
             continue
 
         rel_path = str(md_file.relative_to(WIKI_ROOT)).replace('\\', '/')
+        current_paths.add(rel_path)
+        file_updated = str(meta.get('updated', ''))
+
+        # 跳过未变更的文件
+        if rel_path in indexed and indexed[rel_path] == file_updated:
+            continue
 
         layer_data = {}
         if layer == 'L2':
@@ -112,6 +145,14 @@ def index_notes():
                 layer_data['rhs'] = meta.get('rhs')
 
         updated = meta.get('updated') or datetime.now().strftime('%Y-%m-%d')
+
+        # 将 updated 字段转为时间戳（笔记实际更新时间，非索引执行时间）
+        updated_str = str(updated) if updated else ''
+        try:
+            updated_ts = int(datetime.strptime(updated_str, '%Y-%m-%d').timestamp())
+        except (ValueError, TypeError):
+            updated_ts = 0
+
         cur.execute("""
             INSERT OR REPLACE INTO notes
             (path, title, layer, kind, status, summary, created, updated, updated_ts, layer_data)
@@ -124,8 +165,8 @@ def index_notes():
             meta.get('status'),
             meta.get('summary'),
             meta.get('created'),
-            str(updated) if updated else None,
-            int(datetime.now().timestamp()),
+            updated_str if updated_str else None,
+            updated_ts,
             json.dumps(layer_data, ensure_ascii=False)
         ))
 
@@ -140,11 +181,29 @@ def index_notes():
                     INSERT OR IGNORE INTO note_tags (note_path, tag) VALUES (?, ?)
                 """, (rel_path, tag))
 
-        indexed += 1
+        # 提取 wikilinks 并填充 wikilinks 表
+        wikilinks = extract_wikilinks(md_file)
+        for slug, target_path in wikilinks:
+            cur.execute("""
+                INSERT OR IGNORE INTO wikilinks (source_path, target_slug, target_path, link_type)
+                VALUES (?, ?, ?, 'wikilink')
+            """, (rel_path, slug, target_path))
+
+        # 统计新增或更新
+        if rel_path in indexed:
+            updated_count += 1
+        else:
+            added += 1
+
+    # 清理已删除文件的过期索引
+    stale = set(indexed.keys()) - current_paths
+    for path in stale:
+        cur.execute("DELETE FROM notes WHERE path = ?", (path,))
+        deleted += 1
 
     conn.commit()
     conn.close()
-    print(f"Indexed {indexed} notes")
+    print(f"索引完成：新增 {added}，更新 {updated_count}，删除 {deleted}")
 
 
 if __name__ == "__main__":
