@@ -91,6 +91,26 @@
 **如果用户选择禁用**：记录到执行日志，继续后续步骤
 **如果用户选择保持启用**：正常执行，遇到阻塞时逐个满足要求
 
+### 步骤 0.3：Delta 跟踪检查
+
+**检查文件是否已摄入**：
+```bash
+python "D:\obsidian\0100-wiki-meta\scripts\delta-track.py" check "$SOURCE_FILE"
+```
+
+**如果文件已摄入**：
+```
+⚠️  检测到文件已摄入：inbox/agent-basics.md
+  上次摄入: 2026-07-05 10:30:00
+  内容哈希: abc123def
+  产出页面: 3 个 (2 L2 + 1 L3)
+
+是否重新处理？
+1. 跳过（使用已有内容）⭐️
+2. 增量更新（检测内容变化）
+3. 完全重新摄入
+```
+
 ### 步骤 0.5：用户决策图片和翻译
 
 **IMPORTANT**: 询问用户处理偏好。
@@ -307,7 +327,7 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 | 13 | 所有 L3 正文 wikilink 已扫描，死链已写入 planned_links | 步骤 7 |
 | 14 | L3 文件名和子目录均为全小写英文 slug | 命名规则 |
 
-### 10. 更新索引 + 操作日志 + 报告收尾
+### 10. 更新索引 + 操作日志 + 热缓存 + 报告收尾
 
 **更新 SQLite 索引**：
 ```bash
@@ -322,6 +342,19 @@ sqlite3 .wiki.db "SELECT COUNT(*), layer FROM notes GROUP BY layer;"
 sqlite3 .wiki.db "SELECT COUNT(*) FROM topics;"
 # 确认标签关系
 sqlite3 .wiki.db "SELECT COUNT(*) FROM note_tags;"
+```
+
+**更新热缓存（hot.md）**：
+```bash
+# 添加本次创建的 L2/L3 到热缓存
+# 示例：python update-hot.py add-l2 "3000-Agent/agent-basics.md"
+for l2_path in ${新建的L2路径列表[@]}; do
+  python "D:\obsidian\0100-wiki-meta\scripts\update-hot.py" add-l2 "$l2_path"
+done
+
+for l3_path in ${新建的L3路径列表[@]}; do
+  python "D:\obsidian\0100-wiki-meta\scripts\update-hot.py" add-l3 "$l3_path"
+done
 ```
 
 询问是否移入 `.trash/`（D008），确认后执行 git commit。
