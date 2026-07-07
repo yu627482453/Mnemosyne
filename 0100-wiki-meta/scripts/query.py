@@ -1,15 +1,141 @@
 #!/usr/bin/env python3
 """查询知识库（L3 topic 优先 → L2 → L1）"""
 import argparse
+import json
 import sqlite3
 import sys
+import time
+from collections import Counter
+from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
 DB_PATH = Path(__file__).parent.parent.parent / ".wiki.db"
+QUERY_HISTORY_PATH = Path(__file__).parent.parent / ".query_history.jsonl"
+HOT_MD_PATH = Path(__file__).parent.parent / "hot.md"
+
+# 缓存失效机制：记录DB文件的最后修改时间
+_last_db_mtime: float | None = None
+
+# 查询计数器：每10次查询更新一次hot.md
+_query_count: int = 0
+
+
+def _check_and_clear_cache_if_stale():
+    """检查DB文件是否更新，如果更新则清空query缓存"""
+    global _last_db_mtime
+
+    if not DB_PATH.exists():
+        return
+
+    current_mtime = DB_PATH.stat().st_mtime
+
+    if _last_db_mtime is None:
+        _last_db_mtime = current_mtime
+        return
+
+    if current_mtime != _last_db_mtime:
+        # DB已更新，清空缓存
+        _query_cached.cache_clear()
+        _last_db_mtime = current_mtime
+
+
+def _record_query_history(keyword: str, results: List[Tuple[str, str, str, str]]):
+    """记录查询历史到JSONL文件（追加模式）"""
+    record = {
+        "timestamp": time.time(),
+        "keyword": keyword,
+        "results": [r[0] for r in results]  # 只记录path
+    }
+
+    try:
+        with open(QUERY_HISTORY_PATH, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(record, ensure_ascii=False) + '\n')
+    except Exception:
+        pass  # 记录失败不影响查询功能
+
+
+def _update_hot_md():
+    """从查询历史更新hot.md（最近72h的top20页面）"""
+    if not QUERY_HISTORY_PATH.exists():
+        return
+
+    # 72小时前的时间戳
+    cutoff_time = time.time() - 72 * 3600
+    page_counter = Counter()
+
+    try:
+        with open(QUERY_HISTORY_PATH, 'r', encoding='utf-8') as f:
+            for line in f:
+                try:
+                    record = json.loads(line.strip())
+                    if record.get('timestamp', 0) >= cutoff_time:
+                        for path in record.get('results', []):
+                            page_counter[path] += 1
+                except json.JSONDecodeError:
+                    continue
+
+        # 生成hot.md内容
+        from datetime import datetime
+        now = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+        lines = [
+            "# 热门页面（最近72h查询）\n",
+            f"\n最后更新：{now}\n",
+            "\n## Top 20 页面\n\n"
+        ]
+
+        for i, (path, count) in enumerate(page_counter.most_common(20), 1):
+            # 从path提取slug作为wikilink
+            slug = Path(path).stem
+            lines.append(f"{i}. [[{slug}]] (查询{count}次)\n")
+
+        if not page_counter:
+            lines.append("暂无查询记录\n")
+
+        HOT_MD_PATH.write_text(''.join(lines), encoding='utf-8')
+    except Exception:
+        pass  # 更新失败不影响查询功能
+
+
+@lru_cache(maxsize=128)
+def _query_cached(
+    keyword: str,
+    limit: int,
+    layer: str | None,
+    kind: str | None,
+    topic: str | None,
+) -> tuple:
+    """内部缓存的查询函数（返回tuple以便缓存）"""
+    return tuple(_query_impl(keyword, limit, layer, kind, topic))
 
 
 def query(
+    keyword: str,
+    limit: int = 8,
+    layer: str | None = None,
+    kind: str | None = None,
+    topic: str | None = None,
+) -> List[Tuple[str, str, str, str]]:
+    """查询知识库，返回 (path, title, summary, layer) 列表（带缓存+历史记录）"""
+    global _query_count
+
+    _check_and_clear_cache_if_stale()
+    results = list(_query_cached(keyword, limit, layer, kind, topic))
+
+    # 记录查询历史
+    if results:
+        _record_query_history(keyword, results)
+        _query_count += 1
+
+        # 每10次查询更新一次hot.md
+        if _query_count % 10 == 0:
+            _update_hot_md()
+
+    return results
+
+
+def _query_impl(
     keyword: str,
     limit: int = 8,
     layer: str | None = None,
@@ -39,19 +165,22 @@ def query(
 
     filter_clause = f" AND {' AND '.join(filters)}" if filters else ""
 
-    # 1. L3 topic 优先
+    # 1. L3 topic 优先（结合文本相关性70%+入链数量30%）
     cur.execute(
         f"""
         SELECT n.path, n.title, n.summary, n.layer
         FROM notes_fts f JOIN notes n ON f.rowid = n.rowid
         WHERE notes_fts MATCH ? AND n.path LIKE '0101-wiki-topics/%'{filter_clause}
-        ORDER BY f.rank LIMIT ?
+        ORDER BY (
+            f.rank * 0.7 +
+            (SELECT COUNT(*) FROM wikilinks WHERE target_path=n.path) * 0.3
+        ) LIMIT ?
     """,
         (keyword, *params, limit),
     )
     results = cur.fetchall()
 
-    # 2. L3 concept/entity/comparison
+    # 2. L3 concept/entity/comparison（结合文本相关性70%+入链数量30%）
     if len(results) < limit:
         cur.execute(
             f"""
@@ -60,33 +189,42 @@ def query(
             WHERE notes_fts MATCH ?
             AND (n.path LIKE '0102-wiki-concepts/%' OR n.path LIKE '0103-wiki-entities/%'
                  OR n.path LIKE '0104-wiki-comparisons/%'){filter_clause}
-            ORDER BY f.rank LIMIT ?
+            ORDER BY (
+                f.rank * 0.7 +
+                (SELECT COUNT(*) FROM wikilinks WHERE target_path=n.path) * 0.3
+            ) LIMIT ?
         """,
             (keyword, *params, limit - len(results)),
         )
         results.extend(cur.fetchall())
 
-    # 3. L2
+    # 3. L2（结合文本相关性70%+入链数量30%）
     if len(results) < limit:
         cur.execute(
             f"""
             SELECT n.path, n.title, n.summary, n.layer
             FROM notes_fts f JOIN notes n ON f.rowid = n.rowid
             WHERE notes_fts MATCH ? AND n.layer = 'L2'{filter_clause}
-            ORDER BY f.rank LIMIT ?
+            ORDER BY (
+                f.rank * 0.7 +
+                (SELECT COUNT(*) FROM wikilinks WHERE target_path=n.path) * 0.3
+            ) LIMIT ?
         """,
             (keyword, *params, limit - len(results)),
         )
         results.extend(cur.fetchall())
 
-    # 4. L1
+    # 4. L1（结合文本相关性70%+入链数量30%）
     if len(results) < limit:
         cur.execute(
             f"""
             SELECT n.path, n.title, n.summary, n.layer
             FROM notes_fts f JOIN notes n ON f.rowid = n.rowid
             WHERE notes_fts MATCH ? AND n.layer = 'L1'{filter_clause}
-            ORDER BY f.rank LIMIT ?
+            ORDER BY (
+                f.rank * 0.7 +
+                (SELECT COUNT(*) FROM wikilinks WHERE target_path=n.path) * 0.3
+            ) LIMIT ?
         """,
             (keyword, *params, limit - len(results)),
         )
