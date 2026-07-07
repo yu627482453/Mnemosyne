@@ -169,6 +169,56 @@ def init_db():
         cur.execute("CREATE INDEX IF NOT EXISTS idx_wl_dead ON wikilinks(target_path) WHERE target_path IS NULL")
 
         cur.execute("PRAGMA user_version = 1")
+        print("  [OK] 升级到 Schema Version 1")
+
+    if version < 2:
+        print("开始 Schema Version 2 迁移...")
+
+        # ========== E4: 置信度系统 ==========
+
+        # 添加confidence虚拟列（从layer_data JSON提取）
+        try:
+            cur.execute("""
+                ALTER TABLE notes ADD COLUMN confidence REAL
+                GENERATED ALWAYS AS (CAST(json_extract(layer_data, '$.confidence') AS REAL)) VIRTUAL
+            """)
+            print("  [OK] 添加confidence虚拟列")
+        except sqlite3.OperationalError as e:
+            if "duplicate column" not in str(e).lower():
+                raise
+            print("  [!] confidence列已存在，跳过")
+
+        # 创建confidence索引
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_confidence ON notes(confidence)")
+        print("  [OK] 创建confidence索引")
+
+        # ========== E5: 关系类型化 ==========
+
+        # 创建relationships表
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS relationships (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                source_path TEXT NOT NULL,
+                target_path TEXT NOT NULL,
+                rel_type TEXT NOT NULL CHECK(rel_type IN (
+                    'extends', 'implements', 'contradicts',
+                    'derived_from', 'uses', 'replaces', 'related_to'
+                )),
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(source_path, target_path, rel_type)
+            )
+        """)
+        print("  [OK] 创建relationships表")
+
+        # 创建relationships索引
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_rel_source ON relationships(source_path)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_rel_target ON relationships(target_path)")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_rel_type ON relationships(rel_type)")
+        print("  [OK] 创建relationships索引")
+
+        # 升级版本号
+        cur.execute("PRAGMA user_version = 2")
+        print("  [OK] 升级到 Schema Version 2")
 
     conn.commit()
     conn.close()

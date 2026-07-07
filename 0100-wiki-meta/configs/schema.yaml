@@ -29,6 +29,8 @@ layers:
       planned_links: { type: list, description: "待建概念的 wikilink 目标列表" }
       resource_refs: { type: list, description: "本地资源路径列表" }
       failed_images: { type: list, description: "下载失败的图片 URL 列表" }
+      confidence: { type: number, min: 0.8, max: 1.0, description: "知识置信度" }
+      provenance: { type: object, description: "来源比例：extracted/inferred/ambiguous，三者和≈1.0" }
       status:   { type: enum, required: true, values: [draft, published] }
       summary:  { type: string, required: true, min_len: 200 }
 
@@ -45,5 +47,8 @@ layers:
       lhs: { type: string }
       rhs: { type: string }
       tags:     { type: list, min: 5, max: 10, no_spaces: true }
+      confidence: { type: number, min: 0.6, max: 1.0, description: "知识置信度" }
+      provenance: { type: object, description: "来源比例：extracted/inferred/ambiguous，三者和≈1.0" }
+      relationships: { type: list, description: "类型化关系列表：[{target: '[[slug]]', type: 'extends'}]" }
       status:   { type: enum, values: [draft, published] }
       summary:  { type: string, required: true, min_len: 200 }
