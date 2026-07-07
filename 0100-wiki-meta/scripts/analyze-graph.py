@@ -79,6 +79,85 @@ def analyze_typed_relationships():
     conn.close()
 
 
+def analyze_hub_nodes():
+    """分析Hub节点（高入度节点，被大量引用的基础概念）"""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    print("\n## 5. Hub节点（高入度概念）")
+    cur.execute("""
+        SELECT target_path, COUNT(DISTINCT source_path) as inbound_count
+        FROM wikilinks
+        WHERE target_path IS NOT NULL
+        GROUP BY target_path
+        HAVING inbound_count >= 3
+        ORDER BY inbound_count DESC
+        LIMIT 15
+    """)
+    results = cur.fetchall()
+    if results:
+        for path, count in results:
+            print(f"  {count}个入链 → {path}")
+    else:
+        print("  （暂无Hub节点，入链≥3）")
+
+    conn.close()
+
+
+def analyze_bridge_nodes():
+    """分析Bridge节点（连接不同主题域的概念）"""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    print("\n## 6. Bridge节点（跨主题连接）")
+    # 查找同时被多个不同topic引用的概念
+    cur.execute("""
+        SELECT
+            w.target_path,
+            COUNT(DISTINCT json_extract(n.layer_data, '$.topic')) as topic_count
+        FROM wikilinks w
+        JOIN notes n ON w.source_path = n.path
+        WHERE w.target_path IS NOT NULL
+          AND n.layer = 'L2'
+        GROUP BY w.target_path
+        HAVING topic_count >= 2
+        ORDER BY topic_count DESC
+        LIMIT 10
+    """)
+    results = cur.fetchall()
+    if results:
+        for path, count in results:
+            print(f"  {count}个主题引用 → {path}")
+    else:
+        print("  （暂无Bridge节点，跨主题引用≥2）")
+
+    conn.close()
+
+
+def analyze_dead_end_nodes():
+    """分析Dead End节点（无出链的终端概念）"""
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    print("\n## 7. Dead End节点（无出链终端）")
+    cur.execute("""
+        SELECT n.path, n.title
+        FROM notes n
+        LEFT JOIN wikilinks w ON n.path = w.source_path
+        WHERE n.layer = 'L3' AND n.kind = 'concept'
+          AND w.source_path IS NULL
+        LIMIT 10
+    """)
+    results = cur.fetchall()
+    if results:
+        for path, title in results:
+            print(f"  {title} ({path})")
+    else:
+        print("  （所有L3 concept都有出链）")
+
+    conn.close()
+
+
 def main():
     """主入口"""
     if not DB_PATH.exists():
@@ -87,6 +166,9 @@ def main():
         return 1
 
     analyze_typed_relationships()
+    analyze_hub_nodes()
+    analyze_bridge_nodes()
+    analyze_dead_end_nodes()
     return 0
 
 
