@@ -20,7 +20,7 @@ summary: "Prompt Chaining 是 Anthropic 定义的五种 workflow 模式之一，
 
 Prompt Chaining 是将任务分解为一系列顺序步骤的 workflow 模式，每个 LLM 调用处理前一步的输出，可在中间步骤插入程序化检查（gate）。
 
-![[prompt-chaining-20260625170209.png]]
+![[0001-resource/3000-Agent/building-effective-agents-prompt-chaining-20260625230615.png]]
 
 ## 核心机制
 

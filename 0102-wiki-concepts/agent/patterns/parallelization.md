@@ -21,7 +21,7 @@ summary: "Parallelization 是 Anthropic 定义的五种 workflow 模式之一，
 
 Parallelization 是允许多个 LLM 同时处理任务并通过程序化方式聚合输出的 workflow 模式，包含 Sectioning 和 Voting 两个变体。
 
-![[parallelization-20260625170210.png]]
+![[0001-resource/3000-Agent/building-effective-agents-parallelization-20260625230615.png]]
 
 ## 核心机制
 

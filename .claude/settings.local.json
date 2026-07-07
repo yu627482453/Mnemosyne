@@ -10,7 +10,9 @@
       "Bash(sqlite3 .wiki.db \".tables\")",
       "Bash(sqlite3 .wiki.db \".schema wikilinks\")",
       "Bash(sqlite3 .wiki.db \"SELECT name FROM sqlite_master WHERE type='table' AND name='wikilinks'\")",
-      "Bash(sqlite3 .wiki.db \"SELECT COUNT\\(*\\) FROM wikilinks\")"
+      "Bash(sqlite3 .wiki.db \"SELECT COUNT\\(*\\) FROM wikilinks\")",
+      "Bash(grep -E \"^\\(index|hot|log|_insights\\)\\\\.md$\")",
+      "Bash(bash 0100-wiki-meta/scripts/run-lint.sh)"
     ]
   },
   "hooks": {
