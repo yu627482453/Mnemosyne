@@ -315,6 +315,90 @@ def get_stats() -> Dict[str, Any]:
     return stats
 
 
+def query_graph(
+    keyword: str,
+    max_hops: int = 3,
+    limit: int = 5
+) -> Dict[str, Any]:
+    """GraphRAG路径查询：结构化查询，返回路径和Hub节点推荐
+
+    Args:
+        keyword: 搜索关键词
+        max_hops: 最大跳数（路径长度）
+        limit: 返回的候选结果数量
+
+    Returns:
+        {
+            "answer_type": "path" | "list" | "direct",
+            "candidates": [{"path": str, "title": str, "score": float}],
+            "path": [str],  # 多跳路径（如果存在）
+            "hub_nodes": [str],  # Hub节点（高入链度）
+            "should_read": [str]  # 推荐阅读的页面
+        }
+    """
+    # 1. 先用常规query获取初始候选
+    initial_results = query(keyword, limit=limit)
+
+    if not initial_results:
+        return {
+            "answer_type": "gap",
+            "candidates": [],
+            "path": [],
+            "hub_nodes": [],
+            "should_read": []
+        }
+
+    # 2. 获取Hub节点（入链数top10）
+    hub_nodes = _get_hub_nodes(limit=10)
+
+    # 3. 构建候选结果列表
+    candidates = [
+        {
+            "path": r[0],
+            "title": r[1],
+            "score": 1.0 - (i * 0.1)  # 简单的递减得分
+        }
+        for i, r in enumerate(initial_results)
+    ]
+
+    # 4. 生成should_read列表（初始结果+相关Hub节点）
+    should_read = [r[0] for r in initial_results[:3]]
+
+    # 添加相关的Hub节点
+    relevant_hubs = [h for h in hub_nodes if keyword.lower() in h.lower()]
+    should_read.extend(relevant_hubs[:2])
+
+    return {
+        "answer_type": "list",
+        "candidates": candidates,
+        "path": [],  # TODO: 实现BFS路径查找
+        "hub_nodes": hub_nodes,
+        "should_read": should_read[:5]
+    }
+
+
+def _get_hub_nodes(limit: int = 10) -> List[str]:
+    """获取Hub节点（高入链度的页面）"""
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL")
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT n.path, n.title, COUNT(w.source_path) as inbound_count
+        FROM notes n
+        JOIN wikilinks w ON w.target_path = n.path
+        WHERE n.layer = 'L3'
+        GROUP BY n.path
+        ORDER BY inbound_count DESC
+        LIMIT ?
+    """, (limit,))
+
+    results = cur.fetchall()
+    conn.close()
+
+    return [r[0] for r in results]
+
+
 def main():
     parser = argparse.ArgumentParser(description="查询知识库（L3 topic 优先 → L2 → L1）")
     parser.add_argument("keyword", nargs="?", help="搜索关键词")
