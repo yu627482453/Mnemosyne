@@ -92,6 +92,11 @@ run_check "Summary 范围" "0100-wiki-meta/scripts/check-summary-length.py" "WAR
 # 10. Topic 注册（L2 topic 必须在 topics.yaml active 列表中）
 run_check "Topic 注册" "0100-wiki-meta/scripts/check-topic-registration.py" "WARNING"
 
+# === E4 置信度系统检查 ===
+
+# 11. 置信度和来源标注完整性
+run_check "置信度和来源标注" "0100-wiki-meta/scripts/check-provenance.py" "WARNING"
+
 # === 汇总报告 ===
 echo "=== Lint 汇总 ==="
 echo "  总检查项: $total_checks"

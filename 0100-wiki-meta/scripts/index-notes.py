@@ -144,6 +144,16 @@ def index_notes():
                 layer_data['lhs'] = meta.get('lhs')
                 layer_data['rhs'] = meta.get('rhs')
 
+        # E4: 提取置信度和来源标注
+        confidence = meta.get('confidence')
+        provenance = meta.get('provenance')
+
+        if confidence is not None:
+            layer_data['confidence'] = confidence
+
+        if provenance is not None:
+            layer_data['provenance'] = provenance
+
         updated = meta.get('updated') or datetime.now().strftime('%Y-%m-%d')
 
         # 将 updated 字段转为时间戳（笔记实际更新时间，非索引执行时间）
