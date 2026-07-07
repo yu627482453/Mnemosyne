@@ -69,49 +69,28 @@ run_check "配置同步检查" "0100-wiki-meta/scripts/check-config-sync.py" "CR
 # 3. Frontmatter 校验
 run_check "Frontmatter 校验" "0100-wiki-meta/scripts/validate-frontmatter.py" "WARNING"
 
-# === 待实现检查（占位） ===
+# === P0 Lint 补全检查 ===
 
 # 4. L2 结构完整性（核心提炼区 + 原文笔记区）
-echo "[4] L2 结构完整性"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "L2 结构完整性" "0100-wiki-meta/scripts/check-l2-structure.py" "WARNING"
 
 # 5. 文件名格式（命名规则：kebab-case, 特殊字符转换）
-echo "[5] 文件名格式"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "文件名格式" "0100-wiki-meta/scripts/check-filename-format.py" "WARNING"
 
 # 6. resource_refs 一致性（resource_refs 字段与实际图片路径匹配）
-echo "[6] resource_refs 一致性"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "resource_refs 一致性" "0100-wiki-meta/scripts/check-resource-refs.py" "WARNING"
 
 # 7. 远程图片残留（正文中不应有 http/https 图片链接）
-echo "[7] 远程图片残留"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "远程图片残留" "0100-wiki-meta/scripts/check-remote-images.py" "WARNING"
 
 # 8. Tags 格式（5-10 个，无空格，连字符连接）
-echo "[8] Tags 格式"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "Tags 格式" "0100-wiki-meta/scripts/check-tags-format.py" "WARNING"
 
 # 9. Summary 范围（≥200 字）
-echo "[9] Summary 范围"
-echo "  [SKIP] 待实现"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "Summary 范围" "0100-wiki-meta/scripts/check-summary-length.py" "WARNING"
 
 # 10. Topic 注册（L2 topic 必须在 topics.yaml active 列表中）
-echo "[10] Topic 注册"
-echo "  [SKIP] 待实现（部分由 check-config-sync.py 覆盖）"
-skipped_checks=$((skipped_checks + 1))
-echo ""
+run_check "Topic 注册" "0100-wiki-meta/scripts/check-topic-registration.py" "WARNING"
 
 # === 汇总报告 ===
 echo "=== Lint 汇总 ==="
