@@ -288,6 +288,34 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 
 **Topic 页面完整性**：创建或更新 topic 页面时，必须列出所有本次创建的关联 L3（concept + entity + comparison），确保无遗漏。
 
+#### 5d. 识别类型化关系（E5）
+
+创建L3时，扫描L2原文和L3内容，识别明确的语义关系模式：
+
+| 关键词模式 | 关系类型 | 示例 |
+|-----------|---------|------|
+| "X基于Y"、"X派生自Y" | derived_from | Transformer派生自Attention |
+| "X替代了Y"、"X取代Y" | replaces | BERT替代了LSTM |
+| "X使用Y"、"X调用Y" | uses | Agent使用Tool |
+| "X扩展了Y" | extends | GPT-4扩展了GPT-3 |
+| "X实现了Y" | implements | BERT实现了预训练 |
+| "X与Y相反"、"X矛盾Y" | contradicts | 集中式与分布式矛盾 |
+| 其他语义关联 | related_to | 默认类型 |
+
+**写入L3 frontmatter**：
+```yaml
+relationships:
+  - target: "[[attention-mechanism]]"
+    type: derived_from
+  - target: "[[lstm]]"
+    type: replaces
+```
+
+**注意**：
+- 仅在有明确语义关系时添加，不强制
+- target使用wikilink格式（`[[slug]]`）
+- 关系将被index-notes.py自动提取到SQLite relationships表
+
 ### 6. L3 合并规则
 
 同 slug 匹配→合并：新信息补充、冲突标注、source 追加、更新 updated。

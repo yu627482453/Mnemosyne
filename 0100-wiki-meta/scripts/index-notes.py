@@ -199,6 +199,30 @@ def index_notes():
                 VALUES (?, ?, ?, 'wikilink')
             """, (rel_path, slug, target_path))
 
+        # E5: 提取类型化关系（仅L3）
+        if layer == 'L3':
+            relationships = meta.get('relationships') or []
+            for rel in relationships:
+                if not isinstance(rel, dict):
+                    continue
+
+                target_slug = rel.get('target', '').strip('[]')
+                rel_type = rel.get('type', 'related_to')
+
+                # 解析target_path（类似wikilinks）
+                target_path = None
+                for candidate in WIKI_ROOT.rglob(f"{target_slug}.md"):
+                    rel_c = str(candidate.relative_to(WIKI_ROOT)).replace('\\', '/')
+                    if '.trash' not in rel_c and '.git' not in rel_c:
+                        target_path = rel_c
+                        break
+
+                cur.execute("""
+                    INSERT OR IGNORE INTO relationships
+                    (source_path, target_path, rel_type)
+                    VALUES (?, ?, ?)
+                """, (rel_path, target_path, rel_type))
+
         # L3 反向索引：填充 file_produces 表
         if layer == 'L3':
             sources = meta.get('source') or []
