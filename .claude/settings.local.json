@@ -13,7 +13,10 @@
       "Bash(sqlite3 .wiki.db \"SELECT COUNT\\(*\\) FROM wikilinks\")",
       "Bash(grep -E \"^\\(index|hot|log|_insights\\)\\\\.md$\")",
       "Bash(bash 0100-wiki-meta/scripts/run-lint.sh)",
-      "Read(//d/obsidian/**)"
+      "Read(//d/obsidian/**)",
+      "Bash(sqlite3 .wiki.db \"SELECT path FROM notes WHERE path LIKE '%building-effective-agents%';\")",
+      "Bash(sqlite3 .wiki.db \"SELECT COUNT\\(*\\) FROM notes WHERE path LIKE '%building-effective-agents%' OR path LIKE '%contextual-retrieval%';\")",
+      "Bash(sqlite3 *)"
     ]
   },
   "hooks": {

@@ -22,5 +22,5 @@ Chunk是将长文档切分为适合检索单元的小段落，是RAG系统的基
 
 ## 相关概念
 
-- [[rag]]
-- [[contextual-retrieval]]
+- [[rag]] (已删除)
+- ~~[[contextual-retrieval]]~~ (已删除)

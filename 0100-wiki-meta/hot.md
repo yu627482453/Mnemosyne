@@ -6,7 +6,7 @@
 
 1. [[agent]] (查询7次)
 2. [[RAG与检索]] (查询4次)
-3. [[contextual-retrieval]] (查询4次)
+3. ~~[[contextual-retrieval]]~~ (已删除)
 4. [[swe-bench]] (查询3次)
 5. [[anthropic]] (查询3次)
 6. [[voyage-ai]] (查询1次)
