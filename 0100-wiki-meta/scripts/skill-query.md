@@ -1,6 +1,6 @@
 # skill-query：知识检索
 
-> L3 topic 优先 → L2 → L1 分层检索，优先读取 hot.md 热缓存
+> 统一UNION查询 + 多因子排序（文本相关性 + 入链数 + 新鲜度 + 质量）
 
 ## 触发方式
 
@@ -15,28 +15,28 @@
 cat 0100-wiki-meta/hot.md
 ```
 
-如果热缓存中有相关线索，直接跳转到提到的页面，节省 60%+ token。
+热缓存按关键词聚合，记录最近72h的高频查询结果，直接跳转可节省 60%+ token。
 
-### 步骤 2：SQLite FTS5 检索（优先）
+### 步骤 2：SQLite FTS5 检索
 
-优先使用 SQLite 全文检索（FTS5），已实现分层逻辑（L3 topic → L3 concept/entity/comparison → L2 → L1）：
+使用 SQLite 全文检索（FTS5），已实现：
+- **统一UNION查询**：一次SQL完成分层检索（L3 topic → L3 concept/entity/comparison → L2 → L1）
+- **多因子排序**：
+  - 文本相关性（50%）- FTS5 rank归一化
+  - 入链数量（25%）- 页面权威度
+  - 新鲜度（15%）- 30天内=1.0，90天内=0.5
+  - 质量（10%）- published=1.0，draft=0.7
 
 ```bash
 python "D:\obsidian\0100-wiki-meta\scripts\query.py" "<关键词>" 8
 ```
 
-返回结果直接包含 layer/title/summary/path，跳过文件系统扫描。
+返回结果直接包含 layer/title/summary/path，单次查询完成分层检索。
 
-**如果结果为空或不足**，降级到步骤 2b。
-
-### 步骤 2b：rg 兜底检索（FTS5 无匹配时）
-
-当 FTS5 检索无结果或结果不满意时，使用 rg 扫描：
-
-```bash
-rg "关键词" 0101-wiki-topics/
-rg "关键词" 0102-wiki-concepts/相关主题/
-```
+**性能优化**：
+- 查询结果自动缓存（基于keyword+limit）
+- 每10次查询自动更新hot.md
+- 连接池管理避免频繁创建连接
 
 ### 步骤 3：读取相关页面
 
@@ -64,9 +64,20 @@ rg "关键词" 0102-wiki-concepts/相关主题/
 
 | 检索层级 | Token 消耗 | 何时使用 |
 |---------|-----------|----------|
-| hot.md | ~500 | 优先，72h 内活动 |
+| hot.md | ~500 | 优先，72h 内高频关键词 |
 | Topic 综述 | ~1000 | 无热缓存线索 |
 | L3 概念页 | ~800/页 | 精确匹配 |
 | L2 原文 | ~2000/页 | 需要原文细节 |
 
 **优先级**：hot.md > L3 > L2 > L1
+
+## 已修复的问题
+
+- ✅ 排序算法：FTS5 rank归一化，避免负数与正数直接相加
+- ✅ 统一查询：单次UNION查询替代4次串行查询
+- ✅ 多因子排序：文本相关性 + 入链数 + 新鲜度 + 质量
+- ✅ 缓存优化：只缓存(keyword, limit)，后过滤提高命中率
+- ✅ 连接管理：使用contextmanager复用连接
+- ✅ hot.md重新设计：按关键词聚合，加权排名
+- ✅ GraphRAG Hub推荐：FTS5查询替代字符串匹配
+- ✅ 错误处理：具体异常+日志记录
