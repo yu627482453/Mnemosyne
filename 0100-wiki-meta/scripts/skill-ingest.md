@@ -142,32 +142,89 @@ python "D:\obsidian\0100-wiki-meta\scripts\delta-track.py" check "$SOURCE_FILE"
 ### 1. 主题目录与 slug 推荐（合并确认）
 > 模型：此步骤可用 Haiku。
 
-**主题目录推荐**（5+ 候选）：
+**⚠️ IMPORTANT: 必须使用 AskUserQuestion 工具进行交互式确认，禁止使用纯文本输出。**
+
+#### 1a. 主题目录推荐（必须使用 AskUserQuestion）
+
+**推荐逻辑**：
 - 对照 `0100-wiki-meta/configs/topics.yaml`
-- 给出 5+ 推荐选项，每个附理由（匹配度、已有相关笔记数）
+- 给出 3-5 推荐选项，每个附理由（匹配度、已有相关笔记数）
 - 格式：`{编号}-{显示名}`（如 `3000-Agent`）
 - 边界主题/多主题交叉标注
 - 无匹配时建议新建主题目录
 
-**slug 推荐**（5+ 候选）：
+**AskUserQuestion 参数设计**：
+- **question**: "请选择该笔记的主题目录（L2 归属）"
+- **header**: "主题目录"
+- **multiSelect**: false
+- **options**: 3-5 个推荐，每个包含：
+  - **label**: 目录名（如 `3000-Agent`）+ `⭐️` 标记推荐项
+  - **description**: 匹配度 + 已有笔记数 + 核心关键词
+
+**示例调用**：
+```json
+{
+  "questions": [{
+    "question": "请选择该笔记的主题目录（L2 归属）",
+    "header": "主题目录",
+    "multiSelect": false,
+    "options": [
+      {
+        "label": "3000-Agent ⭐️",
+        "description": "匹配度 95%，已有 12 篇。关键词：agent-loop, reasoning, planning"
+      },
+      {
+        "label": "3200-LLM基础",
+        "description": "匹配度 60%，已有 8 篇。涉及 Transformer 底层架构"
+      },
+      {
+        "label": "新建: 3050-Multi-Agent",
+        "description": "当前无此主题，建议新建专注多智能体协作"
+      }
+    ]
+  }]
+}
+```
+
+#### 1b. 文件名 slug 推荐（必须使用 AskUserQuestion）
+
+**推荐逻辑**：
 - 文件名转换：空格→`-`，`.`→`_`，特殊字符→`_`
 - 全英文 kebab-case 全小写（title 字段用中文）
-- 5+ 推荐选项，每个附理由（简洁度、语义准确度）
+- 3-5 推荐选项，每个附理由（简洁度、语义准确度）
 - `rg --files` 查重，重名追加 `-2`/`-3`
 
-**交互格式**：
-```
-📋 主题目录推荐：
-  1. 3000-Agent ⭐️ （匹配 95%，已有 12 篇）
-  2. 3200-LLM基础 （匹配 60%，涉及底层）
-  3. 新建：3050-Multi-Agent （建议）
+**AskUserQuestion 参数设计**：
+- **question**: "请选择文件名（slug，仅用于文件名，title 保留中文原文）"
+- **header**: "文件名"
+- **multiSelect**: false
+- **options**: 3-5 个推荐，每个包含：
+  - **label**: 文件名（如 `agent-loop.md`）+ `⭐️` 标记推荐项
+  - **description**: 简洁度 + 语义准确度 + 查重结果
 
-📋 文件名推荐：
-  1. agent-loop.md ⭐️ （简洁，核心术语）
-  2. agent-execution-cycle.md （完整描述）
-  3. autonomous-agent-loop.md （强调自主性）
-
-请选择或输入自定义：
+**示例调用**：
+```json
+{
+  "questions": [{
+    "question": "请选择文件名（slug，仅用于文件名，title 保留中文原文）",
+    "header": "文件名",
+    "multiSelect": false,
+    "options": [
+      {
+        "label": "agent-loop.md ⭐️",
+        "description": "简洁，核心术语，无重名冲突"
+      },
+      {
+        "label": "agent-execution-cycle.md",
+        "description": "完整描述执行周期，更具可读性"
+      },
+      {
+        "label": "autonomous-agent-loop.md",
+        "description": "强调自主性，区分传统循环模式"
+      }
+    ]
+  }]
+}
 ```
 
 ### 2. 处理图片资源
@@ -238,7 +295,14 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
    - 相似度 >0.85 → 提示"可能与 [[existing-concept]] 重复，建议合并"
    - 相似度 0.7-0.85 → 提示"与 [[existing-concept]] 相关，确认是否独立"
 
-2. **子分类推荐**：参考 `l3-structure.yaml` 的 `examples` 和 `criteria`
+2. **L3 重定位检测**：检查是否需要移动已存在的 L3 文件
+   - 如果检测到 L3 文件 X 已存在（同 slug）
+   - 分析新 L2 内容建议的 processing_path 和目录
+   - 对比现有文件的物理目录与新建议目录
+   - **触发重定位提示**：物理目录不同 + 标签匹配度≥2
+   - 给出三选一：保持原位 / 移动到新位置 / 两者都保留（拆分）
+
+3. **子分类推荐**：参考 `l3-structure.yaml` 的 `examples` 和 `criteria`
    - 给出 3 个候选子分类 + 匹配理由
    - 示例：`core/`（匹配 criteria: "Agent 运行的基础组件"）
 
@@ -251,26 +315,78 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
 - **≥6分**：推荐创建；**3-5分**：由用户决定；**<3分**：不建议
 - **过细节扣分**：如果是已有概念的子步骤（如"初始化循环状态"属于"agent-loop"） → -3分
 
-**IMPORTANT: 必须使用 AskUserQuestion 工具展示 L3 创建计划表，等待用户明确确认（确认全部/调整目录/删除/新增/合并）后才能创建任何 L3 文件。禁止在用户确认前创建任何 L3 文件。**
+**⚠️ IMPORTANT: 必须先展示完整的L3创建计划表（含最终存储位置），再使用AskUserQuestion确认。等待用户明确确认后才能创建任何L3文件。**
 
-| # | 类型 | slug | 评分 | 子分类推荐 | processing_path | 完整路径 | 理由 | 相似概念 |
-|---|------|------|------|-----------|-----------------|----------|------|---------|
-| 1 | concept | agent-loop | 8 | core/ ⭐️ | AI技术/Agent | `0102-wikiconcepts/agent/core/` | 独立定义+代码+术语 | 无 |
-| 2 | concept | transformer | 7 | architecture/ ⭐️ | AI技术/LLM基础 | `0102-wikiconcepts/llm-basics/architecture/` | 独立定义+配图+核心 | 无 |
-| 3 | entity | dall-e | 6 | - | AI技术/图像生成 | `0103-wiki-entities/product/` | 独立产品+多处引用 | 无 |
-| 4 | comparisons | Agent vs Workflow | 6 | - | AI技术/Agent | `0104-wiki-comparisons/product/` | 独立产品+多处引用 | 无 |
-| 5 | concept | loop-init | 2 | core/ | AI技术/Agent | `0102-wikiconcepts/agent/core/` | ❌ 过细节（属于 agent-loop 内部） | agent-loop (0.92) |
+#### L3创建计划表格式（必须包含完整存储路径）
 
-不建 L3：评分<3、教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）。
+每个L3候选项必须包含以下列：
 
-**用户确认操作：**
-- **确认全部**：按计划落盘
-- **调整目录**：修改某个 L3 的 processing_path 和目录
-- **删除**：某个 L3 不需要创建
-- **新增**：补充遗漏的 L3
-- **合并**：把 2+ 个 L3 合为一个
+| 列名 | 说明 | 示例 |
+|------|------|------|
+| # | 序号 | 1 |
+| 类型 | concept/entity/comparison | concept |
+| slug | 文件名（全小写kebab-case） | `agent-loop.md` |
+| 评分 | 0-10（≥6推荐，3-5待定，<3不建议） | 8 |
+| 子分类 | 推荐子目录 | `core/` ⭐️ |
+| processing_path | 知识域路径 | `AI技术/Agent` |
+| **最终存储位置** | **完整物理路径（含子分类+文件名）** | **`0102-wiki-concepts/agent/core/agent-loop.md`** |
+| 理由 | 创建依据 | 独立定义+代码+术语 |
+| 相似概念 | 已有相似项（相似度） | 无 或 `agent-state (0.72)` |
 
-**未获用户确认前，禁止创建任何 L3 文件。**
+**展示示例**：
+
+```markdown
+## 📋 L3 创建计划表
+
+| # | 类型 | slug | 评分 | 子分类 | processing_path | **最终存储位置** | 理由 | 相似 |
+|---|------|------|------|--------|----------------|-----------------|------|------|
+| 1 | concept | agent-loop.md | 8 | core/ ⭐️ | AI技术/Agent | **`0102-wiki-concepts/agent/core/agent-loop.md`** | 独立定义+代码+术语 | 无 |
+| 2 | concept | transformer.md | 7 | architecture/ ⭐️ | AI技术/LLM基础 | **`0102-wiki-concepts/llm-basics/architecture/transformer.md`** | 独立定义+配图 | 无 |
+| 3 | entity | dall-e.md | 6 | - | AI技术/图像生成 | **`0103-wiki-entities/product/dall-e.md`** | 独立产品 | 无 |
+| 4 | comparison | agent-vs-workflow.md | 6 | automation-paradigm/ | AI技术/Agent | **`0104-wiki-comparisons/automation-paradigm/agent-vs-workflow.md`** | 两种范式对比 | 无 |
+| 5 | concept | loop-init.md | 2 | core/ | AI技术/Agent | **`0102-wiki-concepts/agent/core/loop-init.md`** | ❌ 过细节（属于agent-loop内部） | agent-loop (0.92) |
+
+**评分说明**：≥6分推荐创建，3-5分边界案例，<3分不建议
+```
+
+**然后使用AskUserQuestion批量确认**：
+
+```json
+{
+  "questions": [{
+    "question": "请确认L3创建计划（已展示完整存储路径）",
+    "header": "L3确认",
+    "multiSelect": false,
+    "options": [
+      {
+        "label": "确认全部推荐项（#1, #2, #3, #4）⭐️",
+        "description": "创建所有评分≥6的L3，使用上述推荐的存储位置"
+      },
+      {
+        "label": "仅创建高分项（#1, #2）",
+        "description": "只创建评分≥7的L3"
+      },
+      {
+        "label": "自定义选择",
+        "description": "我将指定具体要创建的L3序号或调整存储位置"
+      }
+    ]
+  }]
+}
+```
+
+不建L3：评分<3、教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有concept）。
+
+**用户确认操作说明：**
+- **确认全部推荐项**：创建所有评分≥6的L3，使用表格中展示的最终存储位置
+- **仅创建高分项**：只创建评分≥7的L3
+- **自定义选择**：用户可以：
+  - 指定具体序号（如"只创建#1和#3"）
+  - 调整某个L3的存储位置（如"#2改到llm-basics/core/"）
+  - 删除某个推荐项
+  - 补充新的L3概念
+
+**未获用户确认前，禁止创建任何L3文件。**
 
 一个 L2 可派生多个不同 topic 的 L3。
 0101 路径由 topics.yaml 大类映射决定（如 `3000-Agent` → AI技术 → `0101/AI技术/Agent.md`）。
@@ -331,9 +447,80 @@ relationships:
 
 ### 8. 跨主题引用 + 更新配置
 
+#### 8a. 新标签确认（必须使用AskUserQuestion）
+
+**⚠️ IMPORTANT: 必须使用AskUserQuestion工具展示新标签清单表，等待用户确认后才能追加到tag-vocabulary.yaml。**
+
+**检测流程**：
+1. 扫描本次ingest的所有L2/L3的`tags`字段
+2. 对比`0100-wiki-meta/configs/tag-vocabulary.yaml`，识别未登记的新标签
+3. 对每个新标签检查近似标签（编辑距离≤2或语义相似>0.8）
+4. 检查格式规范（全小写、连字符、无空格、非混合语言）
+
+**第一步：展示新标签清单表**
+
+```markdown
+## 🏷️ 新标签清单
+
+| # | 新标签 | 语言 | 近似标签（相似度） | 建议操作 |
+|---|--------|------|-------------------|---------|
+| 1 | agent-loop | 英文 | - | ✅ 新增 |
+| 2 | multi-agent-system | 英文 | multi-agent (0.85) | ⚠️ 可能重复 |
+| 3 | transformer-架构 | 混合 | transformer-architecture | ❌ 格式错误 |
+```
+
+**第二步：使用AskUserQuestion批量确认**
+
+```json
+{
+  "questions": [{
+    "question": "请确认新标签的处理方式",
+    "header": "标签确认",
+    "multiSelect": false,
+    "options": [
+      {
+        "label": "智能处理（推荐）⭐️",
+        "description": "新增#1，跳过#2使用已有multi-agent，修正#3为transformer-architecture"
+      },
+      {
+        "label": "全部新增",
+        "description": "将所有新标签原样添加到tag-vocabulary.yaml（不推荐，可能引入重复）"
+      },
+      {
+        "label": "逐个确认",
+        "description": "我将对每个新标签单独决策"
+      }
+    ]
+  }]
+}
+```
+
+**如果用户选择"逐个确认"**，对有问题的标签追加单独确认：
+
+```json
+{
+  "questions": [{
+    "question": "标签'multi-agent-system'与已有'multi-agent'相似度0.85，如何处理？",
+    "header": "标签#2",
+    "multiSelect": false,
+    "options": [
+      {
+        "label": "使用已有'multi-agent'",
+        "description": "替换为已登记标签，避免重复"
+      },
+      {
+        "label": "新增'multi-agent-system'",
+        "description": "作为独立标签登记（需说明与multi-agent的区别）"
+      }
+    ]
+  }]
+}
+```
+
+#### 8b. 跨主题引用检查
+
 - tags 重叠≥2 且无 wikilink→建议关联
 - 新建主题目录→追加到 `0100-wiki-meta/configs/topics.yaml`
-- 新标签：**IMPORTANT: 必须使用 AskUserQuestion 工具展示新标签清单表（tag / 语言 / 是否有近似 tag），等待用户逐个确认或批量确认后**才能追加到 `0100-wiki-meta/configs/tag-vocabulary.yaml`
 
 ### 9. 写入前强制校验（阻塞步骤）
 > 模型：此步骤可用 Haiku。
