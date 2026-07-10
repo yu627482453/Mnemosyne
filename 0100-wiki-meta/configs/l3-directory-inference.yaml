@@ -1,0 +1,81 @@
+# L3 目录推断规则 — 根据 tags 推荐合理的物理目录
+
+# 规则优先级：tag_patterns > fallback
+
+tag_patterns:
+  # Agent 领域
+  - tags: [agent-loop, agent-core, agent-architecture, reasoning, planning, reflection]
+    suggested_dir: "0102-wiki-concepts/agent/core"
+    domain: "AI技术/Agent"
+
+  - tags: [agent-framework, crewai, autogen, langchain-agent, agent-system]
+    suggested_dir: "0102-wiki-concepts/agent/frameworks"
+    domain: "AI技术/Agent"
+
+  - tags: [multi-agent, agent-collaboration, agent-communication, agent-coordination]
+    suggested_dir: "0102-wiki-concepts/agent/multi-agent"
+    domain: "AI技术/Agent"
+
+  # RAG 领域
+  - tags: [rag, retrieval, embedding, vector-search, semantic-search]
+    suggested_dir: "0102-wiki-concepts/rag/core"
+    domain: "AI技术/RAG与检索"
+
+  - tags: [chunking, text-splitting, document-processing]
+    suggested_dir: "0102-wiki-concepts/rag/preprocessing"
+    domain: "AI技术/RAG与检索"
+
+  - tags: [reranking, retrieval-optimization, query-optimization]
+    suggested_dir: "0102-wiki-concepts/rag/optimization"
+    domain: "AI技术/RAG与检索"
+
+  # LLM 基础
+  - tags: [transformer, attention, architecture, neural-network]
+    suggested_dir: "0102-wiki-concepts/llm-basics/architecture"
+    domain: "AI技术/LLM基础"
+
+  - tags: [tokenization, encoding, bpe, vocabulary]
+    suggested_dir: "0102-wiki-concepts/llm-basics/tokenization"
+    domain: "AI技术/LLM基础"
+
+  - tags: [prompting, prompt-engineering, few-shot, zero-shot]
+    suggested_dir: "0102-wiki-concepts/llm-basics/prompting"
+    domain: "AI技术/LLM基础"
+
+  # 模型训练
+  - tags: [training, fine-tuning, pretraining, optimization]
+    suggested_dir: "0102-wiki-concepts/model-training/core"
+    domain: "AI技术/模型训练"
+
+  - tags: [rlhf, reinforcement-learning, alignment]
+    suggested_dir: "0102-wiki-concepts/model-training/rlhf"
+    domain: "AI技术/模型训练"
+
+  # 图像生成
+  - tags: [diffusion, stable-diffusion, image-generation, text-to-image]
+    suggested_dir: "0102-wiki-concepts/image-generation/core"
+    domain: "AI技术/图像生成"
+
+  # AI 工程
+  - tags: [deployment, inference, serving, production]
+    suggested_dir: "0102-wiki-concepts/ai-engineering/deployment"
+    domain: "AI技术/AI工程"
+
+  - tags: [evaluation, benchmark, testing, quality]
+    suggested_dir: "0102-wiki-concepts/ai-engineering/evaluation"
+    domain: "AI技术/AI工程"
+
+# 回退规则：无精确匹配时按主题域的通用目录
+fallback:
+  "AI技术/Agent": "0102-wiki-concepts/agent/core"
+  "AI技术/RAG与检索": "0102-wiki-concepts/rag/core"
+  "AI技术/LLM基础": "0102-wiki-concepts/llm-basics"
+  "AI技术/图像生成": "0102-wiki-concepts/image-generation/core"
+  "AI技术/模型训练": "0102-wiki-concepts/model-training/core"
+  "AI技术/AI工程": "0102-wiki-concepts/ai-engineering"
+
+# 推断算法：
+# 1. 遍历 tag_patterns，计算标签交集数量
+# 2. 选择交集数量最多的规则（≥2 个匹配 tag）
+# 3. 若无规则匹配≥2，使用 fallback 映射 processing_path
+# 4. 若 fallback 无匹配，保持原目录不变

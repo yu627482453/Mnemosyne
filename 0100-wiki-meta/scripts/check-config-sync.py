@@ -136,6 +136,53 @@ for n in notes:
             if found:
                 err("stale_planned_link", f"{n.get('_path', '?')} planned_links 中 '{target}' 已存在，应清理")
 
+# === 8h: L3 目录对齐检查 ===
+inference_file = ROOT / "0100-wiki-meta" / "configs" / "l3-directory-inference.yaml"
+if inference_file.exists():
+    try:
+        inference_cfg = yaml.safe_load(inference_file.read_text(encoding='utf-8'))
+        tag_patterns = inference_cfg.get('tag_patterns', [])
+        fallback_map = inference_cfg.get('fallback', {})
+
+        for n in notes:
+            if n.get('layer') != 'L3':
+                continue
+
+            path = n.get('_path', '')
+            if not path:
+                continue
+
+            # 提取物理目录（去掉文件名）
+            physical_dir = str(Path(path).parent).replace('\\', '/')
+            tags = n.get('tags', [])
+            processing_path = n.get('processing_path', '')
+
+            # 推断建议目录
+            suggested_dir = None
+            max_matches = 0
+
+            # 遍历 tag_patterns，找到最多匹配的规则
+            for pattern in tag_patterns:
+                pattern_tags = set(pattern.get('tags', []))
+                file_tags = set(tags)
+                matches = len(pattern_tags & file_tags)
+
+                if matches >= 2 and matches > max_matches:
+                    max_matches = matches
+                    suggested_dir = pattern.get('suggested_dir')
+
+            # 如果无精确匹配，使用 fallback
+            if not suggested_dir and processing_path:
+                suggested_dir = fallback_map.get(processing_path)
+
+            # 检查对齐
+            if suggested_dir and physical_dir != suggested_dir:
+                err("l3_directory_misalignment",
+                    f"{path}: 当前在 {physical_dir}，建议移至 {suggested_dir} (匹配 {max_matches} 个标签)")
+
+    except Exception as e:
+        err("l3_directory_inference", f"无法读取 l3-directory-inference.yaml: {e}")
+
 # === 输出 ===
 if errors:
     print(f"CONFIG SYNC FAILED — {len(errors)} issue(s):")

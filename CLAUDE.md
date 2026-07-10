@@ -1,129 +1,209 @@
 # Mnemosyne — 智能本地 Wiki 系统
 
-> Claude Code 自动加载入口。
+> Claude Code 自动加载入口。快速导航 + 架构概览。
 
 ## 快速导航
 
-| 我要... | 文档位置 | 详细流程 |
-|---------|----------|----------|
-| 摄入新内容 | [Ingest](#ingestl1--l2--l3) | [skill-ingest.md](0100-wiki-meta/scripts/skill-ingest.md) |
-| 查询知识 | [Query](#queryl3-topic-优先--l2--l1) | [skill-query.md](0100-wiki-meta/scripts/skill-query.md) |
-| 修改内容 | [Update](#update三级变更) | [skill-update.md](0100-wiki-meta/scripts/skill-update.md) |
-| 删除条目 | [Remove](#removel2-及派生数据清理) | [skill-remove.md](0100-wiki-meta/scripts/skill-remove.md) |
-| 检查健康度 | [Lint](#lint) | [skill-lint.md](0100-wiki-meta/scripts/skill-lint.md) |
-| 判断 L3 类型 | [Kind 判定](#ingestl1--l2--l3) | 见 Ingest 步骤 6 |
+| 我要... | 文档位置 | 说明 |
+|---------|----------|------|
+| 摄入新内容 | [skill-ingest.md](0100-wiki-meta/scripts/skill-ingest.md) | L1 → L2 → L3 完整流程 |
+| 查询知识 | [skill-query.md](0100-wiki-meta/scripts/skill-query.md) | 热缓存 + FTS5 检索 |
+| 修改内容 | [skill-update.md](0100-wiki-meta/scripts/skill-update.md) | 三级变更策略 |
+| 删除条目 | [skill-remove.md](0100-wiki-meta/scripts/skill-remove.md) | L2 及派生数据清理 |
+| 检查健康度 | [skill-lint.md](0100-wiki-meta/scripts/skill-lint.md) | 自动修复 + 报告 |
 
-## 系统概述
+---
 
-三层架构，L2 是唯一事实源，L3 由 L2 派生：
+## 系统架构
+
+### 三层设计
 
 | 层级 | 定位 | 目录 | 生命周期 |
 |------|------|------|----------|
-| L1 原始数据层 | 未加工素材 | `0003-inbox/` | 临时，完成标准化后移入 .trash/ |
-| L2 主题知识层 | 高保真标准化数据（source of truth） | `{编号}-{主题名}/` | 主数据层，不可变 |
-| L3 知识加工层 | L2 派生的 typed wiki | `0101-0105/` | Claude 持续维护 |
+| **L1** 原始数据层 | 未加工素材 | `0003-inbox/` | 临时，标准化后移入 .trash/ |
+| **L2** 主题知识层 | 高保真标准化数据（**source of truth**） | `{编号}-{主题名}/` | 主数据层，不可变 |
+| **L3** 知识加工层 | L2 派生的 typed wiki | `0101-0105/` | Claude 持续维护 |
 
-- 写入：L1 → L2 → L3
-- 查询：L3（topic 优先）→ L2 → L1
-- L3 不得脱离 L2 自行演化
+**核心原则**：
+- 写入：L1 → L2 → L3（单向派生）
+- 查询：L3（topic 优先）→ L2 → L1（智能检索）
+- **L2 是唯一事实源，L3 不得脱离 L2 自行演化**
 
-## 权威配置
+### L2 与 L3 的关系
 
-| 文件 | 用途 |
-|------|------|
-| `0100-wiki-meta/configs/schema.yaml` | 字段校验 |
-| `0100-wiki-meta/configs/topics.yaml` | 主题映射 |
-| `0100-wiki-meta/configs/tag-vocabulary.yaml` | 受控标签词表 |
-| `0100-wiki-meta/configs/lint-rules.yaml` | 健康检查 |
-| `0100-wiki-meta/configs/l3-directory-inference.yaml` | L3 目录推荐（基于 tags） |
-| `0100-wiki-meta/configs/l3-structure.yaml` | L3 子分类结构定义 |
-| `0100-wiki-meta/DECISIONS.md` | 设计决策记录 |
-| `0100-wiki-meta/scripts/skill-ingest.md` | 摄入流程 |
-| `0100-wiki-meta/scripts/skill-lint.md` | 检查流程 |
-| `0100-wiki-meta/scripts/validate-frontmatter.py` | Frontmatter 校验脚本 |
-| `0100-wiki-meta/scripts/check-config-sync.py` | 配置同步校验（ingest 结尾强制运行） |
-| `.wiki.db` | SQLite 索引数据库（notes/topics 表），维护脚本：init-db.py、check-db-health.py |
+- **L2 按来源组织**（书籍、文章、教程等）
+- **L3 按知识域组织**（agent/、rag/、llm-basics/ 等）
+- **多对一映射**：一个 L2 可派生多个不同 topic 的 L3
+- **回溯机制**：L3 的 `source` 字段指向 L2 路径
 
-## 维护脚本
+---
 
-| 类别 | 脚本 | 用途 |
-|------|------|------|
-| **数据库** | init-db.py | 初始化 .wiki.db |
-| | check-db-health.py | 数据库健康检查 |
-| | clean-db-records.py | 清理无效记录 |
-| **校验（必须）** | validate-frontmatter.py | Frontmatter 校验（落盘前） |
-| | check-config-sync.py | 配置同步校验（ingest 结尾） |
-| **校验（可选）** | check-*.py（11个） | 文件名格式/L2结构/资源引用/远程图片/摘要长度等 |
-| **批量操作** | batch-ops.py | 批量修改操作 |
-| | batch-plan.py | 批量操作计划 |
-| | relocate-l3.py | L3 文件重定位 |
-| **同步** | sync-tag-vocabulary.py | 标签词表同步 |
-| **清理** | clean-old-trash.py | 清理旧回收站 |
+## 权威配置索引
 
-**说明**：11 个 check-*.py 脚本包括：config-sync、content-hash、db-health、filename-format、l2-structure、planned-links、provenance、remote-images、remove-status、resource-refs、similarity、summary-length、tags-format、topic-registration
+**配置文件位置**：`0100-wiki-meta/configs/`
 
-## 关键决策工具
+| 文件 | 用途 | 操作依赖 |
+|------|------|----------|
+| **schema.yaml** | Frontmatter 字段校验（硬约束） | ingest, update |
+| **topics.yaml** | 主题映射与域级分类 | ingest |
+| **tag-vocabulary.yaml** | 受控标签词表 | ingest, lint |
+| **lint-rules.yaml** | 健康检查规则定义 | lint |
+| **l3-directory-inference.yaml** | L3 目录推荐（基于 tags） | ingest |
+| **l3-structure.yaml** | L3 子分类结构定义 | ingest |
+| **DECISIONS.md** | 设计决策记录（ADR） | 全局 |
+| **.wiki.db** | SQLite 索引（notes/topics 表） | query, lint |
 
-### Kind 判定规则
+**配置维护脚本**：
+- `validate-frontmatter.py` — 落盘前强制校验
+- `check-config-sync.py` — ingest 结尾强制运行（退出码非 0 则阻断）
+- `init-db.py` / `check-db-health.py` — 数据库初始化与健康检查
 
-L3 文件类型的判定标准：
+---
 
-| Kind | 定义 | 示例 |
-|------|------|------|
-| **comparison** | 两个及以上独立范式的对比分析（含 comparison_axis/lhs/rhs）；命名含"vs"或内容为分类框架对比 | `agent-vs-workflow.md` |
-| **entity** | 具体的人/组织/产品/项目/论文（可独立搜索的外部实体） | `dall-e.md`、`openai.md` |
-| **concept** | 机制/模式/方法论（不属上述两类的抽象概念） | `agent-loop.md`、`rag-pipeline.md` |
+## Frontmatter 规范
 
-**注意**：命名含"vs"或分类框架对比 → comparison，不放 concept
+### L2（主题知识层）
 
-## Frontmatter（摘要）
+```yaml
+---
+id: <自动生成>
+title: "原文标题"
+topic: <所属主题>
+layer: L2
+kind: standard
+tags: [5-10个, 无空格, 多词用连字符]
+aliases: [别名列表]
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+source: "来源"
+source_url: "原文链接"
+resource_refs: [本地资源路径]
+content_hash: <自动计算>
+status: draft | published
+summary: "200字以上核心摘要"
+---
+```
 
-**L2** — id, title, topic, layer:L2, kind:standard, tags(5-10, 无空格, 多词连字符), aliases, created, updated, source, source_url, resource_refs, content_hash, status(draft/published), summary(200字以上)
+### L3 Concept（概念）
 
-**L3 concept** — title, layer:L3, kind:concept, processing_path, updated, source([L2路径]), tags, status, summary(200字以上)
+```yaml
+---
+title: "概念名称"
+layer: L3
+kind: concept
+processing_path: "AI技术/Agent"
+updated: YYYY-MM-DD
+source: ["../L2路径"]
+tags: [标签]
+status: draft | published
+summary: "200字以上"
+---
+```
 
-**L3 entity** — title, layer:L3, kind:entity, entity_type(Organization/Product/Project/Paper/Person), processing_path, updated, source, tags, status, summary
+### L3 Entity（实体）
 
-**L3 comparison** — title, layer:L3, kind:comparison, processing_path, comparison_axis, lhs, rhs, updated, source, tags, status, summary
+```yaml
+---
+title: "实体名称"
+layer: L3
+kind: entity
+entity_type: Organization | Product | Project | Paper | Person
+processing_path: "AI技术/Agent"
+updated: YYYY-MM-DD
+source: ["../L2路径"]
+tags: [标签]
+status: draft | published
+summary: "简介"
+---
+```
 
-**L1** — title, date, source, source_url, status(raw/processing/archived)
+### L3 Comparison（对比）
 
-> 完整校验见 schema.yaml。
+```yaml
+---
+title: "对比标题"
+layer: L3
+kind: comparison
+processing_path: "AI技术/Agent"
+comparison_axis: "对比维度"
+lhs: "左侧项"
+rhs: "右侧项"
+updated: YYYY-MM-DD
+source: ["../L2路径"]
+tags: [标签]
+status: draft | published
+summary: "对比摘要"
+---
+```
+
+**完整字段校验规则**：见 `0100-wiki-meta/configs/schema.yaml`
 
 ## 命名规则
 
-**文件名转换规则**：
-- 空格 → `-`
-- `.` → `_`（仅最后一个 `.` 是扩展名）
-- 特殊字符（`/ : * ? " < > | + #`）→ `_`
-- 文件名统一英文 kebab-case 全小写
+### 文件名转换规则
 
-**图片资源路径**：`0001-resource/{topic}/{slug}-{timestamp}.{ext}`
-- 示例：`0001-resource/3000-Agent/agent-loop-20260625143022.png`
+| 字符 | 转换 | 示例 |
+|------|------|------|
+| 空格 | `-` | `agent loop` → `agent-loop` |
+| 点号 | `_`（仅扩展名前的点保留） | `v2.5` → `v2_5` |
+| 特殊字符 | `_`（`/ : * ? " < > \| + #`） | `hello?world` → `hello_world` |
+| 大小写 | 全小写 | `AgentLoop` → `agent-loop` |
+
+**资源路径规范**：`0001-resource/{topic}/{slug}-{timestamp}.{ext}`  
+示例：`0001-resource/3000-Agent/agent-loop-20260625143022.png`
 
 ### 语言规范
 
 | 层级 | 规则 | 示例 |
 |------|------|------|
-| L2 topic 目录 | `{编号}-{显示名}`，技术术语可英文 | `3000-Agent`、`3001-RAG与检索` |
-| L2/L3 文件名 | 英文 kebab-case 全小写 | `agent-loop.md`、`rag-basics.md` |
-| L3 concept 目录 | 英文 slug 全小写，支持子分类 | `agent/core/`、`agent/frameworks/` |
-| L3 entity 目录 | 英文 slug 全小写，按 entity_type | `product/`、`organization/` |
-| L3 comparison 目录 | 英文 slug 全小写 | `automation-paradigm/` |
-| title 字段 | 统一中文（frontmatter） | `title: "Agent 循环机制"` |
-| tags | 英文 slug，连字符连接 | `agent-loop`、`tool-calling` |
-| processing_path | `{中文大类}/{topic显示名}` | `AI技术/Agent` |
-| 正文 | 统一中文 | 技术术语首次出现可附英文原文 |
+| **L2 topic 目录** | `{编号}-{显示名}`，技术术语可英文 | `3000-Agent`、`3001-RAG与检索` |
+| **L2/L3 文件名** | 英文 kebab-case 全小写 | `agent-loop.md`、`rag-basics.md` |
+| **L3 目录** | 英文 slug 全小写，支持子分类 | `agent/core/`、`product/` |
+| **title 字段** | 统一中文（frontmatter） | `title: "Agent 循环机制"` |
+| **tags** | 英文 slug，连字符连接 | `agent-loop`、`tool-calling` |
+| **processing_path** | `{中文大类}/{topic显示名}` | `AI技术/Agent` |
+| **正文** | 统一中文 | 技术术语首次出现可附英文原文 |
 
-### L2 与 L3 的关系
+---
 
-L2 按**来源**组织，L3 按**知识域**组织，两者是多对一映射：
+## L2 正文结构
 
-- 一个 L2 文件可派生多个不同 topic 的 L3 concept
-- L3 `source` 字段指向 L2 路径，用于回溯
-- L2 目录不需要与 L3 目录对齐
+L2 采用**分区结构**（上半提炼，下半原文）：
 
-示例：`hello-agents-ch3-llm-basics.md`（L2, `3000-Agent/`）→ `transformer-architecture.md`（L3, `llm-basics/`）
+```markdown
+## 核心提炼
+概括本文独有的论证逻辑和上下文关系，不重复 L3 可覆盖的通用概念定义。
+
+## 关键概念
+- [[概念1]]
+- [[概念2]]
+
+## 原文要点
+**第一章**：关键论点
+**第二章**：关键论点
+
+## 来源
+作者、机构、原文链接、原始文件
+
+---
+
+## 原文笔记
+原文中文翻译，保留段落层次；代码块保留核心逻辑（函数签名 + 关键注释），省略标准库调用和环境配置。
+```
+
+---
+
+## L3 Kind 判定规则
+
+| Kind | 定义 | 触发条件 |
+|------|------|----------|
+| **comparison** | 两个及以上独立范式的对比分析 | 含 comparison_axis/lhs/rhs；命名含"vs"；分类框架对比 |
+| **entity** | 具体的人/组织/产品/项目/论文 | 可独立搜索的外部实体 |
+| **concept** | 机制/模式/方法论 | 不属上述两类的抽象概念 |
+
+**注意**：命名含"vs"或分类框架对比 → comparison，不放 concept
+
+---
 
 ## 目录结构
 
@@ -133,133 +213,82 @@ L2 按**来源**组织，L3 按**知识域**组织，两者是多对一映射：
 0001-resource/            # 本地资源（图片/附件）
 0003-inbox/               # L1
 0101-wiki-topics/         # L3 主题综述（域级）
-0102-wiki-concepts/       # L3 概念（按主题域：agent/、rag/、image-generation/、llm-basics/、model-training/、ai-engineering/）
+0102-wiki-concepts/       # L3 概念（按主题域）
+  ├── agent/              # Agent 相关概念
+  ├── rag/                # RAG 与检索
+  ├── llm-basics/         # 大模型基础
+  ├── model-training/     # 模型训练
+  └── ai-engineering/     # AI 工程化
 0103-wiki-entities/       # L3 实体（按 entity_type）
+  ├── organization/
+  ├── product/
+  ├── project/
+  ├── paper/
+  └── person/
 0104-wiki-comparisons/    # L3 对比（按 comparison_axis）
 0105-wiki-base/           # Base 面板
 0109-log/                 # 操作日志
 .trash/                   # 回收站
 ```
 
-## L2 正文结构
-
-L2 正文采用分区结构，上半为提炼，下半为原文：
-
-1. **核心提炼** — 概括本文独有的论证逻辑和上下文关系，不重复 L3 可覆盖的通用概念定义
-2. **关键概念** — 本文涉及的重要概念 wikilink 列表
-3. **原文要点** — 章节大纲 + 关键论点，非全文搬运
-4. **来源** — 作者、机构、原文链接、原始文件
-5. `---` 分隔线
-6. **原文笔记** — 原文中文翻译，保留段落层次；代码块保留核心逻辑（函数签名 + 关键注释），省略标准库调用和环境配置
-
-## 四操作规范
-
-### Ingest（L1 → L2 → L3）
-
-1. 用户 @ 引用 inbox → 读取 → 扫描图片
-2. 判断归属主题目录（须用户确认）
-3. 生成 slug（英文优先，3-5 推荐）；文件名按命名规则处理
-4. 图片落地：下载 → `0001-resource/{topic（完整目录名）}/{slug}/{timeStamp}.{ext}` → 改写正文 → 写入 resource_refs
-5. 创建 L2：标题保留原文；正文采用分区结构（上半：核心提炼 + 关键概念 + 原文要点 + 来源；下半：原文笔记）
-6. L3 触发：逐个检查可派生的 concept/entity/comparison，对每个给出推荐：
-   - **kind 判定**：见 [Kind 判定规则](#kind-判定规则)
-   - 是否建 L3（满足其一：独立机制 / 跨源引用≥2 / 工具价值）
-   - processing_path 及所属目录（推荐 topic 及理由）
-   不建 L3：教科书分类列举、纯对比关系（→ comparison）、已有概念的子细节（→ 合入已有 concept）
-   
-   **⚠️ 重要**：必须展示"L3创建计划表"（使用 AskUserQuestion 工具确认），表格必须包含：
-   - slug（文件名）、类型（concept/entity/comparison）、评分（0-10，≥6推荐，<3不建议）
-   - processing_path（如 `AI技术/Agent`）
-   - **最终存储位置**（完整物理路径，如 `0102-wiki-concepts/agent/core/agent-loop.md`）
-   
-   **评分维度**：独立定义(+3) + 代码示例(+2) + 配图(+1) + 多处引用(+2) + 核心术语(+2) - 过细节(-3)
-   
-   详细的表格格式、评分模型和 AskUserQuestion 参数见 [skill-ingest.md](0100-wiki-meta/scripts/skill-ingest.md)
-   
-   交由用户确认后落盘。一个 L2 可派生多个不同 topic 的 L3。
-   - **图片复用**：创建 L3 时检查源 L2 的 `resource_refs`，若存在与该概念直接相关的图片（如架构图、流程图），用 `![[filename]]` 嵌入到 L3 正文的"定义"段之后。不复制文件，仅引用已有资源。
-7. 写入前强制校验：topic/tags/summary/source/processing_path（schema.yaml 硬约束，不过不得落盘）
-8. 配置同步与引用治理（逐项检查，不可跳过）：
-   - 8a. **topics.yaml** — L2 归入的 topic 是否在对应 domain 的 `active` 列表中？若不在则追加
-   - 8b. **tag-vocabulary.yaml** — 本次 ingest 引入的新标签是否全部登记？
-   - 8c. **0101-wiki-topics/** — 该 topic 是否首次有 L2 入驻？若是则创建域级主题综述页
-   - 8d. **.wiki.db** — 新建的 L2/L3 文件是否已同步到 SQLite 索引？
-   - 8e. **死链治理** — 断裂 wikilink 正常使用 + planned_links 记录；清理 L2 planned_links 中已创建的 L3
-   - 8f. **跨主题引用检查** — L3 的 `[[wikilink]]` 是否引用了其他 domain 的概念？若是确认引用合理性
-   - 8g. **运行 `check-config-sync.py`** — 脚本退出码非 0 则阻断 commit，所有输出项必须为 PASS 或经用户确认的 SKIP
-9. LOG（Step 8 逐项标记 PASS/SKIP/FAIL，FAIL 必须修复或用户确认跳过）+ .trash/ + git commit
-
-### Query（L3 topic 优先 → L2 → L1）
-
-**架构**：热缓存 → SQLite FTS5 → 多因子排序
-
-1. **热缓存优先**：读取 `0100-wiki-meta/hot.md`（72h 高频查询）
-2. **SQLite FTS5 检索**：`python query.py "<关键词>" 8`
-   - 统一 UNION 查询：L3 topic → L3 concept/entity/comparison → L2 → L1
-   - 多因子排序：文本相关性(50%) + 入链数(25%) + 新鲜度(15%) + 质量(10%)
-3. **结果呈现**：Top 8 全文，引用 [[wikilink]]
-
-详细流程见 [skill-query.md](0100-wiki-meta/scripts/skill-query.md)
-
-### Update（三级变更）
-
-| 等级 | 触发 | 动作 |
-|------|------|------|
-| 轻微 | 措辞/错别字 | 改正文 → updated → content_hash（若改正文） → LOG |
-| 中等 | tags/aliases | 改 Frontmatter → content_hash（若改正文） → LOG |
-| 重大 | title/summary/事实 | 改内容 → rg wikilink → rg L3 source → 同步 → content_hash → LOG |
-
-L3 不可人工编辑（D010）。
-**Update 不改变 status。** draft→published 需用户手动确认并通过 ingest 校验（步骤 10）。
-
-### Remove（L2 及派生数据清理）
-
-> 详见 `0100-wiki-meta/scripts/skill-remove.md`
-
-删除 L2 文件并清理所有派生数据（L3、资源、配置、索引）。
-
-**触发场景**：用户 @ 引用 L2 文件并要求删除；内容重复、质量低或主题不再相关
-
-**流程**：识别分析 → 用户确认 → 执行删除（移入 .trash/） → 验证日志
-
-**安全**：所有删除可恢复、共享资源智能保留、引用数>10 额外警告
-
-### Lint
-
-> 模型约束：Lint 和翻译操作使用 Haiku 模型。
-
-**自动修复**：断裂 wikilink
-
-**报告项**：
-- L2 缺核心提炼区或原文笔记区
-- 孤立页面、draft>30天
-- Frontmatter 不完整、summary 超范围、tags 格式、文件名格式
-- resource_refs 不一致、远程图片残留
-- L3 source 失效、L3 独立事实
-- topic 未注册到 active、active topic 缺综述页
-- **SQLite 索引同步**（.wiki.db 与文件系统一致性）
-
-详细规则见 [skill-lint.md](0100-wiki-meta/scripts/skill-lint.md)
+---
 
 ## 落盘验收清单
 
-1. frontmatter 字段齐全
-2. L2 包含核心提炼区 + 原文笔记区
-3. tags 5-10、无空格、连字符
-4. summary ≥ 200 字
-5. 图片已落地、resource_refs 1:1、无远程图片残留
-6. entity/comparison 已主动检查
-7. 文件名符合命名规则
-8. 死链已处理
-9. 配置同步 — `check-config-sync.py` 退出码 0
-10. LOG 文件 Step 8 逐项标记 PASS/SKIP/FAIL
+每次操作落盘前必须通过：
 
-## Git
+- [ ] Frontmatter 字段齐全（schema.yaml）
+- [ ] L2 包含核心提炼区 + 原文笔记区
+- [ ] tags 5-10 个、无空格、连字符
+- [ ] summary ≥ 200 字
+- [ ] 图片已落地、resource_refs 1:1、无远程图片残留
+- [ ] 文件名符合命名规则
+- [ ] 死链已处理（planned_links 记录）
+- [ ] 配置同步 — `check-config-sync.py` 退出码 0
+- [ ] LOG 文件配置同步项逐项标记 PASS/SKIP/FAIL
+
+---
+
+## Git 规范
 
 | 场景 | 格式 |
 |------|------|
 | 知识操作 | `wiki: {操作} {文件} — {摘要}` |
 | 文档变更 | `docs: {描述}` |
 
-流程：用户确认后 `git status → add → commit`
-**`git push` 必须单独交用户确认，禁止自行推送。**
+**流程**：用户确认后 `git status → add → commit`  
+**⚠️ `git push` 必须单独交用户确认，禁止自行推送。**
+
+---
+
+## 维护脚本索引
+
+**脚本位置**：`0100-wiki-meta/scripts/`
+
+### 数据库
+- `init-db.py` — 初始化 .wiki.db
+- `check-db-health.py` — 数据库健康检查
+- `clean-db-records.py` — 清理无效记录
+
+### 校验（必须）
+- `validate-frontmatter.py` — Frontmatter 校验（落盘前）
+- `check-config-sync.py` — 配置同步校验（ingest 结尾）
+
+### 校验（可选）
+11 个 check-*.py 脚本：config-sync、content-hash、db-health、filename-format、l2-structure、planned-links、provenance、remote-images、remove-status、resource-refs、similarity、summary-length、tags-format、topic-registration
+
+### 批量操作
+- `batch-ops.py` — 批量修改操作
+- `batch-plan.py` — 批量操作计划
+- `relocate-l3.py` — L3 文件重定位
+
+### 同步与清理
+- `sync-tag-vocabulary.py` — 标签词表同步
+- `clean-old-trash.py` — 清理旧回收站
+
+---
+
+## 模型约束
+
+- **Lint 和翻译操作使用 Haiku 模型**（成本优化）
+- 其他操作使用会话默认模型

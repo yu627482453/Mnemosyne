@@ -367,8 +367,8 @@ L3 由 L2 派生，逐个检查可派生的 concept/entity/comparison。
         "description": "只创建评分≥7的L3"
       },
       {
-        "label": "自定义选择",
-        "description": "我将指定具体要创建的L3序号或调整存储位置"
+        "label": "全部选择（包含非推荐项）",
+        "description": "全部选择（包含非推荐项）"
       }
     ]
   }]

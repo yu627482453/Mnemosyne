@@ -46,3 +46,5 @@ manual_review:
     description: "L2 的 topic 未注册到 topics.yaml 对应 domain 的 active 列表"
   - rule: topic_missing_summary_page
     description: "active topic 缺少 0101-wiki-topics 域级综述页"
+  - rule: l3_directory_misalignment
+    description: "L3 文件的物理目录与其 tags/processing_path 不匹配，建议重定位"
